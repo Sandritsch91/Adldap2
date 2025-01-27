@@ -13,7 +13,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function accountExpires();
+    public function accountExpires(): string;
 
     /**
      * The logon name used to support clients and servers running earlier versions of the
@@ -25,7 +25,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function accountName();
+    public function accountName(): string;
 
     /**
      * This attribute contains information about every account type object.
@@ -34,7 +34,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function accountType();
+    public function accountType(): string;
 
     /**
      * The name to be displayed on admin screens.
@@ -43,7 +43,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function adminDisplayName();
+    public function adminDisplayName(): string;
 
     /**
      * Ambiguous name resolution attribute to be used when choosing between objects.
@@ -52,7 +52,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function anr();
+    public function anr(): string;
 
     /**
      * The number of times the user tried to log on to the account using
@@ -63,7 +63,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function badPasswordCount();
+    public function badPasswordCount(): string;
 
     /**
      * The last time and date that an attempt to log on to this
@@ -73,7 +73,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function badPasswordTime();
+    public function badPasswordTime(): string;
 
     /**
      * The name that represents an object.
@@ -82,7 +82,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function commonName();
+    public function commonName(): string;
 
     /**
      * The user's company name.
@@ -91,7 +91,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function company();
+    public function company(): string;
 
     /**
      * The object class computer string.
@@ -100,14 +100,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function computer();
+    public function computer(): string;
 
     /**
      * The class name of the Computer model.
      *
      * @return string
      */
-    public function computerModel();
+    public function computerModel(): string;
 
     /**
      * DN enterprise configuration naming context.
@@ -116,7 +116,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function configurationNamingContext();
+    public function configurationNamingContext(): string;
 
     /**
      * The object class contact string.
@@ -125,21 +125,21 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function contact();
+    public function contact(): string;
 
     /**
      * The class name of the Contact model.
      *
      * @return string
      */
-    public function contactModel();
+    public function contactModel(): string;
 
     /**
      * The class name of the Container model.
      *
      * @return string
      */
-    public function containerModel();
+    public function containerModel(): string;
 
     /**
      * The entry's country attribute.
@@ -148,7 +148,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function country();
+    public function country(): string;
 
     /**
      * The entry's created at attribute.
@@ -157,7 +157,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function createdAt();
+    public function createdAt(): string;
 
     /**
      * The entry's current time attribute.
@@ -166,7 +166,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function currentTime();
+    public function currentTime(): string;
 
     /**
      * This is the default NC for a particular server.
@@ -177,7 +177,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function defaultNamingContext();
+    public function defaultNamingContext(): string;
 
     /**
      * Contains the name for the department in which the user works.
@@ -186,7 +186,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function department();
+    public function department(): string;
 
     /**
      * Identifies a department within an organization.
@@ -195,7 +195,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function departmentNumber();
+    public function departmentNumber(): string;
 
     /**
      * Contains the description to display for an object. This value is restricted
@@ -206,7 +206,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function description();
+    public function description(): string;
 
     /**
      * The display name for an object. This is usually the combination
@@ -216,7 +216,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function displayName();
+    public function displayName(): string;
 
     /**
      * The LDAP API references an LDAP object by its distinguished name (DN).
@@ -227,7 +227,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function distinguishedName();
+    public function distinguishedName(): string;
 
     /**
      * The LDAP API references an LDAP object by its distinguished name (DN).
@@ -237,11 +237,11 @@ interface SchemaInterface
      * value to be the first element in an array, however OpenLDAP expects
      * the dn attribute to contain the value, not an array.
      *
+     * @return int|null
      * @deprecated since 10.0.0
      *
-     * @return int|null
      */
-    public function distinguishedNameSubKey();
+    public function distinguishedNameSubKey(): ?int;
 
     /**
      * Name of computer as registered in DNS.
@@ -250,7 +250,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function dnsHostName();
+    public function dnsHostName(): string;
 
     /**
      * Domain Component located inside an RDN.
@@ -259,7 +259,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function domainComponent();
+    public function domainComponent(): string;
 
     /**
      * The device driver name.
@@ -268,7 +268,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function driverName();
+    public function driverName(): string;
 
     /**
      * The Version number of device driver.
@@ -277,7 +277,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function driverVersion();
+    public function driverVersion(): string;
 
     /**
      * The list of email addresses for a contact.
@@ -286,14 +286,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function email();
+    public function email(): string;
 
     /**
      * The email nickname for the user.
      *
      * @return string
      */
-    public function emailNickname();
+    public function emailNickname(): string;
 
     /**
      * The ID of an employee.
@@ -302,7 +302,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function employeeId();
+    public function employeeId(): string;
 
     /**
      * The number assigned to an employee other than the ID.
@@ -311,7 +311,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function employeeNumber();
+    public function employeeNumber(): string;
 
     /**
      * The job category for an employee.
@@ -320,35 +320,35 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function employeeType();
+    public function employeeType(): string;
 
     /**
      * The class name of the Entry model.
      *
      * @return string
      */
-    public function entryModel();
+    public function entryModel(): string;
 
     /**
      * The LDAP `false` boolean in string form for conversion.
      *
      * @return string
      */
-    public function false();
+    public function false(): string;
 
     /**
      * The LDAP filter to query for enabled users.
      *
      * @return mixed
      */
-    public function filterEnabled();
+    public function filterEnabled(): mixed;
 
     /**
      * The LDAP filter to query for disabled users.
      *
      * @return mixed
      */
-    public function filterDisabled();
+    public function filterDisabled(): mixed;
 
     /**
      * Contains the given name (first name) of the user.
@@ -357,14 +357,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function firstName();
+    public function firstName(): string;
 
     /**
      * The class name of the Group model.
      *
      * @return string
      */
-    public function groupModel();
+    public function groupModel(): string;
 
     /**
      * Contains a set of flags that define the type and scope of a group object.
@@ -373,7 +373,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function groupType();
+    public function groupType(): string;
 
     /**
      * A user's home address.
@@ -382,14 +382,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function homeAddress();
+    public function homeAddress(): string;
 
     /**
      * The users mailbox database location.
      *
      * @return string
      */
-    public function homeMdb();
+    public function homeMdb(): string;
 
     /**
      * Specifies the drive letter to which to map the UNC path specified by homeDirectory.
@@ -398,7 +398,7 @@ interface SchemaInterface
      *
      * @return string|null
      */
-    public function homeDrive();
+    public function homeDrive(): ?string;
 
     /**
      * The home directory for the account.
@@ -407,7 +407,7 @@ interface SchemaInterface
      *
      * @return string|null
      */
-    public function homeDirectory();
+    public function homeDirectory(): ?string;
 
     /**
      * The user's main home phone number.
@@ -416,14 +416,14 @@ interface SchemaInterface
      *
      * @return string|null
      */
-    public function homePhone();
+    public function homePhone(): ?string;
 
     /**
      * The users extra notable information.
      *
      * @return string
      */
-    public function info();
+    public function info(): string;
 
     /**
      * Contains the initials for parts of the user's full name.
@@ -434,7 +434,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function initials();
+    public function initials(): string;
 
     /**
      * A bitfield that dictates how the object is instantiated on a particular server.
@@ -445,7 +445,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function instanceType();
+    public function instanceType(): string;
 
     /**
      * Specifies the TCP/IP address for the phone. Used by telephony.
@@ -454,7 +454,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function ipPhone();
+    public function ipPhone(): string;
 
     /**
      * If TRUE, the object hosting this attribute must be replicated during installation of a new replica.
@@ -463,7 +463,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function isCriticalSystemObject();
+    public function isCriticalSystemObject(): string;
 
     /**
      * Used to store one or more images of a person using the JPEG File Interchange Format [JFIF].
@@ -472,7 +472,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function jpegPhoto();
+    public function jpegPhoto(): string;
 
     /**
      * This attribute is not used.
@@ -481,7 +481,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function lastLogOff();
+    public function lastLogOff(): string;
 
     /**
      * The last time the user logged on. This value is stored as a large integer that
@@ -493,7 +493,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function lastLogOn();
+    public function lastLogOn(): string;
 
     /**
      * This is the time that the user last logged into the domain.
@@ -502,7 +502,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function lastLogOnTimestamp();
+    public function lastLogOnTimestamp(): string;
 
     /**
      * This attribute contains the family or last name for a user.
@@ -511,7 +511,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function lastName();
+    public function lastName(): string;
 
     /**
      * The distinguished name previously used by Exchange.
@@ -520,14 +520,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function legacyExchangeDn();
+    public function legacyExchangeDn(): string;
 
     /**
      * The users locale.
      *
      * @return string
      */
-    public function locale();
+    public function locale(): string;
 
     /**
      * The user's location, such as office number.
@@ -536,7 +536,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function location();
+    public function location(): string;
 
     /**
      * The date and time (UTC) that this account was locked out. This value is stored
@@ -548,7 +548,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function lockoutTime();
+    public function lockoutTime(): string;
 
     /**
      * Contains the distinguished name of the user who is the user's manager.
@@ -561,7 +561,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function manager();
+    public function manager(): string;
 
     /**
      * The distinguished name of the user that is assigned to manage this object.
@@ -570,7 +570,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function managedBy();
+    public function managedBy(): string;
 
     /**
      * The maximum amount of time, in 100-nanosecond intervals, a password is valid.
@@ -583,7 +583,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function maxPasswordAge();
+    public function maxPasswordAge(): string;
 
     /**
      * The list of users that belong to the group.
@@ -592,7 +592,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function member();
+    public function member(): string;
 
     /**
      * The identifier of records that belong to a group.
@@ -606,7 +606,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function memberIdentifier();
+    public function memberIdentifier(): string;
 
     /**
      * The distinguished names of the groups to which this object belongs.
@@ -615,7 +615,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function memberOf();
+    public function memberOf(): string;
 
     /**
      * The distinguished names of the groups to which this object belongs.
@@ -627,7 +627,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function memberOfRecursive();
+    public function memberOfRecursive(): string;
 
     /**
      * The range limited list of users that belong to the group. See range limit in Active Directory
@@ -636,40 +636,40 @@ interface SchemaInterface
      *
      * @link https://msdn.microsoft.com/en-us/library/ms677097(v=vs.85).aspx
      *
-     * @param string|int $from
-     * @param string|int $to
+     * @param int|string $from
+     * @param int|string $to
      *
      * @return string
      */
-    public function memberRange($from, $to);
+    public function memberRange(int|string $from, int|string $to): string;
 
     /**
      * @link https://msdn.microsoft.com/en-us/library/ms981934(v=exchg.65).aspx
      *
      * @return string
      */
-    public function messageTrackingEnabled();
+    public function messageTrackingEnabled(): string;
 
     /**
      * The object category of an exchange server.
      *
      * @return string
      */
-    public function msExchangeServer();
+    public function msExchangeServer(): string;
 
     /**
      * The general name of the entry.
      *
      * @return string
      */
-    public function name();
+    public function name(): string;
 
     /**
      * Returns a string value indicating that an account does not expire.
      *
      * @return string
      */
-    public function neverExpiresDate();
+    public function neverExpiresDate(): string;
 
     /**
      * An object class name used to group objects of this or derived classes.
@@ -678,70 +678,70 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function objectCategory();
+    public function objectCategory(): string;
 
     /**
      * The computer object category.
      *
      * @return string
      */
-    public function objectCategoryComputer();
+    public function objectCategoryComputer(): string;
 
     /**
      * The container object category.
      *
      * @return string
      */
-    public function objectCategoryContainer();
+    public function objectCategoryContainer(): string;
 
     /**
      * The exchange private MDB category.
      *
      * @return string
      */
-    public function objectCategoryExchangePrivateMdb();
+    public function objectCategoryExchangePrivateMdb(): string;
 
     /**
      * The exchange server object category.
      *
      * @return string
      */
-    public function objectCategoryExchangeServer();
+    public function objectCategoryExchangeServer(): string;
 
     /**
      * The exchange storage group object category.
      *
      * @return string
      */
-    public function objectCategoryExchangeStorageGroup();
+    public function objectCategoryExchangeStorageGroup(): string;
 
     /**
      * The group object category.
      *
      * @return string
      */
-    public function objectCategoryGroup();
+    public function objectCategoryGroup(): string;
 
     /**
      * The organizational unit category.
      *
      * @return string
      */
-    public function objectCategoryOrganizationalUnit();
+    public function objectCategoryOrganizationalUnit(): string;
 
     /**
      * The person object category.
      *
      * @return string
      */
-    public function objectCategoryPerson();
+    public function objectCategoryPerson(): string;
 
     /**
      * The printer object category.
      *
      * @return string
      */
-    public function objectCategoryPrinter();
+    public function objectCategoryPrinter(): string;
 
     /**
      * The list of classes from which this class is derived.
@@ -750,42 +750,42 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function objectClass();
+    public function objectClass(): string;
 
     /**
      * The computer object class.
      *
      * @return string
      */
-    public function objectClassComputer();
+    public function objectClassComputer(): string;
 
     /**
      * The contact object class.
      *
      * @return string
      */
-    public function objectClassContact();
+    public function objectClassContact(): string;
 
     /**
      * The container object class.
      *
      * @return string
      */
-    public function objectClassContainer();
+    public function objectClassContainer(): string;
 
     /**
      * The group object class.
      *
      * @return string
      */
-    public function objectClassGroup();
+    public function objectClassGroup(): string;
 
     /**
      * The ou object class.
      *
      * @return string
      */
-    public function objectClassOu();
+    public function objectClassOu(): string;
 
     /**
      * The person object class.
@@ -794,7 +794,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function objectClassPerson();
+    public function objectClassPerson(): string;
 
     /**
      * The printer object class.
@@ -803,21 +803,21 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function objectClassPrinter();
+    public function objectClassPrinter(): string;
 
     /**
      * The user object class.
      *
      * @return string
      */
-    public function objectClassUser();
+    public function objectClassUser(): string;
 
     /**
      * The object class model map.
      *
      * @return array
      */
-    public function objectClassModelMap();
+    public function objectClassModelMap(): array;
 
     /**
      * The unique identifier for an object.
@@ -826,14 +826,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function objectGuid();
+    public function objectGuid(): string;
 
     /**
      * Determine whether the object GUID requires conversion from binary.
      *
      * @return bool
      */
-    public function objectGuidRequiresConversion();
+    public function objectGuidRequiresConversion(): bool;
 
     /**
      * A binary value that specifies the security identifier (SID) of the user.
@@ -844,14 +844,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function objectSid();
+    public function objectSid(): string;
 
     /**
      * Determine whether the object SID requires conversion from binary.
      *
      * @return bool
      */
-    public function objectSidRequiresConversion();
+    public function objectSidRequiresConversion(): bool;
 
     /**
      * The Operating System name, for example, Windows Vista Enterprise.
@@ -860,7 +860,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function operatingSystem();
+    public function operatingSystem(): string;
 
     /**
      * The operating system service pack ID string (for example, SP3).
@@ -869,7 +869,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function operatingSystemServicePack();
+    public function operatingSystemServicePack(): string;
 
     /**
      * The operating system version string, for example, 4.0.
@@ -878,14 +878,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function operatingSystemVersion();
+    public function operatingSystemVersion(): string;
 
     /**
      * The RDN version of organization name for use in distinguished names.
      *
      * @return mixed
      */
-    public function organizationName();
+    public function organizationName(): mixed;
 
     /**
      * This class is used for objects that contain organizational information about a user,
@@ -895,7 +895,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function organizationalPerson();
+    public function organizationalPerson(): string;
 
     /**
      * A container for storing users, computers, and other account objects.
@@ -904,21 +904,21 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function organizationalUnit();
+    public function organizationalUnit(): string;
 
     /**
      * The class name of the Organizational Unit model.
      *
      * @return string
      */
-    public function organizationalUnitModel();
+    public function organizationalUnitModel(): string;
 
     /**
      * The RDN version of organizational unit for use in distinguished names.
      *
      * @return string
      */
-    public function organizationalUnitShort();
+    public function organizationalUnitShort(): string;
 
     /**
      * Contains other additional mail addresses in a form such as CCMAIL: JohnDoe.
@@ -927,7 +927,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function otherMailbox();
+    public function otherMailbox(): string;
 
     /**
      * The date and time that the password for this account was last changed.
@@ -941,7 +941,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function passwordLastSet();
+    public function passwordLastSet(): string;
 
     /**
      * The person object class.
@@ -950,7 +950,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function person();
+    public function person(): string;
 
     /**
      * The user's title.
@@ -959,7 +959,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function personalTitle();
+    public function personalTitle(): string;
 
     /**
      * Contains the office location in the user's place of business.
@@ -968,7 +968,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function physicalDeliveryOfficeName();
+    public function physicalDeliveryOfficeName(): string;
 
     /**
      * List of port names. For example, for printer ports or comm ports.
@@ -977,7 +977,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function portName();
+    public function portName(): string;
 
     /**
      * The postal or zip code for mail delivery.
@@ -986,7 +986,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function postalCode();
+    public function postalCode(): string;
 
     /**
      * The post office box number for this object.
@@ -995,7 +995,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function postOfficeBox();
+    public function postOfficeBox(): string;
 
     /**
      * Contains the relative identifier (RID) for the primary group of the user.
@@ -1006,7 +1006,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function primaryGroupId();
+    public function primaryGroupId(): string;
 
     /**
      * A list of printer bin names.
@@ -1015,7 +1015,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerBinNames();
+    public function printerBinNames(): string;
 
     /**
      * If a printer can print in color.
@@ -1024,7 +1024,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerColorSupported();
+    public function printerColorSupported(): string;
 
     /**
      * Indicates the type of duplex support a printer has.
@@ -1033,7 +1033,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerDuplexSupported();
+    public function printerDuplexSupported(): string;
 
     /**
      * The time a print queue stops servicing jobs.
@@ -1042,7 +1042,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerEndTime();
+    public function printerEndTime(): string;
 
     /**
      * The maximum printer resolution.
@@ -1051,7 +1051,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerMaxResolutionSupported();
+    public function printerMaxResolutionSupported(): string;
 
     /**
      * A list of media supported by a printer.
@@ -1060,7 +1060,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerMediaSupported();
+    public function printerMediaSupported(): string;
 
     /**
      * The amount of memory installed in a printer.
@@ -1069,14 +1069,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerMemory();
+    public function printerMemory(): string;
 
     /**
      * The class name of the Printer model.
      *
      * @return string
      */
-    public function printerModel();
+    public function printerModel(): string;
 
     /**
      * The display name of an attached printer.
@@ -1085,7 +1085,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerName();
+    public function printerName(): string;
 
     /**
      * The page rotation for landscape printing.
@@ -1094,7 +1094,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerOrientationSupported();
+    public function printerOrientationSupported(): string;
 
     /**
      * Driver-supplied print rate.
@@ -1103,7 +1103,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerPrintRate();
+    public function printerPrintRate(): string;
 
     /**
      * Driver-supplied print rate unit.
@@ -1112,7 +1112,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerPrintRateUnit();
+    public function printerPrintRateUnit(): string;
 
     /**
      * The printer's share name.
@@ -1121,7 +1121,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerShareName();
+    public function printerShareName(): string;
 
     /**
      * If the printer supports stapling. Supplied by the driver.
@@ -1130,7 +1130,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerStaplingSupported();
+    public function printerStaplingSupported(): string;
 
     /**
      * The time a print queue begins servicing jobs.
@@ -1139,7 +1139,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function printerStartTime();
+    public function printerStartTime(): string;
 
     /**
      * The current priority (of a process, print job, and so on).
@@ -1148,7 +1148,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function priority();
+    public function priority(): string;
 
     /**
      * Specifies a path to the user's profile. This value can be a null
@@ -1158,7 +1158,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function profilePath();
+    public function profilePath(): string;
 
     /**
      * A proxy address is the address by which a Microsoft Exchange Server recipient
@@ -1169,7 +1169,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function proxyAddresses();
+    public function proxyAddresses(): string;
 
     /**
      * The room number of an object.
@@ -1178,7 +1178,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function roomNumber();
+    public function roomNumber(): string;
 
     /**
      * The DN of the root domain NC for this DC's forest.
@@ -1187,14 +1187,14 @@ interface SchemaInterface
      *
      * @return mixed
      */
-    public function rootDomainNamingContext();
+    public function rootDomainNamingContext(): mixed;
 
     /**
      * The attribute.
      *
      * @return mixed
      */
-    public function schemaNamingContext();
+    public function schemaNamingContext(): mixed;
 
     /**
      * This attribute specifies the path for the user's logon script. The string can be null.
@@ -1203,7 +1203,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function scriptPath();
+    public function scriptPath(): string;
 
     /**
      * Part of X.500 specification. Not used by Active Directory.
@@ -1212,7 +1212,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function serialNumber();
+    public function serialNumber(): string;
 
     /**
      * The name of a server.
@@ -1221,7 +1221,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function serverName();
+    public function serverName(): string;
 
     /**
      * This attribute is used to indicate in which MAPI address books an object will appear.
@@ -1232,7 +1232,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function showInAddressBook();
+    public function showInAddressBook(): string;
 
     /**
      * The street address.
@@ -1241,7 +1241,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function street();
+    public function street(): string;
 
     /**
      * The street address.
@@ -1250,7 +1250,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function streetAddress();
+    public function streetAddress(): string;
 
     /**
      * An integer value that contains flags that define additional properties of the class.
@@ -1259,7 +1259,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function systemFlags();
+    public function systemFlags(): string;
 
     /**
      * The primary telephone number.
@@ -1268,7 +1268,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function telephone();
+    public function telephone(): string;
 
     /**
      * The primary mobile phone number.
@@ -1277,7 +1277,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function mobile();
+    public function mobile(): string;
 
     /**
      * The secondary mobile phone number.
@@ -1286,14 +1286,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function otherMobile();
+    public function otherMobile(): string;
 
     /**
      * The users thumbnail photo path.
      *
      * @return string
      */
-    public function thumbnail();
+    public function thumbnail(): string;
 
     /**
      * Contains the user's job title.
@@ -1302,7 +1302,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function title();
+    public function title(): string;
 
     /**
      * The top level class from which all classes are derived.
@@ -1311,14 +1311,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function top();
+    public function top(): string;
 
     /**
      * The LDAP `true` boolean in string form for conversion.
      *
      * @return string
      */
-    public function true();
+    public function true(): string;
 
     /**
      * The password of the user in Windows NT one-way format (OWF). Windows 2000 uses the Windows NT OWF.
@@ -1327,7 +1327,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function unicodePassword();
+    public function unicodePassword(): string;
 
     /**
      * The date when this object was last changed.
@@ -1336,14 +1336,14 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function updatedAt();
+    public function updatedAt(): string;
 
     /**
      * The entry's URL attribute.
      *
      * @return string
      */
-    public function url();
+    public function url(): string;
 
     /**
      * The user object class.
@@ -1354,7 +1354,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function user();
+    public function user(): string;
 
     /**
      * Flags that control the behavior of the user account.
@@ -1363,21 +1363,21 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function userAccountControl();
+    public function userAccountControl(): string;
 
     /**
      * The user ID attribute.
      *
      * @return string
      */
-    public function userId();
+    public function userId(): string;
 
     /**
      * The class name of the User model.
      *
      * @return string
      */
-    public function userModel();
+    public function userModel(): string;
 
     /**
      * The object classes that User models must be constructed with.
@@ -1394,7 +1394,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function userPrincipalName();
+    public function userPrincipalName(): string;
 
     /**
      * Contains the NetBIOS or DNS names of the computers running Windows NT Workstation
@@ -1408,7 +1408,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function userWorkstations();
+    public function userWorkstations(): string;
 
     /**
      * A general purpose version number.
@@ -1417,5 +1417,5 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function versionNumber();
+    public function versionNumber(): string;
 }

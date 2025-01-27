@@ -4,6 +4,7 @@ namespace Adldap\Tests\Connections;
 
 use Adldap\Tests\TestCase;
 use Adldap\Connections\Ldap;
+use LDAP\Connection;
 
 class LdapTest extends TestCase
 {
@@ -113,7 +114,7 @@ class LdapTest extends TestCase
 
     public function test_set_options()
     {
-        $ldap = $this->getMockBuilder(Ldap::class)->setMethods(['setOption'])->getMock();
+        $ldap = $this->getMockBuilder(Ldap::class)->onlyMethods(['setOption'])->getMock();
 
         $ldap->expects($this->exactly(2))->method('setOption');
 
@@ -142,5 +143,5 @@ class LdapTest extends TestCase
 
 class ConnectedLdapStub extends Ldap
 {
-    protected $bound = true;
+    protected bool $bound = true;
 }

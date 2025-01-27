@@ -9,30 +9,30 @@ class DetailedError
      *
      * @var int|null
      */
-    protected $errorCode;
+    protected ?int $errorCode;
 
     /**
      * The error message from ldap_error.
      *
      * @var string|null
      */
-    protected $errorMessage;
+    protected ?string $errorMessage;
 
     /**
      * The diagnostic message when retrieved after an ldap_error.
      *
      * @var string|null
      */
-    protected $diagnosticMessage;
+    protected ?string $diagnosticMessage;
 
     /**
      * Constructor.
      *
-     * @param int    $errorCode
+     * @param int $errorCode
      * @param string $errorMessage
      * @param string $diagnosticMessage
      */
-    public function __construct($errorCode, $errorMessage, $diagnosticMessage)
+    public function __construct(int $errorCode, string $errorMessage, string $diagnosticMessage)
     {
         $this->errorCode = $errorCode;
         $this->errorMessage = $errorMessage;
@@ -42,9 +42,9 @@ class DetailedError
     /**
      * Returns the LDAP error code.
      *
-     * @return int
+     * @return int|null
      */
-    public function getErrorCode()
+    public function getErrorCode(): ?int
     {
         return $this->errorCode;
     }
@@ -52,9 +52,9 @@ class DetailedError
     /**
      * Returns the LDAP error message.
      *
-     * @return string
+     * @return string|null
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): ?string
     {
         return $this->errorMessage;
     }
@@ -62,9 +62,9 @@ class DetailedError
     /**
      * Returns the LDAP diagnostic message.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDiagnosticMessage()
+    public function getDiagnosticMessage(): ?string
     {
         return $this->diagnosticMessage;
     }

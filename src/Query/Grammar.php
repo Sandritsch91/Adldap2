@@ -10,14 +10,14 @@ class Grammar
      * Produces: (query)
      *
      * @param string $query
-     * @param string $prefix
-     * @param string $suffix
+     * @param string|null $prefix
+     * @param string|null $suffix
      *
      * @return string
      */
-    public function wrap($query, $prefix = '(', $suffix = ')')
+    public function wrap(string $query, ?string $prefix = '(', ?string $suffix = ')'): string
     {
-        return $prefix.$query.$suffix;
+        return $prefix . $query . $suffix;
     }
 
     /**
@@ -27,7 +27,7 @@ class Grammar
      *
      * @return string
      */
-    public function compile(Builder $builder)
+    public function compile(Builder $builder): string
     {
         $ands = $builder->filters['and'];
         $ors = $builder->filters['or'];
@@ -63,11 +63,11 @@ class Grammar
      *
      * @return string
      */
-    public function concatenate(array $bindings = [])
+    public function concatenate(array $bindings = []): string
     {
         // Filter out empty query segments.
         $bindings = array_filter($bindings, function ($value) {
-            return (string) $value !== '';
+            return (string)$value !== '';
         });
 
         return implode('', $bindings);
@@ -83,9 +83,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileEquals($field, $value)
+    public function compileEquals(string $field, string $value): string
     {
-        return $this->wrap($field.Operator::$equals.$value);
+        return $this->wrap($field . Operator::$equals . $value);
     }
 
     /**
@@ -98,7 +98,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileDoesNotEqual($field, $value)
+    public function compileDoesNotEqual(string $field, string $value): string
     {
         return $this->compileNot($this->compileEquals($field, $value));
     }
@@ -113,7 +113,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileDoesNotEqualAlias($field, $value)
+    public function compileDoesNotEqualAlias(string $field, string $value): string
     {
         return $this->compileDoesNotEqual($field, $value);
     }
@@ -128,9 +128,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileGreaterThanOrEquals($field, $value)
+    public function compileGreaterThanOrEquals(string $field, string $value): string
     {
-        return $this->wrap($field.Operator::$greaterThanOrEquals.$value);
+        return $this->wrap($field . Operator::$greaterThanOrEquals . $value);
     }
 
     /**
@@ -143,9 +143,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileLessThanOrEquals($field, $value)
+    public function compileLessThanOrEquals(string $field, string $value): string
     {
-        return $this->wrap($field.Operator::$lessThanOrEquals.$value);
+        return $this->wrap($field . Operator::$lessThanOrEquals . $value);
     }
 
     /**
@@ -158,9 +158,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileApproximatelyEquals($field, $value)
+    public function compileApproximatelyEquals(string $field, string $value): string
     {
-        return $this->wrap($field.Operator::$approximatelyEquals.$value);
+        return $this->wrap($field . Operator::$approximatelyEquals . $value);
     }
 
     /**
@@ -173,9 +173,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileStartsWith($field, $value)
+    public function compileStartsWith(string $field, string $value): string
     {
-        return $this->wrap($field.Operator::$equals.$value.Operator::$has);
+        return $this->wrap($field . Operator::$equals . $value . Operator::$has);
     }
 
     /**
@@ -188,7 +188,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileNotStartsWith($field, $value)
+    public function compileNotStartsWith(string $field, string $value): string
     {
         return $this->compileNot($this->compileStartsWith($field, $value));
     }
@@ -203,9 +203,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileEndsWith($field, $value)
+    public function compileEndsWith(string $field, string $value): string
     {
-        return $this->wrap($field.Operator::$equals.Operator::$has.$value);
+        return $this->wrap($field . Operator::$equals . Operator::$has . $value);
     }
 
     /**
@@ -218,7 +218,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileNotEndsWith($field, $value)
+    public function compileNotEndsWith(string $field, string $value): string
     {
         return $this->compileNot($this->compileEndsWith($field, $value));
     }
@@ -233,9 +233,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileContains($field, $value)
+    public function compileContains(string $field, string $value): string
     {
-        return $this->wrap($field.Operator::$equals.Operator::$has.$value.Operator::$has);
+        return $this->wrap($field . Operator::$equals . Operator::$has . $value . Operator::$has);
     }
 
     /**
@@ -248,7 +248,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileNotContains($field, $value)
+    public function compileNotContains(string $field, string $value): string
     {
         return $this->compileNot($this->compileContains($field, $value));
     }
@@ -262,9 +262,9 @@ class Grammar
      *
      * @return string
      */
-    public function compileHas($field)
+    public function compileHas(string $field): string
     {
-        return $this->wrap($field.Operator::$equals.Operator::$has);
+        return $this->wrap($field . Operator::$equals . Operator::$has);
     }
 
     /**
@@ -276,7 +276,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileNotHas($field)
+    public function compileNotHas(string $field): string
     {
         return $this->compileNot($this->compileHas($field));
     }
@@ -290,7 +290,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileAnd($query)
+    public function compileAnd(string $query): string
     {
         return $query ? $this->wrap($query, '(&') : '';
     }
@@ -304,7 +304,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileOr($query)
+    public function compileOr(string $query): string
     {
         return $query ? $this->wrap($query, '(|') : '';
     }
@@ -316,7 +316,7 @@ class Grammar
      *
      * @return string
      */
-    public function compileNot($query)
+    public function compileNot(string $query): string
     {
         return $query ? $this->wrap($query, '(!') : '';
     }
@@ -324,12 +324,12 @@ class Grammar
     /**
      * Assembles all where clauses in the current wheres property.
      *
-     * @param array  $wheres
+     * @param array $wheres
      * @param string $query
      *
      * @return string
      */
-    protected function compileWheres(array $wheres = [], $query = '')
+    protected function compileWheres(array $wheres = [], string $query = ''): string
     {
         foreach ($wheres as $where) {
             $query .= $this->compileWhere($where);
@@ -341,12 +341,12 @@ class Grammar
     /**
      * Assembles all or where clauses in the current orWheres property.
      *
-     * @param array  $orWheres
+     * @param array $orWheres
      * @param string $query
      *
      * @return string
      */
-    protected function compileOrWheres(array $orWheres = [], $query = '')
+    protected function compileOrWheres(array $orWheres = [], string $query = ''): string
     {
         $or = '';
 
@@ -373,18 +373,19 @@ class Grammar
      *
      * @return string|null
      */
-    protected function compileWhere(array $where)
+    protected function compileWhere(array $where): ?string
     {
         // Get the name of the operator.
         if ($name = array_search($where['operator'], Operator::all())) {
             // If the name was found we'll camel case it
             // to run it through the compile method.
-            $method = 'compile'.ucfirst($name);
+            $method = 'compile' . ucfirst($name);
 
             // Make sure the compile method exists for the operator.
             if (method_exists($this, $method)) {
                 return $this->{$method}($where['field'], $where['value']);
             }
         }
+        return null;
     }
 }

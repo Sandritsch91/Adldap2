@@ -4,6 +4,7 @@ namespace Adldap\Query;
 
 use Closure;
 use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class Cache
 {
@@ -12,7 +13,7 @@ class Cache
      *
      * @var CacheInterface
      */
-    protected $store;
+    protected CacheInterface $store;
 
     /**
      * Constructor.
@@ -29,11 +30,10 @@ class Cache
      *
      * @param string $key
      *
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *
      * @return mixed
+     * @throws InvalidArgumentException
      */
-    public function get($key)
+    public function get(string $key): mixed
     {
         return $this->store->get($key);
     }
@@ -41,15 +41,14 @@ class Cache
     /**
      * Store an item in the cache.
      *
-     * @param string                                    $key
-     * @param mixed                                     $value
-     * @param \DateTimeInterface|\DateInterval|int|null $ttl
-     *
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param string $key
+     * @param mixed $value
+     * @param \DateInterval|\DateTimeInterface|int|null $ttl
      *
      * @return bool
+     * @throws InvalidArgumentException
      */
-    public function put($key, $value, $ttl = null)
+    public function put(string $key, mixed $value, \DateInterval|\DateTimeInterface|int $ttl = null): bool
     {
         return $this->store->set($key, $value, $ttl);
     }
@@ -57,15 +56,14 @@ class Cache
     /**
      * Get an item from the cache, or execute the given Closure and store the result.
      *
-     * @param string                                    $key
-     * @param \DateTimeInterface|\DateInterval|int|null $ttl
-     * @param Closure                                   $callback
-     *
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param string $key
+     * @param \DateInterval|\DateTimeInterface|int|null $ttl
+     * @param Closure $callback
      *
      * @return mixed
+     * @throws InvalidArgumentException
      */
-    public function remember($key, $ttl, Closure $callback)
+    public function remember(string $key, \DateInterval|\DateTimeInterface|int|null $ttl, Closure $callback): mixed
     {
         $value = $this->get($key);
 
@@ -83,12 +81,10 @@ class Cache
      *
      * @param string $key
      *
-     * @throws \Psr\Cache\InvalidArgumentException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *
      * @return bool
+     * @throws InvalidArgumentException
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         return $this->store->delete($key);
     }

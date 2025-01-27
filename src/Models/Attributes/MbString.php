@@ -11,7 +11,7 @@ class MbString
      *
      * @return int
      */
-    public static function ord($string)
+    public static function ord($string): int
     {
         if (self::isLoaded()) {
             $result = unpack('N', mb_convert_encoding($string, 'UCS-4BE', 'UTF-8'));
@@ -31,7 +31,7 @@ class MbString
      *
      * @return string
      */
-    public static function chr($int)
+    public static function chr($int): string
     {
         if (self::isLoaded()) {
             return mb_convert_encoding(pack('n', $int), 'UTF-8', 'UTF-16BE');
@@ -47,7 +47,7 @@ class MbString
      *
      * @return string[]
      */
-    public static function split($value)
+    public static function split(string $value): array
     {
         return preg_split('/(?<!^)(?!$)/u', $value);
     }
@@ -59,10 +59,10 @@ class MbString
      *
      * @return string|false
      */
-    public static function isUtf8($string)
+    public static function isUtf8($string): false|string
     {
         if (self::isLoaded()) {
-            return mb_detect_encoding($string, 'UTF-8', $strict = true);
+            return mb_detect_encoding($string, 'UTF-8', true);
         }
 
         return $string;
@@ -73,7 +73,7 @@ class MbString
      *
      * @return bool
      */
-    public static function isLoaded()
+    public static function isLoaded(): bool
     {
         return extension_loaded('mbstring');
     }

@@ -2,21 +2,21 @@
 
 namespace Adldap\Models;
 
-use DateTime;
-use ArrayAccess;
-use Adldap\Utilities;
-use JsonSerializable;
-use Adldap\Query\Builder;
-use Illuminate\Support\Arr;
-use Adldap\Query\Collection;
-use InvalidArgumentException;
-use UnexpectedValueException;
-use Adldap\Models\Attributes\Sid;
-use Adldap\Models\Attributes\Guid;
-use Adldap\Schemas\SchemaInterface;
-use Adldap\Models\Attributes\MbString;
 use Adldap\Connections\ConnectionException;
 use Adldap\Models\Attributes\DistinguishedName;
+use Adldap\Models\Attributes\Guid;
+use Adldap\Models\Attributes\MbString;
+use Adldap\Models\Attributes\Sid;
+use Adldap\Query\Builder;
+use Adldap\Query\Collection;
+use Adldap\Schemas\SchemaInterface;
+use Adldap\Utilities;
+use ArrayAccess;
+use DateTime;
+use Illuminate\Support\Arr;
+use InvalidArgumentException;
+use JsonSerializable;
+use UnexpectedValueException;
 
 /**
  * Class Model.
@@ -41,26 +41,26 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @var Builder
      */
-    protected $query;
+    protected Builder $query;
 
     /**
      * The current LDAP attribute schema.
      *
      * @var SchemaInterface
      */
-    protected $schema;
+    protected SchemaInterface $schema;
 
     /**
      * Contains the models modifications.
      *
      * @var array
      */
-    protected $modifications = [];
+    protected array $modifications = [];
 
     /**
      * Constructor.
      *
-     * @param array   $attributes
+     * @param array $attributes
      * @param Builder $builder
      */
     public function __construct(array $attributes, Builder $builder)
@@ -87,7 +87,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return $this
      */
-    public function setQuery(Builder $builder)
+    public function setQuery(Builder $builder): static
     {
         $this->query = $builder;
 
@@ -99,7 +99,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return Builder
      */
-    public function getQuery()
+    public function getQuery(): Builder
     {
         return $this->query;
     }
@@ -109,7 +109,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return Builder
      */
-    public function newQuery()
+    public function newQuery(): Builder
     {
         return $this->query->newInstance();
     }
@@ -117,14 +117,17 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Returns a new batch modification.
      *
-     * @param string|null     $attribute
-     * @param string|int|null $type
-     * @param array           $values
+     * @param string|null $attribute
+     * @param int|string|null $type
+     * @param array $values
      *
      * @return BatchModification
      */
-    public function newBatchModification($attribute = null, $type = null, $values = [])
-    {
+    public function newBatchModification(
+        ?string $attribute = null,
+        int|string|null $type = null,
+        array $values = []
+    ): BatchModification {
         return new BatchModification($attribute, $type, $values);
     }
 
@@ -135,7 +138,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return Collection
      */
-    public function newCollection($items = [])
+    public function newCollection(mixed $items = []): Collection
     {
         return new Collection($items);
     }
@@ -147,7 +150,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return $this
      */
-    public function setSchema(SchemaInterface $schema)
+    public function setSchema(SchemaInterface $schema): static
     {
         $this->schema = $schema;
 
@@ -159,7 +162,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return SchemaInterface
      */
-    public function getSchema()
+    public function getSchema(): SchemaInterface
     {
         return $this->schema;
     }
@@ -172,7 +175,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return !is_null($this->getAttribute($offset));
     }
@@ -185,7 +188,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * @return mixed
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->getAttribute($offset);
     }
@@ -193,13 +196,13 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Set the value at the given offset.
      *
-     * @param string $offset
-     * @param mixed  $value
+     * @param mixed $offset
+     * @param mixed $value
      *
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->setAttribute($offset, $value);
     }
@@ -207,12 +210,12 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Unset the value at the given offset.
      *
-     * @param string $offset
+     * @param mixed $offset
      *
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset]);
     }
@@ -224,7 +227,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return bool
      */
-    public function __isset($key)
+    public function __isset(string $key)
     {
         return $this->offsetExists($key);
     }
@@ -235,7 +238,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * @return array
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $attributes = $this->getAttributes();
 
@@ -245,13 +248,13 @@ abstract class Model implements ArrayAccess, JsonSerializable
                 // encoding, we'll encode only the
                 // attributes that need to be.
                 if (!MbString::isUtf8($val)) {
-                    $val = utf8_encode($val);
+                    $val = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
                 }
             } else {
                 // If the mbstring extension is not loaded, we'll
                 // encode all attributes to make sure
                 // they are encoded properly.
-                $val = utf8_encode($val);
+                $val = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
             }
         });
 
@@ -259,7 +262,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
         // their string equivalents for convenience.
         return array_replace($attributes, [
             $this->schema->objectGuid() => $this->getConvertedGuid(),
-            $this->schema->objectSid()  => $this->getConvertedSid(),
+            $this->schema->objectSid() => $this->getConvertedSid(),
         ]);
     }
 
@@ -267,8 +270,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * Reload a fresh model instance from the directory.
      *
      * @return static|null
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function fresh()
+    public function fresh(): null|static
     {
         $model = $this->query->newInstance()->findByDn($this->getDn());
 
@@ -279,8 +283,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * Synchronizes the current models attributes with the directory values.
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function syncRaw()
+    public function syncRaw(): bool
     {
         if ($model = $this->fresh()) {
             $this->setRawAttributes($model->getAttributes());
@@ -296,7 +301,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return array
      */
-    public function getModifications()
+    public function getModifications(): array
     {
         $this->buildModificationsFromDirty();
 
@@ -310,7 +315,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return $this
      */
-    public function setModifications(array $modifications = [])
+    public function setModifications(array $modifications = []): static
     {
         $this->modifications = $modifications;
 
@@ -322,11 +327,11 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @param array|BatchModification $mod
      *
+     * @return $this
      * @throws InvalidArgumentException
      *
-     * @return $this
      */
-    public function addModification($mod = [])
+    public function addModification(array|BatchModification $mod = []): static
     {
         if ($mod instanceof BatchModification) {
             $mod = $mod->get();
@@ -350,7 +355,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string|null
      */
-    public function getDistinguishedName()
+    public function getDistinguishedName(): ?string
     {
         return $this->getFirstAttribute($this->schema->distinguishedName());
     }
@@ -362,9 +367,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return $this
      */
-    public function setDistinguishedName($dn)
+    public function setDistinguishedName(string|DistinguishedName $dn): static
     {
-        $this->setFirstAttribute($this->schema->distinguishedName(), (string) $dn);
+        $this->setFirstAttribute($this->schema->distinguishedName(), (string)$dn);
 
         return $this;
     }
@@ -378,7 +383,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string|null
      */
-    public function getDn()
+    public function getDn(): ?string
     {
         return $this->getDistinguishedName();
     }
@@ -388,7 +393,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return DistinguishedName
      */
-    public function getDnBuilder()
+    public function getDnBuilder(): DistinguishedName
     {
         // If we currently don't have a distinguished name, we'll set
         // it to our base, otherwise we'll use our query's base DN.
@@ -404,7 +409,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return array
      */
-    public function getDnComponents($removeAttributePrefixes = true)
+    public function getDnComponents(bool $removeAttributePrefixes = true): array
     {
         if ($components = Utilities::explodeDn($this->getDn(), $removeAttributePrefixes)) {
             unset($components['count']);
@@ -420,7 +425,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getDnRoot()
+    public function getDnRoot(): string
     {
         $components = $this->getDnComponents(false);
 
@@ -438,7 +443,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return DistinguishedName
      */
-    public function getNewDnBuilder($baseDn = '')
+    public function getNewDnBuilder(string $baseDn = ''): DistinguishedName
     {
         return new DistinguishedName($baseDn);
     }
@@ -452,7 +457,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return $this
      */
-    public function setDn($dn)
+    public function setDn(string $dn): static
     {
         return $this->setDistinguishedName($dn);
     }
@@ -464,7 +469,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getObjectSid()
+    public function getObjectSid(): string
     {
         return $this->getFirstAttribute($this->schema->objectSid());
     }
@@ -476,7 +481,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getObjectGuid()
+    public function getObjectGuid(): string
     {
         return $this->getFirstAttribute($this->schema->objectGuid());
     }
@@ -486,12 +491,12 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string|null
      */
-    public function getConvertedGuid()
+    public function getConvertedGuid(): ?string
     {
         try {
-            return (string) new Guid($this->getObjectGuid());
-        } catch (InvalidArgumentException $e) {
-            return;
+            return (string)new Guid($this->getObjectGuid());
+        } catch (InvalidArgumentException) {
+            return null;
         }
     }
 
@@ -500,12 +505,12 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string|null
      */
-    public function getConvertedSid()
+    public function getConvertedSid(): ?string
     {
         try {
-            return (string) new Sid($this->getObjectSid());
-        } catch (InvalidArgumentException $e) {
-            return;
+            return (string)new Sid($this->getObjectSid());
+        } catch (InvalidArgumentException) {
+            return null;
         }
     }
 
@@ -514,9 +519,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @link https://msdn.microsoft.com/en-us/library/ms675449(v=vs.85).aspx
      *
-     * @return string
+     * @return ?string
      */
-    public function getCommonName()
+    public function getCommonName(): ?string
     {
         return $this->getFirstAttribute($this->schema->commonName());
     }
@@ -524,11 +529,11 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Sets the model's common name.
      *
-     * @param string $name
+     * @param ?string $name
      *
      * @return $this
      */
-    public function setCommonName($name)
+    public function setCommonName(?string $name): static
     {
         return $this->setFirstAttribute($this->schema->commonName(), $name);
     }
@@ -540,7 +545,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->getFirstAttribute($this->schema->name());
     }
@@ -552,7 +557,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return Model
      */
-    public function setName($name)
+    public function setName(string $name): Model
     {
         return $this->setFirstAttribute($this->schema->name(), $name);
     }
@@ -562,7 +567,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->getFirstAttribute($this->schema->displayName());
     }
@@ -574,7 +579,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return $this
      */
-    public function setDisplayName($displayName)
+    public function setDisplayName(string $displayName): static
     {
         return $this->setFirstAttribute($this->schema->displayName(), $displayName);
     }
@@ -586,7 +591,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getAccountName()
+    public function getAccountName(): string
     {
         return $this->getFirstAttribute($this->schema->accountName());
     }
@@ -598,7 +603,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return Model
      */
-    public function setAccountName($accountName)
+    public function setAccountName(string $accountName): Model
     {
         return $this->setFirstAttribute($this->schema->accountName(), $accountName);
     }
@@ -610,7 +615,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getUserPrincipalName()
+    public function getUserPrincipalName(): string
     {
         return $this->getFirstAttribute($this->schema->userPrincipalName());
     }
@@ -622,7 +627,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return Model
      */
-    public function setUserPrincipalName($upn)
+    public function setUserPrincipalName(string $upn): Model
     {
         return $this->setFirstAttribute($this->schema->userPrincipalName(), $upn);
     }
@@ -634,7 +639,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getAccountType()
+    public function getAccountType(): string
     {
         return $this->getFirstAttribute($this->schema->accountType());
     }
@@ -646,7 +651,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): string
     {
         return $this->getFirstAttribute($this->schema->createdAt());
     }
@@ -656,7 +661,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getCreatedAtDate()
+    public function getCreatedAtDate(): string
     {
         return (new DateTime())->setTimestamp($this->getCreatedAtTimestamp())->format($this->dateFormat);
     }
@@ -664,9 +669,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Returns the created at time in a unix timestamp format.
      *
-     * @return float
+     * @return int
      */
-    public function getCreatedAtTimestamp()
+    public function getCreatedAtTimestamp(): int
     {
         return DateTime::createFromFormat($this->timestampFormat, $this->getCreatedAt())->getTimestamp();
     }
@@ -678,7 +683,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): string
     {
         return $this->getFirstAttribute($this->schema->updatedAt());
     }
@@ -688,7 +693,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getUpdatedAtDate()
+    public function getUpdatedAtDate(): string
     {
         return (new DateTime())->setTimestamp($this->getUpdatedAtTimestamp())->format($this->dateFormat);
     }
@@ -696,9 +701,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Returns the updated at time in a unix timestamp format.
      *
-     * @return float
+     * @return int
      */
-    public function getUpdatedAtTimestamp()
+    public function getUpdatedAtTimestamp(): int
     {
         return DateTime::createFromFormat($this->timestampFormat, $this->getUpdatedAt())->getTimestamp();
     }
@@ -709,8 +714,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * @link https://msdn.microsoft.com/en-us/library/ms679012(v=vs.85).aspx
      *
      * @return Container|Entry|bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function getObjectClass()
+    public function getObjectClass(): Container|Entry|bool
     {
         return $this->query->findByDn($this->getObjectCategoryDn());
     }
@@ -720,13 +726,14 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return null|string
      */
-    public function getObjectCategory()
+    public function getObjectCategory(): ?string
     {
         $category = $this->getObjectCategoryArray();
 
         if (is_array($category) && array_key_exists(0, $category)) {
             return $category[0];
         }
+        return null;
     }
 
     /**
@@ -734,7 +741,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return array|false
      */
-    public function getObjectCategoryArray()
+    public function getObjectCategoryArray(): false|array
     {
         return Utilities::explodeDn($this->getObjectCategoryDn());
     }
@@ -744,7 +751,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return null|string
      */
-    public function getObjectCategoryDn()
+    public function getObjectCategoryDn(): ?string
     {
         return $this->getFirstAttribute($this->schema->objectCategory());
     }
@@ -756,7 +763,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string
      */
-    public function getPrimaryGroupId()
+    public function getPrimaryGroupId(): string
     {
         return $this->getFirstAttribute($this->schema->primaryGroupId());
     }
@@ -768,7 +775,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return int
      */
-    public function getInstanceType()
+    public function getInstanceType(): int
     {
         return $this->getFirstAttribute($this->schema->instanceType());
     }
@@ -778,7 +785,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return string|null
      */
-    public function getManagedBy()
+    public function getManagedBy(): ?string
     {
         return $this->getFirstAttribute($this->schema->managedBy());
     }
@@ -788,9 +795,10 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * Returns false otherwise.
      *
-     * @return User|bool
+     * @return User|Entry|bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function getManagedByUser()
+    public function getManagedByUser(): User|Entry|bool
     {
         if ($dn = $this->getManagedBy()) {
             return $this->query->newInstance()->findByDn($dn);
@@ -802,11 +810,11 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Sets the user who is assigned to managed this object.
      *
-     * @param Model|string $dn
+     * @param string|Model $dn
      *
      * @return $this
      */
-    public function setManagedBy($dn)
+    public function setManagedBy(Model|string $dn): static
     {
         if ($dn instanceof self) {
             $dn = $dn->getDn();
@@ -818,9 +826,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Returns the model's max password age.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMaxPasswordAge()
+    public function getMaxPasswordAge(): ?string
     {
         return $this->getFirstAttribute($this->schema->maxPasswordAge());
     }
@@ -830,7 +838,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return int
      */
-    public function getMaxPasswordAgeDays()
+    public function getMaxPasswordAgeDays(): int
     {
         $age = $this->getMaxPasswordAge();
 
@@ -838,7 +846,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
             return 0;
         }
 
-        return (int) (abs($age) / 10000000 / 60 / 60 / 24);
+        return (int)(abs($age) / 10000000 / 60 / 60 / 24);
     }
 
     /**
@@ -846,23 +854,23 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * If a model instance is given, the strict parameter is ignored.
      *
-     * @param Model|string $ou     The organizational unit to check.
-     * @param bool         $strict Whether the check is case-sensitive.
+     * @param string|Model $ou The organizational unit to check.
+     * @param bool $strict Whether the check is case-sensitive.
      *
      * @return bool
      */
-    public function inOu($ou, $strict = false)
+    public function inOu(Model|string $ou, bool $strict = false): bool
     {
         if ($ou instanceof self) {
             // If we've been given an OU model, we can
             // just check if the OU's DN is inside
             // the current models DN.
-            return (bool) strpos($this->getDn(), $ou->getDn());
+            return (bool)strpos($this->getDn(), $ou->getDn());
         }
 
         $suffix = $strict ? '' : 'i';
 
-        return (bool) preg_grep("/{$ou}/{$suffix}", $this->getDnBuilder()->getComponents('ou'));
+        return (bool)preg_grep("/$ou/$suffix", $this->getDnBuilder()->getComponents('ou'));
     }
 
     /**
@@ -871,9 +879,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
-        return (int) $this->getInstanceType() === 4;
+        return $this->getInstanceType() === 4;
     }
 
     /**
@@ -882,8 +890,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * @param array $attributes The attributes to update or create for the current entry.
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function save(array $attributes = [])
+    public function save(array $attributes = []): bool
     {
         $this->fireModelEvent(new Events\Saving($this));
 
@@ -902,8 +911,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * @param array $attributes The attributes to update for the current entry.
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function update(array $attributes = [])
+    public function update(array $attributes = []): bool
     {
         $this->fill($attributes);
 
@@ -940,11 +950,10 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @param array $attributes The attributes for the new entry.
      *
-     * @throws UnexpectedValueException
-     *
      * @return bool
+     * @throws UnexpectedValueException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function create(array $attributes = [])
+    public function create(array $attributes = []): bool
     {
         $this->fill($attributes);
 
@@ -985,12 +994,13 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * Creates an attribute on the current model.
      *
      * @param string $attribute The attribute to create
-     * @param mixed  $value     The value of the new attribute
-     * @param bool   $sync      Whether to re-sync all attributes
+     * @param mixed $value The value of the new attribute
+     * @param bool $sync Whether to re-sync all attributes
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function createAttribute($attribute, $value, $sync = true)
+    public function createAttribute(string $attribute, mixed $value, bool $sync = true): bool
     {
         if (
             $this->exists &&
@@ -1010,12 +1020,13 @@ abstract class Model implements ArrayAccess, JsonSerializable
      * Updates the specified attribute with the specified value.
      *
      * @param string $attribute The attribute to modify
-     * @param mixed  $value     The new value for the attribute
-     * @param bool   $sync      Whether to re-sync all attributes
+     * @param mixed $value The new value for the attribute
+     * @param bool $sync Whether to re-sync all attributes
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function updateAttribute($attribute, $value, $sync = true)
+    public function updateAttribute(string $attribute, mixed $value, bool $sync = true): bool
     {
         if (
             $this->exists &&
@@ -1034,8 +1045,8 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Deletes an attribute on the current entry.
      *
-     * @param string|array $attributes The attribute(s) to delete
-     * @param bool         $sync       Whether to re-sync all attributes
+     * @param array|string $attributes The attribute(s) to delete
+     * @param bool $sync Whether to re-sync all attributes
      *
      * Delete specific values in attributes:
      *
@@ -1046,8 +1057,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *     ["memberuid" => []]
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function deleteAttribute($attributes, $sync = true)
+    public function deleteAttribute(array|string $attributes, bool $sync = true): bool
     {
         // If we've been given a string, we'll assume we're removing a
         // single attribute. Otherwise, we'll assume it's
@@ -1076,11 +1088,12 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @param bool $recursive Whether to recursively delete leaf nodes (models that are children).
      *
-     * @throws ModelDoesNotExistException
-     *
      * @return bool
+     * @throws ModelDoesNotExistException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *
      */
-    public function delete($recursive = false)
+    public function delete(bool $recursive = false): bool
     {
         $dn = $this->getDn();
 
@@ -1118,18 +1131,19 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * For example: $user->move($ou);
      *
-     * @param Model|string $newParentDn  The new parent of the current model.
-     * @param bool         $deleteOldRdn Whether to delete the old models relative distinguished name once renamed / moved.
+     * @param string|Model $newParentDn The new parent of the current model.
+     * @param bool $deleteOldRdn Whether to delete the old models relative distinguished name once renamed / moved.
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function move($newParentDn, $deleteOldRdn = true)
+    public function move(Model|string $newParentDn, bool $deleteOldRdn = true): bool
     {
         // First we'll explode the current models distinguished name and keep their attributes prefixes.
-        $parts = Utilities::explodeDn($this->getDn(), $removeAttrPrefixes = false);
+        $parts = Utilities::explodeDn($this->getDn(), false);
 
         // If the current model has an empty RDN, we can't move it.
-        if ((int) Arr::first($parts) === 0) {
+        if ((int)Arr::first($parts) === 0) {
             throw new UnexpectedValueException('Current model does not contain an RDN to move.');
         }
 
@@ -1142,13 +1156,14 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Renames the current model to a new RDN and new parent.
      *
-     * @param string            $rdn          The models new relative distinguished name. Example: "cn=JohnDoe"
-     * @param Model|string|null $newParentDn  The models new parent distinguished name (if moving). Leave this null if you are only renaming. Example: "ou=MovedUsers,dc=acme,dc=org"
-     * @param bool|true         $deleteOldRdn Whether to delete the old models relative distinguished name once renamed / moved.
+     * @param string $rdn The models new relative distinguished name. Example: "cn=JohnDoe"
+     * @param string|Model|null $newParentDn The models new parent distinguished name (if moving). Leave this null if you are only renaming. Example: "ou=MovedUsers,dc=acme,dc=org"
+     * @param bool $deleteOldRdn Whether to delete the old models relative distinguished name once renamed / moved.
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function rename($rdn, $newParentDn = null, $deleteOldRdn = true)
+    public function rename(string $rdn, Model|string|null $newParentDn = null, bool $deleteOldRdn = true): bool
     {
         if ($newParentDn instanceof self) {
             $newParentDn = $newParentDn->getDn();
@@ -1159,7 +1174,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
         if ($moved) {
             // If the model was successfully moved, we'll set its
             // new DN so we can sync it's attributes properly.
-            $this->setDn("{$rdn},{$newParentDn}");
+            $this->setDn("$rdn,$newParentDn");
 
             $this->syncRaw();
 
@@ -1174,7 +1189,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return DistinguishedName|string
      */
-    protected function getCreatableDn()
+    protected function getCreatableDn(): string|DistinguishedName
     {
         return $this->getDnBuilder()->addCn($this->getCommonName());
     }
@@ -1182,9 +1197,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Returns the models creatable attributes.
      *
-     * @return mixed
+     * @return array
      */
-    protected function getCreatableAttributes()
+    protected function getCreatableAttributes(): array
     {
         return Arr::except($this->getAttributes(), [$this->schema->distinguishedName()]);
     }
@@ -1196,7 +1211,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return bool
      */
-    protected function isValidModification($mod)
+    protected function isValidModification(mixed $mod): bool
     {
         return is_array($mod) &&
             array_key_exists(BatchModification::KEY_MODTYPE, $mod) &&
@@ -1208,7 +1223,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return array
      */
-    protected function buildModificationsFromDirty()
+    protected function buildModificationsFromDirty(): array
     {
         foreach ($this->getDirty() as $attribute => $values) {
             // Make sure values is always an array.
@@ -1240,11 +1255,11 @@ abstract class Model implements ArrayAccess, JsonSerializable
     /**
      * Validates that the current LDAP connection is secure.
      *
+     * @return void
      * @throws ConnectionException
      *
-     * @return void
      */
-    protected function validateSecureConnection()
+    protected function validateSecureConnection(): void
     {
         if (!$this->query->getConnection()->canChangePasswords()) {
             throw new ConnectionException(
@@ -1260,7 +1275,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @return null|bool
      */
-    protected function convertStringToBool($bool)
+    protected function convertStringToBool(string $bool): ?bool
     {
         $bool = strtoupper($bool);
 
@@ -1269,7 +1284,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
         } elseif ($bool === strtoupper($this->schema->true())) {
             return true;
         } else {
-            return;
+            return null;
         }
     }
 }

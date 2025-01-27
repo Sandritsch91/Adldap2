@@ -17,7 +17,7 @@ class BindException extends AdldapException
      *
      * @var DetailedError
      */
-    protected $detailedError;
+    protected DetailedError $detailedError;
 
     /**
      * Sets the detailed error.
@@ -26,7 +26,7 @@ class BindException extends AdldapException
      *
      * @return $this
      */
-    public function setDetailedError(DetailedError $error = null)
+    public function setDetailedError(?DetailedError $error = null): static
     {
         $this->detailedError = $error;
 
@@ -38,7 +38,7 @@ class BindException extends AdldapException
      *
      * @return DetailedError|null
      */
-    public function getDetailedError()
+    public function getDetailedError(): ?DetailedError
     {
         return $this->detailedError;
     }

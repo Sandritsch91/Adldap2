@@ -12,7 +12,7 @@ class Sid
      *
      * @var string
      */
-    protected $value;
+    protected string $value;
 
     /**
      * Determines if the specified SID is valid.
@@ -21,7 +21,7 @@ class Sid
      *
      * @return bool
      */
-    public static function isValid($sid)
+    public static function isValid(string $sid): bool
     {
         return Utilities::isValidSid($sid);
     }
@@ -33,7 +33,7 @@ class Sid
      *
      * @throws InvalidArgumentException
      */
-    public function __construct($value)
+    public function __construct(mixed $value)
     {
         if (static::isValid($value)) {
             $this->value = $value;
@@ -59,7 +59,7 @@ class Sid
      *
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -69,13 +69,13 @@ class Sid
      *
      * @return string
      */
-    public function getBinary()
+    public function getBinary(): string
     {
         $sid = explode('-', ltrim($this->value, 'S-'));
 
-        $level = (int) array_shift($sid);
+        $level = (int)array_shift($sid);
 
-        $authority = (int) array_shift($sid);
+        $authority = (int)array_shift($sid);
 
         $subAuthorities = array_map('intval', $sid);
 
@@ -94,7 +94,7 @@ class Sid
      *
      * @return string|null
      */
-    protected function binarySidToString($binary)
+    protected function binarySidToString(string $binary): ?string
     {
         return Utilities::binarySidToString($binary);
     }

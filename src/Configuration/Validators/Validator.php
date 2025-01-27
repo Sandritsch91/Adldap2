@@ -2,6 +2,8 @@
 
 namespace Adldap\Configuration\Validators;
 
+use Adldap\Configuration\ConfigurationException;
+
 /**
  * Class Validator.
  *
@@ -14,22 +16,22 @@ abstract class Validator
      *
      * @var string
      */
-    protected $key;
+    protected string $key;
 
     /**
      * The configuration value under validation.
      *
      * @var mixed
      */
-    protected $value;
+    protected mixed $value;
 
     /**
      * Constructor.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
-    public function __construct($key, $value)
+    public function __construct(string $key, mixed $value)
     {
         $this->key = $key;
         $this->value = $value;
@@ -38,9 +40,9 @@ abstract class Validator
     /**
      * Validates the configuration value.
      *
-     * @throws \Adldap\Configuration\ConfigurationException When the value given fails validation.
+     * @return true
+     * @throws ConfigurationException When the value given fails validation.
      *
-     * @return bool
      */
-    abstract public function validate();
+    abstract public function validate(): true;
 }

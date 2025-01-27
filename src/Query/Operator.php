@@ -11,105 +11,105 @@ class Operator
      *
      * @var string
      */
-    public static $has = '*';
+    public static string $has = '*';
 
     /**
      * The custom `notHas` operator.
      *
      * @var string
      */
-    public static $notHas = '!*';
+    public static string $notHas = '!*';
 
     /**
      * The equals operator.
      *
      * @var string
      */
-    public static $equals = '=';
+    public static string $equals = '=';
 
     /**
      * The does not equal operator.
      *
      * @var string
      */
-    public static $doesNotEqual = '!';
+    public static string $doesNotEqual = '!';
 
     /**
      * The does not equal operator (alias).
      *
      * @var string
      */
-    public static $doesNotEqualAlias = '!=';
+    public static string $doesNotEqualAlias = '!=';
 
     /**
      * The greater than or equal to operator.
      *
      * @var string
      */
-    public static $greaterThanOrEquals = '>=';
+    public static string $greaterThanOrEquals = '>=';
 
     /**
      * The less than or equal to operator.
      *
      * @var string
      */
-    public static $lessThanOrEquals = '<=';
+    public static string $lessThanOrEquals = '<=';
 
     /**
      * The approximately equal to operator.
      *
      * @var string
      */
-    public static $approximatelyEquals = '~=';
+    public static string $approximatelyEquals = '~=';
 
     /**
      * The custom starts with operator.
      *
      * @var string
      */
-    public static $startsWith = 'starts_with';
+    public static string $startsWith = 'starts_with';
 
     /**
      * The custom not starts with operator.
      *
      * @var string
      */
-    public static $notStartsWith = 'not_starts_with';
+    public static string $notStartsWith = 'not_starts_with';
 
     /**
      * The custom ends with operator.
      *
      * @var string
      */
-    public static $endsWith = 'ends_with';
+    public static string $endsWith = 'ends_with';
 
     /**
      * The custom not ends with operator.
      *
      * @var string
      */
-    public static $notEndsWith = 'not_ends_with';
+    public static string $notEndsWith = 'not_ends_with';
 
     /**
      * The custom contains operator.
      *
      * @var string
      */
-    public static $contains = 'contains';
+    public static string $contains = 'contains';
 
     /**
      * The custom not contains operator.
      *
      * @var string
      */
-    public static $notContains = 'not_contains';
+    public static string $notContains = 'not_contains';
 
     /**
      * Returns all available operators.
      *
      * @return array
      */
-    public static function all()
+    public static function all(): array
     {
         return (new ReflectionClass(new static()))->getStaticProperties();
     }

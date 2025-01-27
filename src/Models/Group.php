@@ -2,6 +2,7 @@
 
 namespace Adldap\Models;
 
+use Adldap\Query\Collection;
 use Adldap\Utilities;
 use InvalidArgumentException;
 
@@ -20,9 +21,10 @@ class Group extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms677097(v=vs.85).aspx
      *
-     * @return \Adldap\Query\Collection
+     * @return Collection
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function getMembers()
+    public function getMembers(): Collection
     {
         $members = $this->getMembersFromAttribute($this->schema->member());
 
@@ -38,7 +40,7 @@ class Group extends Entry
      *
      * @return array
      */
-    public function getMemberNames()
+    public function getMemberNames(): array
     {
         $members = [];
 
@@ -62,7 +64,7 @@ class Group extends Entry
      *
      * @return $this
      */
-    public function setMembers(array $entries)
+    public function setMembers(array $entries): static
     {
         return $this->setAttribute($this->schema->member(), $entries);
     }
@@ -73,8 +75,9 @@ class Group extends Entry
      * @param array $members
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function addMembers(array $members)
+    public function addMembers(array $members): bool
     {
         $members = array_map(function ($member) {
             return $member instanceof Model
@@ -96,11 +99,10 @@ class Group extends Entry
      *
      * @param string|Entry $member
      *
-     * @throws InvalidArgumentException When the given entry is empty or contains no distinguished name.
-     *
      * @return bool
+     * @throws InvalidArgumentException|\Psr\SimpleCache\InvalidArgumentException When the given entry is empty or contains no distinguished name.
      */
-    public function addMember($member)
+    public function addMember(Entry|string $member): bool
     {
         $member = ($member instanceof Model ? $member->getDn() : $member);
 
@@ -124,11 +126,10 @@ class Group extends Entry
      *
      * @param string|Entry $member
      *
-     * @throws InvalidArgumentException
-     *
      * @return bool
+     * @throws InvalidArgumentException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function removeMember($member)
+    public function removeMember(Entry|string $member): bool
     {
         $member = ($member instanceof Model ? $member->getDn() : $member);
 
@@ -151,8 +152,9 @@ class Group extends Entry
      * Removes all members from the current group.
      *
      * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function removeMembers()
+    public function removeMembers(): bool
     {
         $mod = $this->newBatchModification(
             $this->schema->member(),
@@ -169,7 +171,7 @@ class Group extends Entry
      *
      * @return string
      */
-    public function getGroupType()
+    public function getGroupType(): string
     {
         return $this->getFirstAttribute($this->schema->groupType());
     }
@@ -177,11 +179,12 @@ class Group extends Entry
     /**
      * Retrieves group members by the specified model attribute.
      *
-     * @param $attribute
+     * @param int|string $attribute
      *
      * @return array
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    protected function getMembersFromAttribute($attribute)
+    protected function getMembersFromAttribute(int|string $attribute): array
     {
         $members = [];
 
@@ -219,8 +222,9 @@ class Group extends Entry
      * Retrieves members that are contained in a member range.
      *
      * @return array
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    protected function getPaginatedMembers()
+    protected function getPaginatedMembers(): array
     {
         $members = [];
 
@@ -229,7 +233,7 @@ class Group extends Entry
         // We need to filter out the model attributes so
         // we only retrieve the member range.
         $attributes = array_values(array_filter($keys, function ($key) {
-            return strpos($key, 'member;range') !== false;
+            return str_contains($key, 'member;range');
         }));
 
         // We'll grab the member range key so we can run a

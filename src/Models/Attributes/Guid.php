@@ -12,7 +12,7 @@ class Guid
      *
      * @var string
      */
-    protected $value;
+    protected mixed $value;
 
     /**
      * The guid structure in order by section to parse using substr().
@@ -23,7 +23,7 @@ class Guid
      *
      * @var array
      */
-    protected $guidSections = [
+    protected array $guidSections = [
         [[-26, 2], [-28, 2], [-30, 2], [-32, 2]],
         [[-22, 2], [-24, 2]],
         [[-18, 2], [-20, 2]],
@@ -40,7 +40,7 @@ class Guid
      *
      * @var array
      */
-    protected $octetSections = [
+    protected array $octetSections = [
         [6, 4, 2, 0],
         [10, 8],
         [14, 12],
@@ -54,7 +54,7 @@ class Guid
      *
      * @return bool
      */
-    public static function isValid($guid)
+    public static function isValid(string $guid): bool
     {
         return Utilities::isValidGuid($guid);
     }
@@ -66,7 +66,7 @@ class Guid
      *
      * @throws InvalidArgumentException
      */
-    public function __construct($value)
+    public function __construct(mixed $value)
     {
         if (static::isValid($value)) {
             $this->value = $value;
@@ -92,7 +92,7 @@ class Guid
      *
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -102,7 +102,7 @@ class Guid
      *
      * @return string
      */
-    public function getBinary()
+    public function getBinary(): string
     {
         $data = '';
 
@@ -122,7 +122,7 @@ class Guid
      *
      * @return string|null
      */
-    protected function binaryGuidToString($binary)
+    protected function binaryGuidToString(string $binary): ?string
     {
         return Utilities::binaryGuidToString($binary);
     }
@@ -130,17 +130,17 @@ class Guid
     /**
      * Return the specified section of the hexadecimal string.
      *
+     * @param string $hex The full hex string.
+     * @param array $sections An array of start and length (unless octet is true, then length is always 2).
+     * @param bool $octet Whether this is for octet string form.
+     *
+     * @return string The concatenated sections in upper-case.
      * @author Chad Sikorra <Chad.Sikorra@gmail.com>
      *
      * @link https://github.com/ldaptools/ldaptools
      *
-     * @param string $hex      The full hex string.
-     * @param array  $sections An array of start and length (unless octet is true, then length is always 2).
-     * @param bool   $octet    Whether this is for octet string form.
-     *
-     * @return string The concatenated sections in upper-case.
      */
-    protected function parseSection($hex, array $sections, $octet = false)
+    protected function parseSection(string $hex, array $sections, bool $octet = false): string
     {
         $parsedString = '';
 

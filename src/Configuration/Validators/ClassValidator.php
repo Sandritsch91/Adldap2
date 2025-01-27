@@ -7,16 +7,12 @@ use Adldap\Configuration\ConfigurationException;
 class ClassValidator extends Validator
 {
     /**
-     * Validates the configuration value.
-     *
-     * @throws ConfigurationException When the value given fails validation.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function validate()
+    public function validate(): true
     {
         if (!is_string($this->value) || !class_exists($this->value)) {
-            throw new ConfigurationException("Option {$this->key} must be a valid class.");
+            throw new ConfigurationException("Option $this->key must be a valid class.");
         }
 
         return true;

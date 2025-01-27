@@ -2,6 +2,9 @@
 
 namespace Adldap\Connections;
 
+use LDAP\Connection;
+use LDAP\Result;
+
 /**
  * The Connection interface used for making connections. Implementing
  * this interface on connection classes helps unit and functional
@@ -44,35 +47,35 @@ interface ConnectionInterface
      *
      * @param string|null $name The connection name.
      */
-    public function __construct($name = null);
+    public function __construct(?string $name = null);
 
     /**
      * Returns true / false if the current connection instance is using SSL.
      *
      * @return bool
      */
-    public function isUsingSSL();
+    public function isUsingSSL(): bool;
 
     /**
      * Returns true / false if the current connection instance is using TLS.
      *
      * @return bool
      */
-    public function isUsingTLS();
+    public function isUsingTLS(): bool;
 
     /**
      * Returns true / false if the current connection is able to modify passwords.
      *
      * @return bool
      */
-    public function canChangePasswords();
+    public function canChangePasswords(): bool;
 
     /**
      * Returns true / false if the current connection is bound.
      *
      * @return bool
      */
-    public function isBound();
+    public function isBound(): bool;
 
     /**
      * Sets the current connection to use SSL.
@@ -81,7 +84,7 @@ interface ConnectionInterface
      *
      * @return ConnectionInterface
      */
-    public function ssl($enabled = true);
+    public function ssl(bool $enabled = true): ConnectionInterface;
 
     /**
      * Sets the current connection to use TLS.
@@ -90,7 +93,7 @@ interface ConnectionInterface
      *
      * @return ConnectionInterface
      */
-    public function tls($enabled = true);
+    public function tls(bool $enabled = true): ConnectionInterface;
 
     /**
      * Returns the full LDAP host URL.
@@ -99,43 +102,44 @@ interface ConnectionInterface
      *
      * @return string|null
      */
-    public function getHost();
+    public function getHost(): ?string;
 
     /**
      * Returns the connections name.
      *
      * @return string|null
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Get the current connection.
      *
-     * @return mixed
+     * @return Connection|false|null
      */
-    public function getConnection();
+    public function getConnection(): Connection|false|null;
 
     /**
      * Retrieve the entries from a search result.
      *
      * @link http://php.net/manual/en/function.ldap-get-entries.php
      *
-     * @param resource $searchResult
+     * @param Result $searchResults
      *
      * @return mixed
      */
-    public function getEntries($searchResult);
+    // todo - add return type Result
+    public function getEntries(mixed $searchResults): mixed;
 
     /**
      * Returns the number of entries from a search result.
      *
      * @link http://php.net/manual/en/function.ldap-count-entries.php
      *
-     * @param resource $searchResult
+     * @param Result $searchResults
      *
      * @return int
      */
-    public function countEntries($searchResult);
+    public function countEntries(Result $searchResults): int;
 
     /**
      * Compare value of attribute found in entry specified with DN.
@@ -146,20 +150,20 @@ interface ConnectionInterface
      * @param string $attribute
      * @param string $value
      *
-     * @return mixed
+     * @return int|bool
      */
-    public function compare($dn, $attribute, $value);
+    public function compare(string $dn, string $attribute, string $value): int|bool;
 
     /**
      * Retrieves the first entry from a search result.
      *
      * @link http://php.net/manual/en/function.ldap-first-entry.php
      *
-     * @param resource $searchResult
+     * @param Result $searchResults
      *
-     * @return mixed
+     * @return array|false
      */
-    public function getFirstEntry($searchResult);
+    public function getFirstEntry(Result $searchResults): array|false;
 
     /**
      * Retrieves the next entry from a search result.
@@ -168,9 +172,9 @@ interface ConnectionInterface
      *
      * @param $entry
      *
-     * @return mixed
+     * @return array|false
      */
-    public function getNextEntry($entry);
+    public function getNextEntry($entry): array|false;
 
     /**
      * Retrieves the ldap entry's attributes.
@@ -179,9 +183,9 @@ interface ConnectionInterface
      *
      * @param $entry
      *
-     * @return mixed
+     * @return array|false
      */
-    public function getAttributes($entry);
+    public function getAttributes($entry): array|false;
 
     /**
      * Retrieve the last error on the current connection.
@@ -190,7 +194,7 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function getLastError();
+    public function getLastError(): string;
 
     /**
      * Return detailed information about an error.
@@ -201,7 +205,7 @@ interface ConnectionInterface
      *
      * @return DetailedError|null
      */
-    public function getDetailedError();
+    public function getDetailedError(): ?DetailedError;
 
     /**
      * Get all binary values from the specified result entry.
@@ -213,28 +217,28 @@ interface ConnectionInterface
      *
      * @return array
      */
-    public function getValuesLen($entry, $attribute);
+    public function getValuesLen($entry, $attribute): array;
 
     /**
      * Sets an option on the current connection.
      *
      * @link http://php.net/manual/en/function.ldap-set-option.php
      *
-     * @param int   $option
+     * @param int $option
      * @param mixed $value
      *
-     * @return mixed
+     * @return bool
      */
-    public function setOption($option, $value);
+    public function setOption(int $option, mixed $value): bool;
 
     /**
      * Sets options on the current connection.
      *
      * @param array $options
      *
-     * @return mixed
+     * @return void
      */
-    public function setOptions(array $options = []);
+    public function setOptions(array $options = []): void;
 
     /**
      * Set a callback function to do re-binds on referral chasing.
@@ -245,19 +249,19 @@ interface ConnectionInterface
      *
      * @return bool
      */
-    public function setRebindCallback(callable $callback);
+    public function setRebindCallback(callable $callback): bool;
 
     /**
      * Connects to the specified hostname using the specified port.
      *
      * @link http://php.net/manual/en/function.ldap-start-tls.php
      *
-     * @param string|array $hostname
-     * @param int          $port
+     * @param array|string $hostname
+     * @param int $port
      *
-     * @return mixed
+     * @return Connection|bool
      */
-    public function connect($hostname = [], $port = 389);
+    public function connect(array|string $hostname = [], int $port = 389): Connection|bool;
 
     /**
      * Starts a connection using TLS.
@@ -266,9 +270,9 @@ interface ConnectionInterface
      *
      * @throws ConnectionException If starting TLS fails.
      *
-     * @return mixed
+     * @return bool
      */
-    public function startTLS();
+    public function startTLS(): bool;
 
     /**
      * Binds to the current connection using the specified username and password.
@@ -278,13 +282,13 @@ interface ConnectionInterface
      *
      * @param string $username
      * @param string $password
-     * @param bool   $sasl
+     * @param bool $sasl
      *
      * @throws ConnectionException If starting TLS fails.
      *
      * @return bool
      */
-    public function bind($username, $password, $sasl = false);
+    public function bind(string $username, string $password, bool $sasl = false): bool;
 
     /**
      * Closes the current connection.
@@ -295,7 +299,7 @@ interface ConnectionInterface
      *
      * @return bool
      */
-    public function close();
+    public function close(): bool;
 
     /**
      * Performs a search on the current connection.
@@ -304,14 +308,22 @@ interface ConnectionInterface
      *
      * @param string $dn
      * @param string $filter
-     * @param array  $fields
-     * @param bool   $onlyAttributes
-     * @param int    $size
-     * @param int    $time
+     * @param array $fields
+     * @param bool $onlyAttributes
+     * @param int $size
+     * @param int $time
      *
-     * @return mixed
+     * @return Result|Result[]|false
      */
-    public function search($dn, $filter, array $fields, $onlyAttributes = false, $size = 0, $time = 0);
+    // todo - add return type Result
+    public function search(
+        string $dn,
+        string $filter,
+        array $fields,
+        bool $onlyAttributes = false,
+        int $size = 0,
+        int $time = 0
+    ): mixed;
 
     /**
      * Reads an entry on the current connection.
@@ -319,15 +331,23 @@ interface ConnectionInterface
      * @link http://php.net/manual/en/function.ldap-read.php
      *
      * @param string $dn
-     * @param $filter
+     * @param string $filter
      * @param array $fields
-     * @param bool  $onlyAttributes
-     * @param int   $size
-     * @param int   $time
+     * @param bool $onlyAttributes
+     * @param int $size
+     * @param int $time
      *
-     * @return mixed
+     * @return Result|Result[]|false
      */
-    public function read($dn, $filter, array $fields, $onlyAttributes = false, $size = 0, $time = 0);
+    // todo - add return type Result
+    public function read(
+        string $dn,
+        string $filter,
+        array $fields,
+        bool $onlyAttributes = false,
+        int $size = 0,
+        int $time = 0
+    ): mixed;
 
     /**
      * Performs a single level search on the current connection.
@@ -336,14 +356,21 @@ interface ConnectionInterface
      *
      * @param string $dn
      * @param string $filter
-     * @param array  $attributes
-     * @param bool   $onlyAttributes
-     * @param int    $size
-     * @param int    $time
+     * @param array $attributes
+     * @param bool $onlyAttributes
+     * @param int $size
+     * @param int $time
      *
-     * @return mixed
+     * @return Result|array|false
      */
-    public function listing($dn, $filter, array $attributes, $onlyAttributes = false, $size = 0, $time = 0);
+    public function listing(
+        string $dn,
+        string $filter,
+        array $attributes,
+        bool $onlyAttributes = false,
+        int $size = 0,
+        int $time = 0
+    ): Result|array|false;
 
     /**
      * Adds an entry to the current connection.
@@ -351,11 +378,11 @@ interface ConnectionInterface
      * @link http://php.net/manual/en/function.ldap-add.php
      *
      * @param string $dn
-     * @param array  $entry
+     * @param array $entry
      *
      * @return bool
      */
-    public function add($dn, array $entry);
+    public function add(string $dn, array $entry): bool;
 
     /**
      * Deletes an entry on the current connection.
@@ -366,7 +393,7 @@ interface ConnectionInterface
      *
      * @return bool
      */
-    public function delete($dn);
+    public function delete(string $dn): bool;
 
     /**
      * Modify the name of an entry on the current connection.
@@ -376,11 +403,11 @@ interface ConnectionInterface
      * @param string $dn
      * @param string $newRdn
      * @param string $newParent
-     * @param bool   $deleteOldRdn
+     * @param bool $deleteOldRdn
      *
      * @return bool
      */
-    public function rename($dn, $newRdn, $newParent, $deleteOldRdn = false);
+    public function rename(string $dn, string $newRdn, string $newParent, bool $deleteOldRdn = false): bool;
 
     /**
      * Modifies an existing entry on the current connection.
@@ -388,23 +415,23 @@ interface ConnectionInterface
      * @link http://php.net/manual/en/function.ldap-modify.php
      *
      * @param string $dn
-     * @param array  $entry
+     * @param array $entry
      *
      * @return bool
      */
-    public function modify($dn, array $entry);
+    public function modify(string $dn, array $entry): bool;
 
     /**
      * Batch modifies an existing entry on the current connection.
      *
      * @link http://php.net/manual/en/function.ldap-modify-batch.php
      *
-     * @param string $dn
-     * @param array  $values
+     * @param string|null $dn
+     * @param array $values
      *
-     * @return mixed
+     * @return bool
      */
-    public function modifyBatch($dn, array $values);
+    public function modifyBatch(?string $dn, array $values): bool;
 
     /**
      * Add attribute values to current attributes.
@@ -412,11 +439,11 @@ interface ConnectionInterface
      * @link http://php.net/manual/en/function.ldap-mod-add.php
      *
      * @param string $dn
-     * @param array  $entry
+     * @param array $entry
      *
-     * @return mixed
+     * @return bool
      */
-    public function modAdd($dn, array $entry);
+    public function modAdd(string $dn, array $entry): bool;
 
     /**
      * Replaces attribute values with new ones.
@@ -424,11 +451,11 @@ interface ConnectionInterface
      * @link http://php.net/manual/en/function.ldap-mod-replace.php
      *
      * @param string $dn
-     * @param array  $entry
+     * @param array $entry
      *
-     * @return mixed
+     * @return bool
      */
-    public function modReplace($dn, array $entry);
+    public function modReplace(string $dn, array $entry): bool;
 
     /**
      * Delete attribute values from current attributes.
@@ -436,24 +463,24 @@ interface ConnectionInterface
      * @link http://php.net/manual/en/function.ldap-mod-del.php
      *
      * @param string $dn
-     * @param array  $entry
+     * @param array $entry
      *
-     * @return mixed
+     * @return bool
      */
-    public function modDelete($dn, array $entry);
+    public function modDelete(string $dn, array $entry): bool;
 
     /**
      * Send LDAP pagination control.
      *
      * @link http://php.net/manual/en/function.ldap-control-paged-result.php
      *
-     * @param int    $pageSize
-     * @param bool   $isCritical
+     * @param int $pageSize
+     * @param bool $isCritical
      * @param string $cookie
      *
-     * @return mixed
+     * @return void
      */
-    public function controlPagedResult($pageSize = 1000, $isCritical = false, $cookie = '');
+    public function controlPagedResult(int $pageSize = 1000, bool $isCritical = false, string $cookie = ''): void;
 
     /**
      * Retrieve the LDAP pagination cookie.
@@ -463,9 +490,9 @@ interface ConnectionInterface
      * @param $result
      * @param string $cookie
      *
-     * @return mixed
+     * @return void
      */
-    public function controlPagedResultResponse($result, &$cookie);
+    public function controlPagedResultResponse($result, string &$cookie): void;
 
     /**
      * Frees up the memory allocated internally to store the result.
@@ -476,7 +503,7 @@ interface ConnectionInterface
      *
      * @return bool
      */
-    public function freeResult($result);
+    public function freeResult($result): bool;
 
     /**
      * Returns the error number of the last command
@@ -486,28 +513,28 @@ interface ConnectionInterface
      *
      * @return int
      */
-    public function errNo();
+    public function errNo(): int;
 
     /**
      * Returns the extended error string of the last command.
      *
      * @return string
      */
-    public function getExtendedError();
+    public function getExtendedError(): string;
 
     /**
      * Returns the extended error hex code of the last command.
      *
      * @return string|null
      */
-    public function getExtendedErrorHex();
+    public function getExtendedErrorHex(): ?string;
 
     /**
      * Returns the extended error code of the last command.
      *
      * @return string
      */
-    public function getExtendedErrorCode();
+    public function getExtendedErrorCode(): string;
 
     /**
      * Returns the error string of the specified
@@ -519,14 +546,14 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function err2Str($number);
+    public function err2Str(int $number): string;
 
     /**
      * Return the diagnostic Message.
      *
      * @return string
      */
-    public function getDiagnosticMessage();
+    public function getDiagnosticMessage(): string;
 
     /**
      * Extract the diagnostic code from the message.
@@ -535,5 +562,5 @@ interface ConnectionInterface
      *
      * @return string|bool
      */
-    public function extractDiagnosticCode($message);
+    public function extractDiagnosticCode(string $message): bool|string;
 }

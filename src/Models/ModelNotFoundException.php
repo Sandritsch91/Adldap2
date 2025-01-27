@@ -16,14 +16,14 @@ class ModelNotFoundException extends AdldapException
      *
      * @var string
      */
-    protected $query;
+    protected string $query;
 
     /**
      * The base DN of the query that was used.
      *
      * @var string
      */
-    protected $baseDn;
+    protected string $baseDn;
 
     /**
      * Sets the query that was used.
@@ -33,12 +33,12 @@ class ModelNotFoundException extends AdldapException
      *
      * @return ModelNotFoundException
      */
-    public function setQuery($query, $baseDn)
+    public function setQuery(string $query, string $baseDn): static
     {
         $this->query = $query;
         $this->baseDn = $baseDn;
 
-        $this->message = "No LDAP query results for filter: [{$query}] in: [{$baseDn}]";
+        $this->message = "No LDAP query results for filter: [$query] in: [$baseDn]";
 
         return $this;
     }

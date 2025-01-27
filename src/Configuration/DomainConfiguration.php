@@ -2,8 +2,8 @@
 
 namespace Adldap\Configuration;
 
-use Adldap\Schemas\ActiveDirectory;
 use Adldap\Connections\ConnectionInterface;
+use Adldap\Schemas\ActiveDirectory;
 
 /**
  * Class DomainConfiguration.
@@ -19,7 +19,7 @@ class DomainConfiguration
      *
      * @var array
      */
-    protected $options = [
+    protected array $options = [
         // An array of LDAP hosts.
         'hosts' => [],
 
@@ -84,11 +84,11 @@ class DomainConfiguration
      * not exist, or if it's an invalid type.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @throws ConfigurationException When an option value given is an invalid type.
      */
-    public function set($key, $value)
+    public function set(string $key, mixed $value): void
     {
         if ($this->validate($key, $value)) {
             $this->options[$key] = $value;
@@ -102,17 +102,17 @@ class DomainConfiguration
      *
      * @param string $key
      *
+     * @return mixed
      * @throws ConfigurationException When the option specified does not exist.
      *
-     * @return mixed
      */
-    public function get($key)
+    public function get(string $key): mixed
     {
         if ($this->has($key)) {
             return $this->options[$key];
         }
 
-        throw new ConfigurationException("Option {$key} does not exist.");
+        throw new ConfigurationException("Option $key does not exist.");
     }
 
     /**
@@ -122,7 +122,7 @@ class DomainConfiguration
      *
      * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return array_key_exists($key, $this->options);
     }
@@ -134,13 +134,13 @@ class DomainConfiguration
      * If an invalid type is given, an exception is thrown.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
+     * @return true
      * @throws ConfigurationException When an option value given is an invalid type.
      *
-     * @return bool
      */
-    protected function validate($key, $value)
+    protected function validate(string $key, mixed $value): true
     {
         $default = $this->get($key);
 

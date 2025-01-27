@@ -256,6 +256,8 @@ class AccessorAndMutatorTest extends TestCase
 
     public function test_get_created_at_timestamp()
     {
+        date_default_timezone_set('UTC');
+
         $created = '20150915110643.0Z';
 
         $m = $this->newEntry(['whencreated' => $created]);

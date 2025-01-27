@@ -2,10 +2,11 @@
 
 namespace Adldap\Models\Concerns;
 
-use Adldap\Utilities;
-use Adldap\Models\User;
 use Adldap\Models\Group;
+use Adldap\Models\User;
 use Adldap\Query\Collection;
+use Adldap\Utilities;
+use Psr\SimpleCache\InvalidArgumentException;
 
 trait HasMemberOf
 {
@@ -16,7 +17,7 @@ trait HasMemberOf
      *
      * @return array
      */
-    public function getMemberOf()
+    public function getMemberOf(): array
     {
         $dns = $this->getAttribute($this->schema->memberOf());
 
@@ -30,8 +31,9 @@ trait HasMemberOf
      * @param string|Group $group
      *
      * @return bool
+     * @throws InvalidArgumentException
      */
-    public function addGroup($group)
+    public function addGroup(Group|string $group): bool
     {
         if (is_string($group)) {
             // If the group is a string, we'll assume the dev is passing
@@ -54,8 +56,9 @@ trait HasMemberOf
      * @param string|Group $group
      *
      * @return bool
+     * @throws InvalidArgumentException
      */
-    public function removeGroup($group)
+    public function removeGroup(Group|string $group): bool
     {
         if (is_string($group)) {
             // If the group is a string, we'll assume the dev is passing
@@ -76,8 +79,9 @@ trait HasMemberOf
      * Removes the current model from all groups.
      *
      * @return array The group distinguished names that were successfully removed
+     * @throws InvalidArgumentException
      */
-    public function removeAllGroups()
+    public function removeAllGroups(): array
     {
         $removed = [];
 
@@ -100,13 +104,17 @@ trait HasMemberOf
      * @link https://msdn.microsoft.com/en-us/library/ms677099(v=vs.85).aspx
      *
      * @param array $fields
-     * @param bool  $recursive
+     * @param bool $recursive
      * @param array $visited
      *
-     * @return Collection
+     * @return \Illuminate\Support\Collection
+     * @throws InvalidArgumentException
      */
-    public function getGroups(array $fields = ['*'], $recursive = false, array $visited = [])
-    {
+    public function getGroups(
+        array $fields = ['*'],
+        bool $recursive = false,
+        array $visited = []
+    ): \Illuminate\Support\Collection {
         if (!in_array($this->schema->memberOf(), $fields)) {
             // We want to make sure that we always select the memberof
             // field in case developers want recursive members.
@@ -159,8 +167,9 @@ trait HasMemberOf
      * @param bool $recursive
      *
      * @return array
+     * @throws InvalidArgumentException
      */
-    public function getGroupNames($recursive = false)
+    public function getGroupNames(bool $recursive = false): array
     {
         $fields = [$this->schema->commonName(), $this->schema->memberOf()];
 
@@ -175,11 +184,12 @@ trait HasMemberOf
      * Determine if the current model is a member of the specified group(s).
      *
      * @param mixed $group
-     * @param bool  $recursive
+     * @param bool $recursive
      *
      * @return bool
+     * @throws InvalidArgumentException
      */
-    public function inGroup($group, $recursive = false)
+    public function inGroup(mixed $group, bool $recursive = false): bool
     {
         $memberOf = $this->getGroups(['cn'], $recursive);
 
@@ -196,8 +206,8 @@ trait HasMemberOf
             // model must be apart of, then go through the models
             // actual groups and perform validation.
             $exists = $memberOf->filter(function (Group $parent) use ($group) {
-                return $this->groupIsParent($group, $parent);
-            })->count() !== 0;
+                    return $this->groupIsParent($group, $parent);
+                })->count() !== 0;
 
             if (!$exists) {
                 // If the current group isn't at all contained
@@ -216,9 +226,10 @@ trait HasMemberOf
      * @param array $dns
      * @param array $fields
      *
-     * @return Collection
+     * @return \Illuminate\Support\Collection
+     * @throws InvalidArgumentException
      */
-    protected function getGroupsByNames(array $dns = [], $fields = [])
+    protected function getGroupsByNames(array $dns = [], array $fields = []): \Illuminate\Support\Collection
     {
         $query = $this->query->newInstance();
 
@@ -232,12 +243,12 @@ trait HasMemberOf
     /**
      * Validates if the specified group is the given parent instance.
      *
-     * @param Group|string $group
-     * @param Group        $parent
+     * @param string|Group $group
+     * @param Group $parent
      *
      * @return bool
      */
-    protected function groupIsParent($group, Group $parent)
+    protected function groupIsParent(Group|string $group, Group $parent): bool
     {
         if ($group instanceof Group) {
             // We've been given a group instance, we'll compare their DNs.

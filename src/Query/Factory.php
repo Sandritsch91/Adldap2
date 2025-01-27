@@ -2,10 +2,11 @@
 
 namespace Adldap\Query;
 
+use Adldap\Connections\ConnectionInterface;
 use Adldap\Models\RootDse;
 use Adldap\Schemas\ActiveDirectory;
 use Adldap\Schemas\SchemaInterface;
-use Adldap\Connections\ConnectionInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * Adldap2 Search Factory.
@@ -20,37 +21,37 @@ class Factory
     /**
      * @var ConnectionInterface
      */
-    protected $connection;
+    protected ConnectionInterface $connection;
 
     /**
      * Stores the current schema instance.
      *
      * @var SchemaInterface
      */
-    protected $schema;
+    protected SchemaInterface $schema;
 
     /**
      * The base DN to use for the search.
      *
      * @var string|null
      */
-    protected $base;
+    protected ?string $base;
 
     /**
      * The query cache.
      *
-     * @var Cache
+     * @var ?Cache
      */
-    protected $cache;
+    protected ?Cache $cache = null;
 
     /**
      * Constructor.
      *
-     * @param ConnectionInterface  $connection The connection to use when constructing a new query.
-     * @param SchemaInterface|null $schema     The schema to use for the query and models located.
-     * @param string               $baseDn     The base DN to use for all searches.
+     * @param ConnectionInterface $connection The connection to use when constructing a new query.
+     * @param SchemaInterface|null $schema The schema to use for the query and models located.
+     * @param string $baseDn The base DN to use for all searches.
      */
-    public function __construct(ConnectionInterface $connection, SchemaInterface $schema = null, $baseDn = '')
+    public function __construct(ConnectionInterface $connection, ?SchemaInterface $schema = null, string $baseDn = '')
     {
         $this->setConnection($connection)
             ->setSchema($schema)
@@ -64,7 +65,7 @@ class Factory
      *
      * @return $this
      */
-    public function setConnection(ConnectionInterface $connection)
+    public function setConnection(ConnectionInterface $connection): static
     {
         $this->connection = $connection;
 
@@ -78,7 +79,7 @@ class Factory
      *
      * @return $this
      */
-    public function setSchema(SchemaInterface $schema = null)
+    public function setSchema(?SchemaInterface $schema = null): static
     {
         $this->schema = $schema ?: new ActiveDirectory();
 
@@ -92,7 +93,7 @@ class Factory
      *
      * @return $this
      */
-    public function setBaseDn($base = '')
+    public function setBaseDn(string $base = ''): static
     {
         $this->base = $base;
 
@@ -106,7 +107,7 @@ class Factory
      *
      * @return $this
      */
-    public function setCache(Cache $cache)
+    public function setCache(Cache $cache): static
     {
         $this->cache = $cache;
 
@@ -118,7 +119,7 @@ class Factory
      *
      * @return Builder
      */
-    public function newQuery()
+    public function newQuery(): Builder
     {
         return $this->newBuilder()->in($this->base);
     }
@@ -128,9 +129,10 @@ class Factory
      * connection by performing a search for all entries
      * that contain a common name attribute.
      *
-     * @return \Adldap\Query\Collection|array
+     * @return Collection|array
+     * @throws InvalidArgumentException
      */
-    public function get()
+    public function get(): array|Collection
     {
         return $this->newQuery()->whereHas($this->schema->commonName())->get();
     }
@@ -140,7 +142,7 @@ class Factory
      *
      * @return Builder
      */
-    public function users()
+    public function users(): Builder
     {
         $wheres = [
             [$this->schema->objectClass(), Operator::$equals, $this->schema->objectClassUser()],
@@ -162,7 +164,7 @@ class Factory
      *
      * @return Builder
      */
-    public function printers()
+    public function printers(): Builder
     {
         return $this->where([
             $this->schema->objectClass() => $this->schema->objectClassPrinter(),
@@ -174,7 +176,7 @@ class Factory
      *
      * @return Builder
      */
-    public function ous()
+    public function ous(): Builder
     {
         return $this->where([
             $this->schema->objectClass() => $this->schema->objectClassOu(),
@@ -186,7 +188,7 @@ class Factory
      *
      * @return Builder
      */
-    public function organizations()
+    public function organizations(): Builder
     {
         return $this->where([
             $this->schema->objectClass() => $this->schema->objectClassOrganization(),
@@ -198,7 +200,7 @@ class Factory
      *
      * @return Builder
      */
-    public function groups()
+    public function groups(): Builder
     {
         return $this->where([
             $this->schema->objectClass() => $this->schema->objectClassGroup(),
@@ -210,7 +212,7 @@ class Factory
      *
      * @return Builder
      */
-    public function containers()
+    public function containers(): Builder
     {
         return $this->where([
             $this->schema->objectClass() => $this->schema->objectClassContainer(),
@@ -222,7 +224,7 @@ class Factory
      *
      * @return Builder
      */
-    public function contacts()
+    public function contacts(): Builder
     {
         return $this->where([
             $this->schema->objectClass() => $this->schema->objectClassContact(),
@@ -234,7 +236,7 @@ class Factory
      *
      * @return Builder
      */
-    public function computers()
+    public function computers(): Builder
     {
         return $this->where([
             $this->schema->objectClass() => $this->schema->objectClassComputer(),
@@ -245,8 +247,9 @@ class Factory
      * Returns the root DSE record.
      *
      * @return RootDse|null
+     * @throws InvalidArgumentException
      */
-    public function getRootDse()
+    public function getRootDse(): ?RootDse
     {
         $query = $this->newQuery();
 
@@ -256,17 +259,18 @@ class Factory
             return (new RootDse([], $query))
                 ->setRawAttributes($root->getAttributes());
         }
+        return null;
     }
 
     /**
      * Handle dynamic method calls on the query builder object.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         return call_user_func_array([$this->newQuery(), $method], $parameters);
     }
@@ -276,7 +280,7 @@ class Factory
      *
      * @return Grammar
      */
-    protected function newGrammar()
+    protected function newGrammar(): Grammar
     {
         return new Grammar();
     }
@@ -286,7 +290,7 @@ class Factory
      *
      * @return Builder
      */
-    protected function newBuilder()
+    protected function newBuilder(): Builder
     {
         $builder = new Builder($this->connection, $this->newGrammar(), $this->schema);
 

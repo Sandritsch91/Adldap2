@@ -7,7 +7,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function distinguishedName()
+    public function distinguishedName(): string
     {
         return 'distinguishedname';
     }
@@ -15,7 +15,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function distinguishedNameSubKey()
+    public function distinguishedNameSubKey(): ?int
     {
         return 0;
     }
@@ -23,7 +23,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function filterEnabled()
+    public function filterEnabled(): string
     {
         return '(!(UserAccountControl:1.2.840.113556.1.4.803:=2))';
     }
@@ -31,7 +31,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function filterDisabled()
+    public function filterDisabled(): string
     {
         return '(UserAccountControl:1.2.840.113556.1.4.803:=2)';
     }
@@ -39,7 +39,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function lockoutTime()
+    public function lockoutTime(): string
     {
         return 'lockouttime';
     }
@@ -47,7 +47,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassGroup()
+    public function objectClassGroup(): string
     {
         return 'group';
     }
@@ -55,7 +55,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassOu()
+    public function objectClassOu(): string
     {
         return 'organizationalunit';
     }
@@ -63,7 +63,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassPerson()
+    public function objectClassPerson(): string
     {
         return 'person';
     }
@@ -71,7 +71,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectGuid()
+    public function objectGuid(): string
     {
         return 'objectguid';
     }
@@ -79,7 +79,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectGuidRequiresConversion()
+    public function objectGuidRequiresConversion(): bool
     {
         return true;
     }
@@ -87,7 +87,7 @@ class ActiveDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectCategory()
+    public function objectCategory(): string
     {
         return 'objectcategory';
     }

@@ -7,12 +7,12 @@ interface DispatcherInterface
     /**
      * Register an event listener with the dispatcher.
      *
-     * @param string|array $events
-     * @param mixed        $listener
+     * @param array|string $events
+     * @param mixed $listener
      *
      * @return void
      */
-    public function listen($events, $listener);
+    public function listen(array|string $events, mixed $listener): void;
 
     /**
      * Determine if a given event has listeners.
@@ -21,39 +21,39 @@ interface DispatcherInterface
      *
      * @return bool
      */
-    public function hasListeners($eventName);
+    public function hasListeners(string $eventName): bool;
 
     /**
      * Fire an event until the first non-null response is returned.
      *
-     * @param string|object $event
-     * @param mixed         $payload
+     * @param object|string $event
+     * @param mixed $payload
      *
-     * @return array|null
+     * @return array|string|null
      */
-    public function until($event, $payload = []);
+    public function until(object|string $event, mixed $payload = []): array|string|null;
 
     /**
      * Fire an event and call the listeners.
      *
-     * @param string|object $event
-     * @param mixed         $payload
-     * @param bool          $halt
+     * @param object|string $event
+     * @param mixed $payload
+     * @param bool $halt
      *
-     * @return mixed
+     * @return array|null
      */
-    public function fire($event, $payload = [], $halt = false);
+    public function fire(object|string $event, mixed $payload = [], bool $halt = false): ?array;
 
     /**
      * Fire an event and call the listeners.
      *
-     * @param string|object $event
-     * @param mixed         $payload
-     * @param bool          $halt
+     * @param object|string $event
+     * @param mixed $payload
+     * @param bool $halt
      *
-     * @return array|null
+     * @return array|string|null
      */
-    public function dispatch($event, $payload = [], $halt = false);
+    public function dispatch(object|string $event, mixed $payload = [], bool $halt = false): array|string|null;
 
     /**
      * Get all of the listeners for a given event name.
@@ -62,7 +62,7 @@ interface DispatcherInterface
      *
      * @return array
      */
-    public function getListeners($eventName);
+    public function getListeners(string $eventName): array;
 
     /**
      * Remove a set of listeners from the dispatcher.
@@ -71,5 +71,5 @@ interface DispatcherInterface
      *
      * @return void
      */
-    public function forget($event);
+    public function forget(string $event): void;
 }

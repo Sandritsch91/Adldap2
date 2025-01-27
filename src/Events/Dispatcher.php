@@ -24,29 +24,29 @@ class Dispatcher implements DispatcherInterface
      *
      * @var array
      */
-    protected $listeners = [];
+    protected array $listeners = [];
 
     /**
      * The wildcard listeners.
      *
      * @var array
      */
-    protected $wildcards = [];
+    protected array $wildcards = [];
 
     /**
      * The cached wildcard listeners.
      *
      * @var array
      */
-    protected $wildcardsCache = [];
+    protected array $wildcardsCache = [];
 
     /**
      * {@inheritdoc}
      */
-    public function listen($events, $listener)
+    public function listen(array|string $events, mixed $listener): void
     {
-        foreach ((array) $events as $event) {
-            if (strpos($event, '*') !== false) {
+        foreach ((array)$events as $event) {
+            if (str_contains($event, '*')) {
                 $this->setupWildcardListen($event, $listener);
             } else {
                 $this->listeners[$event][] = $this->makeListener($listener);
@@ -58,11 +58,11 @@ class Dispatcher implements DispatcherInterface
      * Setup a wildcard listener callback.
      *
      * @param string $event
-     * @param mixed  $listener
+     * @param mixed $listener
      *
      * @return void
      */
-    protected function setupWildcardListen($event, $listener)
+    protected function setupWildcardListen(string $event, mixed $listener): void
     {
         $this->wildcards[$event][] = $this->makeListener($listener, true);
 
@@ -72,7 +72,7 @@ class Dispatcher implements DispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function hasListeners($eventName)
+    public function hasListeners(string $eventName): bool
     {
         return isset($this->listeners[$eventName]) || isset($this->wildcards[$eventName]);
     }
@@ -80,7 +80,7 @@ class Dispatcher implements DispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function until($event, $payload = [])
+    public function until(object|string $event, mixed $payload = []): array|string|null
     {
         return $this->dispatch($event, $payload, true);
     }
@@ -88,7 +88,7 @@ class Dispatcher implements DispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function fire($event, $payload = [], $halt = false)
+    public function fire(object|string $event, mixed $payload = [], bool $halt = false): ?array
     {
         return $this->dispatch($event, $payload, $halt);
     }
@@ -96,12 +96,12 @@ class Dispatcher implements DispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function dispatch($event, $payload = [], $halt = false)
+    public function dispatch(object|string $event, mixed $payload = [], bool $halt = false): array|string|null
     {
         // When the given "event" is actually an object we will assume it is an event
         // object and use the class as the event name and this event itself as the
         // payload to the handler, which makes object based events quite simple.
-        list($event, $payload) = $this->parseEventAndPayload(
+        [$event, $payload] = $this->parseEventAndPayload(
             $event,
             $payload
         );
@@ -139,10 +139,10 @@ class Dispatcher implements DispatcherInterface
      *
      * @return array
      */
-    protected function parseEventAndPayload($event, $payload)
+    protected function parseEventAndPayload(mixed $event, mixed $payload): array
     {
         if (is_object($event)) {
-            list($payload, $event) = [[$event], get_class($event)];
+            [$payload, $event] = [[$event], get_class($event)];
         }
 
         return [$event, Arr::wrap($payload)];
@@ -151,7 +151,7 @@ class Dispatcher implements DispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function getListeners($eventName)
+    public function getListeners(string $eventName): array
     {
         $listeners = $this->listeners[$eventName] ?? [];
 
@@ -172,7 +172,7 @@ class Dispatcher implements DispatcherInterface
      *
      * @return array
      */
-    protected function getWildcardListeners($eventName)
+    protected function getWildcardListeners(string $eventName): array
     {
         $wildcards = [];
 
@@ -195,7 +195,7 @@ class Dispatcher implements DispatcherInterface
      *
      * @return bool
      */
-    protected function wildcardContainsEvent($wildcard, $eventName)
+    protected function wildcardContainsEvent(string $wildcard, string $eventName): bool
     {
         $patterns = Arr::wrap($wildcard);
 
@@ -218,7 +218,7 @@ class Dispatcher implements DispatcherInterface
             // pattern such as "library/*", making any string check convenient.
             $pattern = str_replace('\*', '.*', $pattern);
 
-            if (preg_match('#^'.$pattern.'\z#u', $eventName) === 1) {
+            if (preg_match('#^' . $pattern . '\z#u', $eventName) === 1) {
                 return true;
             }
         }
@@ -230,16 +230,16 @@ class Dispatcher implements DispatcherInterface
      * Add the listeners for the event's interfaces to the given array.
      *
      * @param string $eventName
-     * @param array  $listeners
+     * @param array $listeners
      *
      * @return array
      */
-    protected function addInterfaceListeners($eventName, array $listeners = [])
+    protected function addInterfaceListeners(string $eventName, array $listeners = []): array
     {
         foreach (class_implements($eventName) as $interface) {
             if (isset($this->listeners[$interface])) {
                 foreach ($this->listeners[$interface] as $names) {
-                    $listeners = array_merge($listeners, (array) $names);
+                    $listeners = array_merge($listeners, (array)$names);
                 }
             }
         }
@@ -251,11 +251,11 @@ class Dispatcher implements DispatcherInterface
      * Register an event listener with the dispatcher.
      *
      * @param \Closure|string $listener
-     * @param bool            $wildcard
+     * @param bool $wildcard
      *
      * @return \Closure
      */
-    public function makeListener($listener, $wildcard = false)
+    public function makeListener(\Closure|string $listener, bool $wildcard = false): \Closure
     {
         if (is_string($listener)) {
             return $this->createClassListener($listener, $wildcard);
@@ -274,11 +274,11 @@ class Dispatcher implements DispatcherInterface
      * Create a class based listener.
      *
      * @param string $listener
-     * @param bool   $wildcard
+     * @param bool $wildcard
      *
      * @return \Closure
      */
-    protected function createClassListener($listener, $wildcard = false)
+    protected function createClassListener(string $listener, bool $wildcard = false): \Closure
     {
         return function ($event, $payload) use ($listener, $wildcard) {
             if ($wildcard) {
@@ -299,9 +299,9 @@ class Dispatcher implements DispatcherInterface
      *
      * @return array
      */
-    protected function parseListenerCallback($listener)
+    protected function parseListenerCallback(string $listener): array
     {
-        return strpos($listener, '@') !== false ?
+        return str_contains($listener, '@') ?
             explode('@', $listener, 2) :
             [$listener, 'handle'];
     }
@@ -309,9 +309,9 @@ class Dispatcher implements DispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function forget($event)
+    public function forget(string $event): void
     {
-        if (strpos($event, '*') !== false) {
+        if (str_contains($event, '*')) {
             unset($this->wildcards[$event]);
         } else {
             unset($this->listeners[$event]);

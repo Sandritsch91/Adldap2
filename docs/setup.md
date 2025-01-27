@@ -62,7 +62,7 @@ $config = [
 
     // Custom LDAP Options
     'custom_options'   => [
-        // See: http://php.net/ldap_set_option
+        // See: https://php.net/ldap_set_option
         LDAP_OPT_X_TLS_REQUIRE_CERT => LDAP_OPT_X_TLS_HARD
     ]
 ];

@@ -14,10 +14,10 @@ class IntegerValidator extends Validator
     /**
      * {@inheritdoc}
      */
-    public function validate()
+    public function validate(): true
     {
         if (!is_numeric($this->value)) {
-            throw new ConfigurationException("Option {$this->key} must be an integer.");
+            throw new ConfigurationException("Option $this->key must be an integer.");
         }
 
         return true;

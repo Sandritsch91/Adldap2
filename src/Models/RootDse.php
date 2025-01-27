@@ -16,7 +16,7 @@ class RootDse extends Model
      *
      * @return int
      */
-    public function getCurrentTime()
+    public function getCurrentTime(): int
     {
         $time = $this->getFirstAttribute($this->schema->currentTime());
 
@@ -28,7 +28,7 @@ class RootDse extends Model
      *
      * @return string
      */
-    public function getCurrentTimeDate()
+    public function getCurrentTimeDate(): string
     {
         return (new DateTime())->setTimestamp($this->getCurrentTime())->format($this->dateFormat);
     }
@@ -38,7 +38,7 @@ class RootDse extends Model
      *
      * @return string
      */
-    public function getConfigurationNamingContext()
+    public function getConfigurationNamingContext(): string
     {
         return $this->getFirstAttribute($this->schema->configurationNamingContext());
     }
@@ -48,7 +48,7 @@ class RootDse extends Model
      *
      * @return string
      */
-    public function getSchemaNamingContext()
+    public function getSchemaNamingContext(): string
     {
         return $this->getFirstAttribute($this->schema->schemaNamingContext());
     }
@@ -58,7 +58,7 @@ class RootDse extends Model
      *
      * @return string
      */
-    public function getDnsHostName()
+    public function getDnsHostName(): string
     {
         return $this->getFirstAttribute($this->schema->dnsHostName());
     }
@@ -68,7 +68,7 @@ class RootDse extends Model
      *
      * @return string
      */
-    public function getServerName()
+    public function getServerName(): string
     {
         return $this->getFirstAttribute($this->schema->serverName());
     }
@@ -78,7 +78,7 @@ class RootDse extends Model
      *
      * @return mixed
      */
-    public function getRootDomainNamingContext()
+    public function getRootDomainNamingContext(): mixed
     {
         return $this->getFirstAttribute($this->schema->rootDomainNamingContext());
     }

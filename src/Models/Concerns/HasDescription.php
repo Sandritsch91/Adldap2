@@ -11,9 +11,9 @@ trait HasDescription
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
-        return $this->getFirstAttribute($this->schema->description());
+        return $this->getFirstAttribute($this->schema->description()) ?? '';
     }
 
     /**
@@ -23,7 +23,7 @@ trait HasDescription
      *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         return $this->setFirstAttribute($this->schema->description(), $description);
     }

@@ -2,28 +2,28 @@
 
 namespace Adldap\Query;
 
+use Adldap\Connections\ConnectionInterface;
 use Adldap\Models\Entry;
 use Adldap\Models\Model;
-use InvalidArgumentException;
 use Adldap\Schemas\SchemaInterface;
-use Adldap\Connections\ConnectionInterface;
+use InvalidArgumentException;
 
 class Processor
 {
     /**
      * @var Builder
      */
-    protected $builder;
+    protected Builder $builder;
 
     /**
      * @var ConnectionInterface
      */
-    protected $connection;
+    protected ConnectionInterface $connection;
 
     /**
      * @var SchemaInterface
      */
-    protected $schema;
+    protected SchemaInterface $schema;
 
     /**
      * Constructor.
@@ -40,11 +40,11 @@ class Processor
     /**
      * Processes LDAP search results and constructs their model instances.
      *
-     * @param array $entries The LDAP entries to process.
+     * @param array|Model $entries The LDAP entries to process.
      *
      * @return Collection|array
      */
-    public function process($entries)
+    public function process(array|Model $entries): array|Collection
     {
         if ($this->builder->isRaw()) {
             // If the builder is asking for a raw
@@ -54,7 +54,7 @@ class Processor
 
         $models = [];
 
-	if (is_array($entries) && array_key_exists('count', $entries)) {
+        if (is_array($entries) && array_key_exists('count', $entries)) {
             for ($i = 0; $i < $entries['count']; $i++) {
                 // We'll go through each entry and construct a new
                 // model instance with the raw LDAP attributes.
@@ -81,12 +81,12 @@ class Processor
      * Processes paginated LDAP results.
      *
      * @param array $pages
-     * @param int   $perPage
-     * @param int   $currentPage
+     * @param int $perPage
+     * @param int $currentPage
      *
      * @return Paginator
      */
-    public function processPaginated(array $pages = [], $perPage = 50, $currentPage = 0)
+    public function processPaginated(array $pages = [], int $perPage = 50, int $currentPage = 0): Paginator
     {
         $models = [];
 
@@ -107,7 +107,7 @@ class Processor
      *
      * @return Entry
      */
-    public function newLdapEntry(array $attributes = [])
+    public function newLdapEntry(array $attributes = []): Entry
     {
         $objectClass = $this->schema->objectClass();
 
@@ -144,19 +144,19 @@ class Processor
     /**
      * Creates a new model instance.
      *
-     * @param array       $attributes
+     * @param array $attributes
      * @param string|null $model
      *
+     * @return mixed|Entry
      * @throws InvalidArgumentException
      *
-     * @return mixed|Entry
      */
-    public function newModel($attributes = [], $model = null)
+    public function newModel(array $attributes = [], ?string $model = null): mixed
     {
         $model = ($model !== null && class_exists($model) ? $model : $this->schema->entryModel());
 
         if (!is_subclass_of($model, $base = Model::class)) {
-            throw new InvalidArgumentException("The given model class '{$model}' must extend the base model class '{$base}'");
+            throw new InvalidArgumentException("The given model class '$model' must extend the base model class '$base'");
         }
 
         return new $model($attributes, $this->builder->newInstance());
@@ -166,13 +166,13 @@ class Processor
      * Returns a new Paginator object instance.
      *
      * @param array $models
-     * @param int   $perPage
-     * @param int   $currentPage
-     * @param int   $pages
+     * @param int $perPage
+     * @param int $currentPage
+     * @param int $pages
      *
      * @return Paginator
      */
-    public function newPaginator(array $models = [], $perPage = 25, $currentPage = 0, $pages = 1)
+    public function newPaginator(array $models = [], int $perPage = 25, int $currentPage = 0, int $pages = 1): Paginator
     {
         return new Paginator($models, $perPage, $currentPage, $pages);
     }
@@ -184,7 +184,7 @@ class Processor
      *
      * @return Collection
      */
-    public function newCollection(array $items = [])
+    public function newCollection(array $items = []): Collection
     {
         return new Collection($items);
     }
@@ -196,7 +196,7 @@ class Processor
      *
      * @return Collection
      */
-    protected function processSort(array $models = [])
+    protected function processSort(array $models = []): Collection
     {
         $field = $this->builder->getSortByField();
 
@@ -204,7 +204,7 @@ class Processor
 
         $direction = $this->builder->getSortByDirection();
 
-        $desc = ($direction === 'desc' ? true : false);
+        $desc = $direction === 'desc';
 
         return $this->newCollection($models)->sortBy($field, $flags, $desc);
     }

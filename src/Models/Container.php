@@ -21,7 +21,7 @@ class Container extends Entry
      *
      * @return string
      */
-    public function getSystemFlags()
+    public function getSystemFlags(): string
     {
         return $this->getFirstAttribute($this->schema->systemFlags());
     }

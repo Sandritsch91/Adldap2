@@ -10,7 +10,7 @@ class Collection extends BaseCollection
     /**
      * {@inheritdoc}
      */
-    protected function valueRetriever($value)
+    protected function valueRetriever($value): callable|\Closure|string|null
     {
         if ($this->useAsCallable($value)) {
             return $value;

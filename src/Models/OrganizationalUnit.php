@@ -16,7 +16,7 @@ class OrganizationalUnit extends Entry
      *
      * @return string
      */
-    public function getOu()
+    public function getOu(): string
     {
         return $this->getFirstAttribute($this->schema->organizationalUnitShort());
     }
@@ -24,7 +24,7 @@ class OrganizationalUnit extends Entry
     /**
      * {@inheritdoc}
      */
-    protected function getCreatableDn()
+    protected function getCreatableDn(): string|Attributes\DistinguishedName
     {
         return $this->getDnBuilder()->addOU($this->getOu());
     }

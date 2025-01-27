@@ -32,7 +32,7 @@ class TSProperty
      *
      * @var array
      */
-    protected $propTypes = [
+    protected array $propTypes = [
         'string' => [
             'CtxWFHomeDir',
             'CtxWFHomeDirW',
@@ -66,28 +66,28 @@ class TSProperty
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * The property value.
      *
      * @var string|int
      */
-    protected $value;
+    protected string|int $value;
 
     /**
      * The property value type.
      *
      * @var int
      */
-    protected $valueType = 1;
+    protected int $valueType = 1;
 
     /**
      * Pass binary TSProperty data to construct its object representation.
      *
      * @param string|null $value
      */
-    public function __construct($value = null)
+    public function __construct(?string $value = null)
     {
         if ($value) {
             $this->decode(bin2hex($value));
@@ -101,7 +101,7 @@ class TSProperty
      *
      * @return TSProperty
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -113,7 +113,7 @@ class TSProperty
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -121,11 +121,11 @@ class TSProperty
     /**
      * Set the value for the TSProperty.
      *
-     * @param string|int $value
+     * @param int|string $value
      *
      * @return TSProperty
      */
-    public function setValue($value)
+    public function setValue(int|string $value): static
     {
         $this->value = $value;
 
@@ -137,7 +137,7 @@ class TSProperty
      *
      * @return string|int
      */
-    public function getValue()
+    public function getValue(): int|string
     {
         return $this->value;
     }
@@ -148,7 +148,7 @@ class TSProperty
      *
      * @return string
      */
-    public function toBinary()
+    public function toBinary(): string
     {
         $name = bin2hex($this->name);
 
@@ -158,12 +158,12 @@ class TSProperty
 
         $binary = hex2bin(
             $this->dec2hex(strlen($name))
-            .$this->dec2hex($valueLen)
-            .$this->dec2hex($this->valueType)
-            .$name
+            . $this->dec2hex($valueLen)
+            . $this->dec2hex($this->valueType)
+            . $name
         );
 
-        return $binary.$binValue;
+        return $binary . $binValue;
     }
 
     /**
@@ -171,7 +171,7 @@ class TSProperty
      *
      * @param string $tsProperty
      */
-    protected function decode($tsProperty)
+    protected function decode(string $tsProperty): void
     {
         $nameLength = hexdec(substr($tsProperty, 0, 2));
 
@@ -186,17 +186,17 @@ class TSProperty
     /**
      * Based on the property name/value in question, get its encoded form.
      *
-     * @param string     $propName
-     * @param string|int $propValue
+     * @param string $propName
+     * @param int|string $propValue
      *
      * @return string
      */
-    protected function getEncodedValueForProp($propName, $propValue)
+    protected function getEncodedValueForProp(string $propName, int|string $propValue): string
     {
         if (in_array($propName, $this->propTypes['string'])) {
             // Simple strings are null terminated. Unsure if this is
             // needed or simply a product of how ADUC does stuff?
-            $value = $this->encodePropValue($propValue."\0", true);
+            $value = $this->encodePropValue($propValue . "\0", true);
         } elseif (in_array($propName, $this->propTypes['time'])) {
             // Needs to be in microseconds (assuming it is in minute format)...
             $value = $this->encodePropValue($propValue * self::TIME_CONVERSION);
@@ -213,9 +213,9 @@ class TSProperty
      * @param string $propName
      * @param string $propValue
      *
-     * @return string|int
+     * @return float|int|string
      */
-    protected function getDecodedValueForProp($propName, $propValue)
+    protected function getDecodedValueForProp(string $propName, string $propValue): float|int|string
     {
         if (in_array($propName, $this->propTypes['string'])) {
             // Strip away null terminators. I think this should
@@ -239,11 +239,11 @@ class TSProperty
      * the control, and adding up the results into a final value.
      *
      * @param string $hex
-     * @param bool   $string Whether or not this is simple string data.
+     * @param bool $string Whether or not this is simple string data.
      *
      * @return string
      */
-    protected function decodePropValue($hex, $string = false)
+    protected function decodePropValue(string $hex, bool $string = false): string
     {
         $decodePropValue = '';
 
@@ -257,12 +257,12 @@ class TSProperty
             $controlX = substr($bin, 14, 6);
             $nibbleX = substr($bin, 20, 4);
 
-            $byte = $this->nibbleControl($nibbleX, $controlX).$this->nibbleControl($nibbleY, $controlY);
+            $byte = $this->nibbleControl($nibbleX, $controlX) . $this->nibbleControl($nibbleY, $controlY);
 
             if ($string) {
                 $decodePropValue .= MbString::chr(bindec($byte));
             } else {
-                $decodePropValue = $this->dec2hex(bindec($byte)).$decodePropValue;
+                $decodePropValue = $this->dec2hex(bindec($byte)) . $decodePropValue;
             }
         }
 
@@ -273,11 +273,11 @@ class TSProperty
      * Get the encoded property value as a binary blob.
      *
      * @param string $value
-     * @param bool   $string
+     * @param bool $string
      *
      * @return string
      */
-    protected function encodePropValue($value, $string = false)
+    protected function encodePropValue(string $value, bool $string = false): string
     {
         // An int must be properly padded. (then split and reversed).
         // For a string, we just split the chars. This seems
@@ -315,15 +315,15 @@ class TSProperty
      * packed byte-string with 8 bits per byte.
      *
      * @param string $bits
-     * @param bool   $len
+     * @param int $len
      *
      * @return string
      */
-    protected function packBitString($bits, $len)
+    protected function packBitString(string $bits, int $len): string
     {
         $bits = substr($bits, 0, $len);
         // Pad input with zeros to next multiple of 4 above $len
-        $bits = str_pad($bits, 4 * (int) (($len + 3) / 4), '0');
+        $bits = str_pad($bits, 4 * (int)(($len + 3) / 4), '0');
 
         // Split input into chunks of 4 bits, convert each to hex and pack them
         $nibbles = str_split($bits, 4);
@@ -342,7 +342,7 @@ class TSProperty
      *
      * @return string
      */
-    protected function nibbleControl($nibble, $control)
+    protected function nibbleControl(string $nibble, string $control): string
     {
         // This control stays constant for the low/high nibbles,
         // so it doesn't matter which we compare to
@@ -367,7 +367,7 @@ class TSProperty
      *
      * @return string
      */
-    protected function getNibbleWithControl($nibbleType, $nibble)
+    protected function getNibbleWithControl(string $nibbleType, string $nibble): string
     {
         $dec = bindec($nibble);
 
@@ -378,7 +378,7 @@ class TSProperty
             $control = self::NIBBLE_CONTROL[$nibbleType][0];
         }
 
-        return $control.sprintf('%04d', decbin($dec));
+        return $control . sprintf('%04d', decbin($dec));
     }
 
     /**
@@ -389,7 +389,7 @@ class TSProperty
      *
      * @return string
      */
-    protected function dec2hex($int, $padLength = 2)
+    protected function dec2hex(int $int, int $padLength = 2): string
     {
         return str_pad(dechex($int), $padLength, 0, STR_PAD_LEFT);
     }

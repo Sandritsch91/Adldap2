@@ -1,3 +1,11 @@
+This is a fork of the original Adldap2 package. The original package is no longer maintained and has been replaced by LdapRecord. This fork is intended to provide a temporary solution for those who are using the original Adldap2 package and don't want or can migrate to LdapRecord (yet).
+
+I migrated the original Adldap2 package to PHP 8.2 with compatibility up to php 8.4. I also added strict typing to the codebase. If you encounter any issues, please open an issue on this repository or create a pull request.
+
+Thanks to the author of Adldap2, Steven Bauman, for creating the original package.
+
+<hr>
+
 <h3 align="center">
 <strong>:warning: Project No Longer Maintained :warning:</strong>
 </h3>
@@ -30,9 +38,9 @@ Consider migrating to its direct replacement
 </p>
 
 <h4 align="center">
-    <a href="http://adldap2.github.io/Adldap2/#/?id=quick-start">Quickstart</a>
+    <a href="https://adldap2.github.io/Adldap2/#/?id=quick-start">Quickstart</a>
     <span> · </span>
-    <a href="http://adldap2.github.io/Adldap2/">Documentation</a>
+    <a href="https://adldap2.github.io/Adldap2/">Documentation</a>
 </h4>
 
 -   **Up and running in minutes.** Effortlessly connect to your LDAP servers and start running queries & operations in a matter of minutes.

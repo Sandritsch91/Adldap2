@@ -16,7 +16,7 @@ class ModelDoesNotExistException extends AdldapException
      *
      * @var string
      */
-    protected $model;
+    protected string $model;
 
     /**
      * Sets the model that does not exist.
@@ -25,11 +25,11 @@ class ModelDoesNotExistException extends AdldapException
      *
      * @return ModelDoesNotExistException
      */
-    public function setModel($model)
+    public function setModel(string $model): static
     {
         $this->model = $model;
 
-        $this->message = "Model [{$model}] does not exist.";
+        $this->message = "Model [$model] does not exist.";
 
         return $this;
     }

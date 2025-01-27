@@ -16,7 +16,7 @@ class Organization extends Entry
      *
      * @return string
      */
-    public function getOrganization()
+    public function getOrganization(): string
     {
         return $this->getFirstAttribute($this->schema->organizationName());
     }
@@ -24,7 +24,7 @@ class Organization extends Entry
     /**
      * {@inheritdoc}
      */
-    protected function getCreatableDn()
+    protected function getCreatableDn(): string|Attributes\DistinguishedName
     {
         return $this->getDnBuilder()->addO($this->getOrganization());
     }

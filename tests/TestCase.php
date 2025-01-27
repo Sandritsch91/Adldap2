@@ -16,7 +16,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         if (!defined('LDAP_CONTROL_PAGEDRESULTS')) {
             define('LDAP_CONTROL_PAGEDRESULTS', '1.2.840.113556.1.4.319');
@@ -43,7 +43,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         User::usePasswordStrategy(function ($password) {
             return Utilities::encodePassword($password);
@@ -55,7 +55,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * @return void
      */
-    protected function assertPostConditions()
+    protected function assertPostConditions(): void
     {
         $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
 

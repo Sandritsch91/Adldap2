@@ -2,8 +2,8 @@
 
 namespace Adldap\Query;
 
-use Countable;
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 
 class Paginator implements Countable, IteratorAggregate
@@ -13,45 +13,45 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @var array
      */
-    protected $results = [];
+    protected array $results = [];
 
     /**
      * The total amount of pages.
      *
      * @var int
      */
-    protected $pages;
+    protected int $pages;
 
     /**
      * The amount of entries per page.
      *
      * @var int
      */
-    protected $perPage;
+    protected int $perPage;
 
     /**
      * The current page number.
      *
      * @var int
      */
-    protected $currentPage;
+    protected int $currentPage;
 
     /**
      * The current entry offset number.
      *
      * @var int
      */
-    protected $currentOffset;
+    protected int $currentOffset;
 
     /**
      * Constructor.
      *
      * @param array $results
-     * @param int   $perPage
-     * @param int   $currentPage
-     * @param int   $pages
+     * @param int $perPage
+     * @param int $currentPage
+     * @param int $pages
      */
-    public function __construct(array $results = [], $perPage = 50, $currentPage = 0, $pages = 0)
+    public function __construct(array $results = [], int $perPage = 50, int $currentPage = 0, int $pages = 0)
     {
         $this->setResults($results)
             ->setPerPage($perPage)
@@ -66,7 +66,7 @@ class Paginator implements Countable, IteratorAggregate
      * @return ArrayIterator
      */
     #[\ReturnTypeWillChange]
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         $entries = array_slice($this->getResults(), $this->getCurrentOffset(), $this->getPerPage(), true);
 
@@ -78,7 +78,7 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return array
      */
-    public function getResults()
+    public function getResults(): array
     {
         return $this->results;
     }
@@ -89,7 +89,7 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return int
      */
-    public function getPages()
+    public function getPages(): int
     {
         return $this->pages;
     }
@@ -100,7 +100,7 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return int
      */
-    public function getPerPage()
+    public function getPerPage(): int
     {
         return $this->perPage;
     }
@@ -110,7 +110,7 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return int
      */
-    public function getCurrentPage()
+    public function getCurrentPage(): int
     {
         return $this->currentPage;
     }
@@ -120,7 +120,7 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return int
      */
-    public function getCurrentOffset()
+    public function getCurrentOffset(): int
     {
         return $this->currentOffset;
     }
@@ -131,7 +131,7 @@ class Paginator implements Countable, IteratorAggregate
      * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()
+    public function count(): int
     {
         return count($this->results);
     }
@@ -143,7 +143,7 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return Paginator
      */
-    protected function setResults(array $results)
+    protected function setResults(array $results): static
     {
         $this->results = $results;
 
@@ -157,9 +157,9 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return Paginator
      */
-    protected function setPages($pages = 0)
+    protected function setPages(int $pages = 0): static
     {
-        $this->pages = (int) $pages;
+        $this->pages = $pages;
 
         return $this;
     }
@@ -171,9 +171,9 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return Paginator
      */
-    protected function setPerPage($perPage = 50)
+    protected function setPerPage(int $perPage = 50): static
     {
-        $this->perPage = (int) $perPage;
+        $this->perPage = $perPage;
 
         return $this;
     }
@@ -185,9 +185,9 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return Paginator
      */
-    protected function setCurrentPage($currentPage = 0)
+    protected function setCurrentPage(int $currentPage = 0): static
     {
-        $this->currentPage = (int) $currentPage;
+        $this->currentPage = $currentPage;
 
         return $this;
     }
@@ -199,9 +199,9 @@ class Paginator implements Countable, IteratorAggregate
      *
      * @return Paginator
      */
-    protected function setCurrentOffset($offset = 0)
+    protected function setCurrentOffset(int $offset = 0): static
     {
-        $this->currentOffset = (int) $offset;
+        $this->currentOffset = $offset;
 
         return $this;
     }

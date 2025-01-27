@@ -11,11 +11,11 @@ class Utilities
      * UTF-8 representation embedded inside the DN as well.
      *
      * @param string $dn
-     * @param bool   $removeAttributePrefixes
+     * @param bool $removeAttributePrefixes
      *
      * @return array|false
      */
-    public static function explodeDn($dn, $removeAttributePrefixes = true)
+    public static function explodeDn(string $dn, bool $removeAttributePrefixes = true): bool|array
     {
         $dn = ldap_explode_dn($dn, ($removeAttributePrefixes ? 1 : 0));
 
@@ -36,7 +36,7 @@ class Utilities
      *
      * @return string
      */
-    public static function unescape($value)
+    public static function unescape(string $value): string
     {
         return preg_replace_callback('/\\\([0-9A-Fa-f]{2})/', function ($matches) {
             return chr(hexdec($matches[1]));
@@ -46,19 +46,19 @@ class Utilities
     /**
      * Convert a binary SID to a string SID.
      *
-     * @author Chad Sikorra
-     *
-     * @link https://github.com/ChadSikorra
-     * @link https://stackoverflow.com/questions/39533560/php-ldap-get-user-sid
-     *
      * @param string $value The Binary SID
      *
      * @return string|null
+     * @link https://stackoverflow.com/questions/39533560/php-ldap-get-user-sid
+     *
+     * @author Chad Sikorra
+     *
+     * @link https://github.com/ChadSikorra
      */
-    public static function binarySidToString($value)
+    public static function binarySidToString(string $value): ?string
     {
         if (empty($value)) {
-            return;
+            return null;
         }
 
         // Revision - 8bit unsigned int (C1)
@@ -68,14 +68,14 @@ class Utilities
         $sid = @unpack('C1rev/C1count/x2/N1id', $value);
 
         if (!isset($sid['id']) || !isset($sid['rev'])) {
-            return;
+            return null;
         }
 
         $revisionLevel = $sid['rev'];
 
         $identifierAuthority = $sid['id'];
 
-        $subs = isset($sid['count']) ? $sid['count'] : 0;
+        $subs = $sid['count'] ?? 0;
 
         $sidHex = $subs ? bin2hex($value) : '';
 
@@ -95,9 +95,9 @@ class Utilities
         }
 
         // Tack on the 'S-' and glue it all together...
-        return 'S-'.$revisionLevel.'-'.$identifierAuthority.implode(
-            preg_filter('/^/', '-', $subAuthorities)
-        );
+        return 'S-' . $revisionLevel . '-' . $identifierAuthority . implode(
+                preg_filter('/^/', '-', $subAuthorities)
+            );
     }
 
     /**
@@ -107,23 +107,21 @@ class Utilities
      *
      * @return string|null
      */
-    public static function binaryGuidToString($binGuid)
+    public static function binaryGuidToString(string $binGuid): ?string
     {
-        if ($binGuid === null || trim($binGuid) === '') {
-            return;
+        if (trim($binGuid) === '') {
+            return null;
         }
 
         $hex = unpack('H*hex', $binGuid)['hex'];
 
-        $hex1 = substr($hex, -26, 2).substr($hex, -28, 2).substr($hex, -30, 2).substr($hex, -32, 2);
-        $hex2 = substr($hex, -22, 2).substr($hex, -24, 2);
-        $hex3 = substr($hex, -18, 2).substr($hex, -20, 2);
+        $hex1 = substr($hex, -26, 2) . substr($hex, -28, 2) . substr($hex, -30, 2) . substr($hex, -32, 2);
+        $hex2 = substr($hex, -22, 2) . substr($hex, -24, 2);
+        $hex3 = substr($hex, -18, 2) . substr($hex, -20, 2);
         $hex4 = substr($hex, -16, 4);
         $hex5 = substr($hex, -12, 12);
 
-        $guid = sprintf('%s-%s-%s-%s-%s', $hex1, $hex2, $hex3, $hex4, $hex5);
-
-        return $guid;
+        return sprintf('%s-%s-%s-%s-%s', $hex1, $hex2, $hex3, $hex4, $hex5);
     }
 
     /**
@@ -133,15 +131,15 @@ class Utilities
      *
      * @return string
      */
-    public static function stringGuidToHex($string)
+    public static function stringGuidToHex(string $string): string
     {
-        $hex = '\\'.substr($string, 6, 2).'\\'.substr($string, 4, 2).'\\'.substr($string, 2, 2).'\\'.substr($string, 0, 2);
-        $hex = $hex.'\\'.substr($string, 11, 2).'\\'.substr($string, 9, 2);
-        $hex = $hex.'\\'.substr($string, 16, 2).'\\'.substr($string, 14, 2);
-        $hex = $hex.'\\'.substr($string, 19, 2).'\\'.substr($string, 21, 2);
-        $hex = $hex.'\\'.substr($string, 24, 2).'\\'.substr($string, 26, 2).'\\'.substr($string, 28, 2).'\\'.substr($string, 30, 2).'\\'.substr($string, 32, 2).'\\'.substr($string, 34, 2);
-
-        return $hex;
+        $hex = '\\' . substr($string, 6, 2) . '\\' . substr($string, 4, 2) . '\\' . substr($string, 2,
+                2) . '\\' . substr($string, 0, 2);
+        $hex = $hex . '\\' . substr($string, 11, 2) . '\\' . substr($string, 9, 2);
+        $hex = $hex . '\\' . substr($string, 16, 2) . '\\' . substr($string, 14, 2);
+        $hex = $hex . '\\' . substr($string, 19, 2) . '\\' . substr($string, 21, 2);
+        return $hex . '\\' . substr($string, 24, 2) . '\\' . substr($string, 26, 2) . '\\' . substr($string, 28,
+                2) . '\\' . substr($string, 30, 2) . '\\' . substr($string, 32, 2) . '\\' . substr($string, 34, 2);
     }
 
     /**
@@ -151,9 +149,9 @@ class Utilities
      *
      * @return string
      */
-    public static function encodePassword($password)
+    public static function encodePassword(string $password): string
     {
-        return iconv('UTF-8', 'UTF-16LE', '"'.$password.'"');
+        return iconv('UTF-8', 'UTF-16LE', '"' . $password . '"');
     }
 
     /**
@@ -163,12 +161,12 @@ class Utilities
      *
      * @return string
      */
-    public static function makeSSHAPassword($password)
+    public static function makeSSHAPassword(string $password): string
     {
-        mt_srand((float) microtime() * 1000000);
+        mt_srand((float)microtime() * 1000000);
         $salt = pack('CCCC', mt_rand(), mt_rand(), mt_rand(), mt_rand());
 
-        return '{SSHA}'.base64_encode(pack('H*', sha1($password.$salt)).$salt);
+        return '{SSHA}' . base64_encode(pack('H*', sha1($password . $salt)) . $salt);
     }
 
     /**
@@ -177,9 +175,9 @@ class Utilities
      *
      * @param float $windowsTime
      *
-     * @return float
+     * @return float|int
      */
-    public static function convertWindowsTimeToUnixTime($windowsTime)
+    public static function convertWindowsTimeToUnixTime(float $windowsTime): float|int
     {
         return round($windowsTime / 10000000) - 11644473600;
     }
@@ -191,7 +189,7 @@ class Utilities
      *
      * @return float
      */
-    public static function convertUnixTimeToWindowsTime($unixTime)
+    public static function convertUnixTimeToWindowsTime(float $unixTime): float
     {
         return ($unixTime + 11644473600) * 10000000;
     }
@@ -203,9 +201,9 @@ class Utilities
      *
      * @return bool
      */
-    public static function isValidSid($sid)
+    public static function isValidSid(string $sid): bool
     {
-        return (bool) preg_match("/^S-\d(-\d{1,10}){1,16}$/i", $sid);
+        return (bool)preg_match("/^S-\d(-\d{1,10}){1,16}$/i", $sid);
     }
 
     /**
@@ -215,9 +213,12 @@ class Utilities
      *
      * @return bool
      */
-    public static function isValidGuid($guid)
+    public static function isValidGuid(string $guid): bool
     {
-        return (bool) preg_match('/^([0-9a-fA-F]){8}(-([0-9a-fA-F]){4}){3}-([0-9a-fA-F]){12}$|^([0-9a-fA-F]{8}-){3}[0-9a-fA-F]{8}$/', $guid);
+        return (bool)preg_match(
+            '/^([0-9a-fA-F]){8}(-([0-9a-fA-F]){4}){3}-([0-9a-fA-F]){12}$|^([0-9a-fA-F]{8}-){3}[0-9a-fA-F]{8}$/',
+            $guid
+        );
     }
 
     /**
@@ -227,7 +228,7 @@ class Utilities
      *
      * @return array
      */
-    protected static function ignoreStrToArray($ignore)
+    protected static function ignoreStrToArray(string $ignore): array
     {
         $ignore = trim($ignore);
 

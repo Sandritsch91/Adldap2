@@ -2,13 +2,14 @@
 
 namespace Adldap\Models;
 
-use DateTime;
-use Adldap\Utilities;
 use Adldap\AdldapException;
-use Adldap\Schemas\ActiveDirectory;
 use Adldap\Models\Attributes\AccountControl;
 use Adldap\Models\Attributes\TSPropertyArray;
+use Adldap\Schemas\ActiveDirectory;
+use Adldap\Utilities;
+use DateTime;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * Class User.
@@ -31,7 +32,7 @@ class User extends Entry implements Authenticatable
      *
      * @param callable $strategy
      */
-    public static function usePasswordStrategy(callable $strategy)
+    public static function usePasswordStrategy(callable $strategy): void
     {
         static::$passwordStrategy = $strategy;
     }
@@ -53,25 +54,32 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getAuthIdentifierName()
+    public function getAuthIdentifierName(): string
     {
         return $this->schema->objectGuid();
     }
 
     /**
      * Get the unique identifier for the user.
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getAuthIdentifier()
+    public function getAuthIdentifier(): ?string
     {
         return $this->getConvertedGuid();
     }
 
     /**
+     * Get the name of the password attribute for the user.
+     */
+    public function getAuthPasswordName(): string
+    {
+        return $this->schema->unicodePassword();
+    }
+
+    /**
      * Get the password for the user.
      *
-     * @return string
+     * @return void
      */
     public function getAuthPassword()
     {
@@ -80,7 +88,7 @@ class User extends Entry implements Authenticatable
     /**
      * Get the token value for the "remember me" session.
      *
-     * @return string
+     * @return void
      */
     public function getRememberToken()
     {
@@ -100,7 +108,7 @@ class User extends Entry implements Authenticatable
     /**
      * Get the column name for the "remember me" token.
      *
-     * @return string
+     * @return void
      */
     public function getRememberTokenName()
     {
@@ -111,7 +119,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getDepartmentNumber()
+    public function getDepartmentNumber(): string
     {
         return $this->getFirstAttribute($this->schema->departmentNumber());
     }
@@ -123,7 +131,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setDepartmentNumber($number)
+    public function setDepartmentNumber(string $number): static
     {
         return $this->setFirstAttribute($this->schema->departmentNumber(), $number);
     }
@@ -133,7 +141,7 @@ class User extends Entry implements Authenticatable
      *
      * @return mixed
      */
-    public function getInfo()
+    public function getInfo(): mixed
     {
         return $this->getFirstAttribute($this->schema->info());
     }
@@ -145,7 +153,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setInfo($info)
+    public function setInfo(string $info): static
     {
         return $this->setFirstAttribute($this->schema->info(), $info);
     }
@@ -155,7 +163,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getPhysicalDeliveryOfficeName()
+    public function getPhysicalDeliveryOfficeName(): string
     {
         return $this->getFirstAttribute($this->schema->physicalDeliveryOfficeName());
     }
@@ -167,7 +175,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setPhysicalDeliveryOfficeName($deliveryOffice)
+    public function setPhysicalDeliveryOfficeName(string $deliveryOffice): static
     {
         return $this->setFirstAttribute($this->schema->physicalDeliveryOfficeName(), $deliveryOffice);
     }
@@ -177,7 +185,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->getFirstAttribute($this->schema->locale());
     }
@@ -189,7 +197,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setLocale($locale)
+    public function setLocale(string $locale): static
     {
         return $this->setFirstAttribute($this->schema->locale(), $locale);
     }
@@ -201,7 +209,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getCompany()
+    public function getCompany(): string
     {
         return $this->getFirstAttribute($this->schema->company());
     }
@@ -213,7 +221,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setCompany($company)
+    public function setCompany(string $company): static
     {
         return $this->setFirstAttribute($this->schema->company(), $company);
     }
@@ -225,7 +233,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getHomeMdb()
+    public function getHomeMdb(): string
     {
         return $this->getFirstAttribute($this->schema->homeMdb());
     }
@@ -237,7 +245,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setHomeDrive($drive)
+    public function setHomeDrive($drive): static
     {
         return $this->setAttribute($this->schema->homeDrive(), $drive);
     }
@@ -249,7 +257,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string|null
      */
-    public function getHomeDrive()
+    public function getHomeDrive(): ?string
     {
         return $this->getFirstAttribute($this->schema->homeDrive());
     }
@@ -263,7 +271,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setHomeDirectory($directory)
+    public function setHomeDirectory(string $directory): static
     {
         return $this->setAttribute($this->schema->homeDirectory(), $directory);
     }
@@ -275,7 +283,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string|null
      */
-    public function getHomeDirectory()
+    public function getHomeDirectory(): ?string
     {
         return $this->getFirstAttribute($this->schema->homeDirectory());
     }
@@ -287,7 +295,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string|null
      */
-    public function getHomePhone()
+    public function getHomePhone(): ?string
     {
         return $this->getFirstAttribute($this->schema->homePhone());
     }
@@ -301,7 +309,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getUserPrincipalName()
+    public function getUserPrincipalName(): string
     {
         return $this->getFirstAttribute($this->schema->userPrincipalName());
     }
@@ -309,13 +317,13 @@ class User extends Entry implements Authenticatable
     /**
      * Sets the users user principal name.
      *
-     * @param string $userPrincipalName
+     * @param string $upn
      *
      * @return $this
      */
-    public function setUserPrincipalName($userPrincipalName)
+    public function setUserPrincipalName(string $upn): Model
     {
-        return $this->setFirstAttribute($this->schema->userPrincipalName(), $userPrincipalName);
+        return $this->setFirstAttribute($this->schema->userPrincipalName(), $upn);
     }
 
     /**
@@ -323,7 +331,7 @@ class User extends Entry implements Authenticatable
      *
      * @return array
      */
-    public function getUserWorkstations()
+    public function getUserWorkstations(): array
     {
         $workstations = $this->getFirstAttribute($this->schema->userWorkstations());
 
@@ -337,13 +345,13 @@ class User extends Entry implements Authenticatable
     /**
      * Sets the workstations the user can login to.
      *
-     * @param string|array $workstations The names of the workstations the user can login to.
+     * @param array|string $workstations The names of the workstations the user can login to.
      *                                   Must be an array of names, or a comma separated
      *                                   list of names.
      *
      * @return $this
      */
-    public function setUserWorkstations($workstations = [])
+    public function setUserWorkstations(array|string $workstations = []): static
     {
         if (is_array($workstations)) {
             $workstations = implode(',', $workstations);
@@ -359,7 +367,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getScriptPath()
+    public function getScriptPath(): string
     {
         return $this->getFirstAttribute($this->schema->scriptPath());
     }
@@ -371,7 +379,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setScriptPath($path)
+    public function setScriptPath(string $path): static
     {
         return $this->setFirstAttribute($this->schema->scriptPath(), $path);
     }
@@ -381,7 +389,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getBadPasswordCount()
+    public function getBadPasswordCount(): string
     {
         return $this->getFirstAttribute($this->schema->badPasswordCount());
     }
@@ -391,7 +399,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getBadPasswordTime()
+    public function getBadPasswordTime(): string
     {
         return $this->getFirstAttribute($this->schema->badPasswordTime());
     }
@@ -401,25 +409,27 @@ class User extends Entry implements Authenticatable
      *
      * @return float|null
      */
-    public function getBadPasswordTimestamp()
+    public function getBadPasswordTimestamp(): ?float
     {
         if ($time = $this->getBadPasswordTime()) {
             return Utilities::convertWindowsTimeToUnixTime($time);
         }
+        return null;
     }
 
     /**
      * Returns the formatted timestamp of the bad password date.
      *
+     * @return string|null
      * @throws \Exception
      *
-     * @return string|null
      */
-    public function getBadPasswordDate()
+    public function getBadPasswordDate(): ?string
     {
         if ($timestamp = $this->getBadPasswordTimestamp()) {
             return (new DateTime())->setTimestamp($timestamp)->format($this->dateFormat);
         }
+        return null;
     }
 
     /**
@@ -427,7 +437,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getPasswordLastSet()
+    public function getPasswordLastSet(): string
     {
         return $this->getFirstAttribute($this->schema->passwordLastSet());
     }
@@ -437,25 +447,27 @@ class User extends Entry implements Authenticatable
      *
      * @return float|null
      */
-    public function getPasswordLastSetTimestamp()
+    public function getPasswordLastSetTimestamp(): ?float
     {
         if ($time = $this->getPasswordLastSet()) {
             return Utilities::convertWindowsTimeToUnixTime($time);
         }
+        return null;
     }
 
     /**
      * Returns the formatted timestamp of the password last set date.
      *
+     * @return string|null
      * @throws \Exception
      *
-     * @return string|null
      */
-    public function getPasswordLastSetDate()
+    public function getPasswordLastSetDate(): ?string
     {
         if ($timestamp = $this->getPasswordLastSetTimestamp()) {
             return (new DateTime())->setTimestamp($timestamp)->format($this->dateFormat);
         }
+        return null;
     }
 
     /**
@@ -463,7 +475,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getLockoutTime()
+    public function getLockoutTime(): string
     {
         return $this->getFirstAttribute($this->schema->lockoutTime());
     }
@@ -473,25 +485,27 @@ class User extends Entry implements Authenticatable
      *
      * @return float|null
      */
-    public function getLockoutTimestamp()
+    public function getLockoutTimestamp(): ?float
     {
         if ($time = $this->getLockoutTime()) {
             return Utilities::convertWindowsTimeToUnixTime($time);
         }
+        return null;
     }
 
     /**
      * Returns the formatted timestamp of the lockout date.
      *
+     * @return string|null
      * @throws \Exception
      *
-     * @return string|null
      */
-    public function getLockoutDate()
+    public function getLockoutDate(): ?string
     {
         if ($timestamp = $this->getLockoutTimestamp()) {
             return (new DateTime())->setTimestamp($timestamp)->format($this->dateFormat);
         }
+        return null;
     }
 
     /**
@@ -499,7 +513,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setClearLockoutTime()
+    public function setClearLockoutTime(): static
     {
         return $this->setFirstAttribute($this->schema->lockoutTime(), 0);
     }
@@ -509,7 +523,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getProfilePath()
+    public function getProfilePath(): string
     {
         return $this->getFirstAttribute($this->schema->profilePath());
     }
@@ -521,7 +535,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setProfilePath($path)
+    public function setProfilePath(string $path): static
     {
         return $this->setFirstAttribute($this->schema->profilePath(), $path);
     }
@@ -531,7 +545,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getLegacyExchangeDn()
+    public function getLegacyExchangeDn(): string
     {
         return $this->getFirstAttribute($this->schema->legacyExchangeDn());
     }
@@ -547,9 +561,9 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setAccountExpiry($expiryTime)
+    public function setAccountExpiry(float $expiryTime): static
     {
-        $time = is_null($expiryTime) ? '9223372036854775807' : (string) Utilities::convertUnixTimeToWindowsTime($expiryTime);
+        $time = (string)Utilities::convertUnixTimeToWindowsTime($expiryTime);
 
         return $this->setFirstAttribute($this->schema->accountExpires(), $time);
     }
@@ -560,9 +574,9 @@ class User extends Entry implements Authenticatable
      *
      * @return array
      */
-    public function getShowInAddressBook()
+    public function getShowInAddressBook(): array
     {
-        return $this->getAttribute($this->schema->showInAddressBook());
+        return $this->getAttribute($this->schema->showInAddressBook()) ?? [];
     }
 
     /**
@@ -572,9 +586,9 @@ class User extends Entry implements Authenticatable
      *
      * @return string|null
      */
-    public function getThumbnailEncoded()
+    public function getThumbnailEncoded(): ?string
     {
-        if ($data = base64_decode($this->getThumbnail(), $strict = true)) {
+        if ($data = base64_decode($this->getThumbnail(), true)) {
             // In case we don't have the file info extension enabled,
             // we'll set the jpeg mime type as default.
             $mime = 'image/jpeg';
@@ -591,6 +605,7 @@ class User extends Entry implements Authenticatable
 
             return "data:$mime;base64,$image";
         }
+        return null;
     }
 
     /**
@@ -598,7 +613,7 @@ class User extends Entry implements Authenticatable
      *
      * @return mixed
      */
-    public function getThumbnail()
+    public function getThumbnail(): mixed
     {
         return $this->getFirstAttribute($this->schema->thumbnail());
     }
@@ -607,13 +622,13 @@ class User extends Entry implements Authenticatable
      * Sets the users thumbnail photo.
      *
      * @param string $data
-     * @param bool   $encode
+     * @param bool $encode
      *
      * @return $this
      */
-    public function setThumbnail($data, $encode = true)
+    public function setThumbnail(string $data, bool $encode = true): static
     {
-        if ($encode && !base64_decode($data, $strict = true)) {
+        if ($encode && !base64_decode($data, true)) {
             // If the string we're given is not base 64 encoded, then
             // we will encode it before setting it on the user.
             $data = base64_encode($data);
@@ -627,11 +642,11 @@ class User extends Entry implements Authenticatable
      *
      * @return null|string
      */
-    public function getJpegPhotoEncoded()
+    public function getJpegPhotoEncoded(): ?string
     {
         $jpeg = $this->getJpegPhoto();
 
-        return is_null($jpeg) ? $jpeg : 'data:image/jpeg;base64,'.base64_encode($jpeg);
+        return is_null($jpeg) ? $jpeg : 'data:image/jpeg;base64,' . base64_encode($jpeg);
     }
 
     /**
@@ -639,7 +654,7 @@ class User extends Entry implements Authenticatable
      *
      * @return mixed
      */
-    public function getJpegPhoto()
+    public function getJpegPhoto(): mixed
     {
         return $this->getFirstAttribute($this->schema->jpegPhoto());
     }
@@ -651,9 +666,9 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setJpegPhoto($string)
+    public function setJpegPhoto(string $string): static
     {
-        if (!base64_decode($string, $strict = true)) {
+        if (!base64_decode($string, true)) {
             $string = base64_encode($string);
         }
 
@@ -665,7 +680,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getEmployeeId()
+    public function getEmployeeId(): string
     {
         return $this->getFirstAttribute($this->schema->employeeId());
     }
@@ -677,7 +692,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setEmployeeId($employeeId)
+    public function setEmployeeId(string $employeeId): static
     {
         return $this->setFirstAttribute($this->schema->employeeId(), $employeeId);
     }
@@ -687,7 +702,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string|null
      */
-    public function getEmployeeType()
+    public function getEmployeeType(): ?string
     {
         return $this->getFirstAttribute($this->schema->employeeType());
     }
@@ -699,7 +714,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setEmployeeType($type)
+    public function setEmployeeType(string $type): static
     {
         return $this->setFirstAttribute($this->schema->employeeType(), $type);
     }
@@ -709,7 +724,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getEmployeeNumber()
+    public function getEmployeeNumber(): string
     {
         return $this->getFirstAttribute($this->schema->employeeNumber());
     }
@@ -721,7 +736,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setEmployeeNumber($number)
+    public function setEmployeeNumber(string $number): static
     {
         return $this->setFirstAttribute($this->schema->employeeNumber(), $number);
     }
@@ -731,7 +746,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getRoomNumber()
+    public function getRoomNumber(): string
     {
         return $this->getFirstAttribute($this->schema->roomNumber());
     }
@@ -743,7 +758,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setRoomNumber($number)
+    public function setRoomNumber(string $number): static
     {
         return $this->setFirstAttribute($this->schema->roomNumber(), $number);
     }
@@ -753,7 +768,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function getPersonalTitle()
+    public function getPersonalTitle(): static
     {
         return $this->getFirstAttribute($this->schema->personalTitle());
     }
@@ -765,7 +780,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setPersonalTitle($personalTitle)
+    public function setPersonalTitle(string $personalTitle): static
     {
         return $this->setFirstAttribute($this->schema->personalTitle(), $personalTitle);
     }
@@ -775,7 +790,7 @@ class User extends Entry implements Authenticatable
      *
      * @return TSPropertyArray
      */
-    public function getUserParameters()
+    public function getUserParameters(): TSPropertyArray
     {
         return new TSPropertyArray($this->getFirstAttribute('userparameters'));
     }
@@ -787,7 +802,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setUserParameters(TSPropertyArray $userParameters)
+    public function setUserParameters(TSPropertyArray $userParameters): static
     {
         return $this->setFirstAttribute('userparameters', $userParameters->toBinary());
     }
@@ -796,8 +811,9 @@ class User extends Entry implements Authenticatable
      * Retrieves the primary group of the current user.
      *
      * @return Model|bool
+     * @throws InvalidArgumentException
      */
-    public function getPrimaryGroup()
+    public function getPrimaryGroup(): Model|bool
     {
         $groupSid = preg_replace('/\d+$/', $this->getPrimaryGroupId(), $this->getConvertedSid());
 
@@ -809,11 +825,11 @@ class User extends Entry implements Authenticatable
      *
      * @param string $password
      *
+     * @return $this
      * @throws AdldapException When no SSL or TLS secured connection is present.
      *
-     * @return $this
      */
-    public function setPassword($password)
+    public function setPassword(string $password): static
     {
         $this->validateSecureConnection();
 
@@ -847,7 +863,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setEnableForcePasswordChange()
+    public function setEnableForcePasswordChange(): static
     {
         return $this->setFirstAttribute($this->schema->passwordLastSet(), 0);
     }
@@ -857,7 +873,7 @@ class User extends Entry implements Authenticatable
      *
      * @return $this
      */
-    public function setDisableForcePasswordChange()
+    public function setDisableForcePasswordChange(): static
     {
         return $this->setFirstAttribute($this->schema->passwordLastSet(), -1);
     }
@@ -867,18 +883,18 @@ class User extends Entry implements Authenticatable
      *
      * Throws an exception on failure.
      *
-     * @param string $oldPassword      The new password
-     * @param string $newPassword      The old password
-     * @param bool   $replaceNotRemove Alternative password change method. Set to true if you're receiving 'CONSTRAINT'
+     * @param string $oldPassword The new password
+     * @param string $newPassword The old password
+     * @param bool $replaceNotRemove Alternative password change method. Set to true if you're receiving 'CONSTRAINT'
      *                                 errors.
      *
-     * @throws UserPasswordPolicyException    When the new password does not match your password policy.
+     * @return true
      * @throws UserPasswordIncorrectException When the old password is incorrect.
      * @throws AdldapException                When an unknown cause of failure occurs.
      *
-     * @return true
+     * @throws UserPasswordPolicyException|InvalidArgumentException    When the new password does not match your password policy.
      */
-    public function changePassword($oldPassword, $newPassword, $replaceNotRemove = false)
+    public function changePassword(string $oldPassword, string $newPassword, bool $replaceNotRemove = false): true
     {
         $this->validateSecureConnection();
 
@@ -921,18 +937,15 @@ class User extends Entry implements Authenticatable
             $error = $this->query->getConnection()->getExtendedError();
             $code = $this->query->getConnection()->getExtendedErrorCode();
 
-            switch ($code) {
-                case '0000052D':
-                    throw new UserPasswordPolicyException(
-                        "Error: $code. Your new password does not match the password policy."
-                    );
-                case '00000056':
-                    throw new UserPasswordIncorrectException(
-                        "Error: $code. Your old password is incorrect."
-                    );
-                default:
-                    throw new AdldapException($error);
-            }
+            throw match ($code) {
+                '0000052D' => new UserPasswordPolicyException(
+                    "Error: $code. Your new password does not match the password policy."
+                ),
+                '00000056' => new UserPasswordIncorrectException(
+                    "Error: $code. Your old password is incorrect."
+                ),
+                default => new AdldapException($error),
+            };
         }
 
         return $result;
@@ -942,8 +955,9 @@ class User extends Entry implements Authenticatable
      * Return true / false if LDAP User is active (enabled & not expired).
      *
      * @return bool
+     * @throws \Exception
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->isEnabled() && !$this->isExpired();
     }
@@ -951,11 +965,12 @@ class User extends Entry implements Authenticatable
     /**
      * Return true / false if the LDAP User is expired.
      *
-     * @param DateTime $date Optional date
+     * @param DateTime|null $date Optional date
      *
      * @return bool
+     * @throws \Exception
      */
-    public function isExpired(DateTime $date = null)
+    public function isExpired(?DateTime $date = null): bool
     {
         // Here we'll determine if the account expires by checking is expiration date.
         if ($expirationDate = $this->expirationDate()) {
@@ -971,11 +986,11 @@ class User extends Entry implements Authenticatable
     /**
      * Return the expiration date of the user account.
      *
+     * @return DateTime|null
      * @throws \Exception
      *
-     * @return DateTime|null
      */
-    public function expirationDate()
+    public function expirationDate(): ?DateTime
     {
         $accountExpiry = $this->getAccountExpiry();
 
@@ -983,7 +998,7 @@ class User extends Entry implements Authenticatable
         // ActiveDirectory's 'never expire' value,
         // then we'll return null here.
         if ($accountExpiry == 0 || $accountExpiry == $this->getSchema()->neverExpiresDate()) {
-            return;
+            return null;
         }
 
         $unixTime = Utilities::convertWindowsTimeToUnixTime($accountExpiry);
@@ -996,7 +1011,7 @@ class User extends Entry implements Authenticatable
      *
      * @return string
      */
-    public function getAccountExpiry()
+    public function getAccountExpiry(): string
     {
         return $this->getFirstAttribute($this->schema->accountExpires());
     }
@@ -1005,8 +1020,9 @@ class User extends Entry implements Authenticatable
      * Returns true / false if the users password is expired.
      *
      * @return bool
+     * @throws InvalidArgumentException
      */
-    public function passwordExpired()
+    public function passwordExpired(): bool
     {
         // First we'll check the users userAccountControl to see if
         // it contains the 'password does not expire' flag.
@@ -1014,7 +1030,7 @@ class User extends Entry implements Authenticatable
             return false;
         }
 
-        $lastSet = (int) $this->getPasswordLastSet();
+        $lastSet = (int)$this->getPasswordLastSet();
 
         if ($lastSet === 0) {
             // If the users last set time is zero, the password has

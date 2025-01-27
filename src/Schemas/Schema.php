@@ -2,23 +2,23 @@
 
 namespace Adldap\Schemas;
 
-use Adldap\Models\User;
-use Adldap\Models\Entry;
-use Adldap\Models\Group;
-use Adldap\Models\Contact;
-use Adldap\Models\Printer;
 use Adldap\Models\Computer;
+use Adldap\Models\Contact;
 use Adldap\Models\Container;
+use Adldap\Models\Entry;
+use Adldap\Models\ForeignSecurityPrincipal;
+use Adldap\Models\Group;
 use Adldap\Models\Organization;
 use Adldap\Models\OrganizationalUnit;
-use Adldap\Models\ForeignSecurityPrincipal;
+use Adldap\Models\Printer;
+use Adldap\Models\User;
 
 abstract class Schema implements SchemaInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function accountExpires()
+    public function accountExpires(): string
     {
         return 'accountexpires';
     }
@@ -26,7 +26,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function accountName()
+    public function accountName(): string
     {
         return 'samaccountname';
     }
@@ -34,7 +34,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function accountType()
+    public function accountType(): string
     {
         return 'samaccounttype';
     }
@@ -42,7 +42,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function adminDisplayName()
+    public function adminDisplayName(): string
     {
         return 'admindisplayname';
     }
@@ -50,7 +50,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function anr()
+    public function anr(): string
     {
         return 'anr';
     }
@@ -58,7 +58,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function badPasswordCount()
+    public function badPasswordCount(): string
     {
         return 'badpwdcount';
     }
@@ -66,7 +66,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function badPasswordTime()
+    public function badPasswordTime(): string
     {
         return 'badpasswordtime';
     }
@@ -74,7 +74,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function commonName()
+    public function commonName(): string
     {
         return 'cn';
     }
@@ -82,7 +82,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function company()
+    public function company(): string
     {
         return 'company';
     }
@@ -90,7 +90,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function computer()
+    public function computer(): string
     {
         return 'computer';
     }
@@ -98,7 +98,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function computerModel()
+    public function computerModel(): string
     {
         return Computer::class;
     }
@@ -106,7 +106,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function configurationNamingContext()
+    public function configurationNamingContext(): string
     {
         return 'configurationnamingcontext';
     }
@@ -114,7 +114,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function contact()
+    public function contact(): string
     {
         return 'contact';
     }
@@ -122,7 +122,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function contactModel()
+    public function contactModel(): string
     {
         return Contact::class;
     }
@@ -130,7 +130,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function containerModel()
+    public function containerModel(): string
     {
         return Container::class;
     }
@@ -138,7 +138,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function country()
+    public function country(): string
     {
         return 'c';
     }
@@ -146,7 +146,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function createdAt()
+    public function createdAt(): string
     {
         return 'whencreated';
     }
@@ -154,7 +154,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function currentTime()
+    public function currentTime(): string
     {
         return 'currenttime';
     }
@@ -162,7 +162,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function defaultNamingContext()
+    public function defaultNamingContext(): string
     {
         return 'defaultnamingcontext';
     }
@@ -170,7 +170,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function department()
+    public function department(): string
     {
         return 'department';
     }
@@ -178,7 +178,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function departmentNumber()
+    public function departmentNumber(): string
     {
         return 'departmentnumber';
     }
@@ -186,7 +186,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function description()
+    public function description(): string
     {
         return 'description';
     }
@@ -194,7 +194,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function displayName()
+    public function displayName(): string
     {
         return 'displayname';
     }
@@ -202,7 +202,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function dnsHostName()
+    public function dnsHostName(): string
     {
         return 'dnshostname';
     }
@@ -210,7 +210,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function domainComponent()
+    public function domainComponent(): string
     {
         return 'dc';
     }
@@ -218,7 +218,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function driverName()
+    public function driverName(): string
     {
         return 'drivername';
     }
@@ -226,7 +226,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function driverVersion()
+    public function driverVersion(): string
     {
         return 'driverversion';
     }
@@ -234,7 +234,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function email()
+    public function email(): string
     {
         return 'mail';
     }
@@ -242,7 +242,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function emailNickname()
+    public function emailNickname(): string
     {
         return 'mailnickname';
     }
@@ -250,7 +250,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function employeeId()
+    public function employeeId(): string
     {
         return 'employeeid';
     }
@@ -258,7 +258,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function employeeNumber()
+    public function employeeNumber(): string
     {
         return 'employeenumber';
     }
@@ -266,7 +266,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function employeeType()
+    public function employeeType(): string
     {
         return 'employeetype';
     }
@@ -274,7 +274,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function entryModel()
+    public function entryModel(): string
     {
         return Entry::class;
     }
@@ -282,7 +282,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function false()
+    public function false(): string
     {
         return 'FALSE';
     }
@@ -290,7 +290,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function firstName()
+    public function firstName(): string
     {
         return 'givenname';
     }
@@ -298,7 +298,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function groupModel()
+    public function groupModel(): string
     {
         return Group::class;
     }
@@ -306,7 +306,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function groupType()
+    public function groupType(): string
     {
         return 'grouptype';
     }
@@ -314,7 +314,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function homeAddress()
+    public function homeAddress(): string
     {
         return 'homepostaladdress';
     }
@@ -322,7 +322,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function homeMdb()
+    public function homeMdb(): string
     {
         return 'homemdb';
     }
@@ -330,7 +330,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function homeDrive()
+    public function homeDrive(): ?string
     {
         return 'homedrive';
     }
@@ -338,7 +338,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function homeDirectory()
+    public function homeDirectory(): ?string
     {
         return 'homedirectory';
     }
@@ -346,7 +346,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function homePhone()
+    public function homePhone(): ?string
     {
         return 'homephone';
     }
@@ -354,7 +354,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function info()
+    public function info(): string
     {
         return 'info';
     }
@@ -362,7 +362,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function initials()
+    public function initials(): string
     {
         return 'initials';
     }
@@ -370,7 +370,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function instanceType()
+    public function instanceType(): string
     {
         return 'instancetype';
     }
@@ -378,7 +378,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function ipPhone()
+    public function ipPhone(): string
     {
         return 'ipphone';
     }
@@ -386,7 +386,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function isCriticalSystemObject()
+    public function isCriticalSystemObject(): string
     {
         return 'iscriticalsystemobject';
     }
@@ -394,7 +394,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function jpegPhoto()
+    public function jpegPhoto(): string
     {
         return 'jpegphoto';
     }
@@ -402,7 +402,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function lastLogOff()
+    public function lastLogOff(): string
     {
         return 'lastlogoff';
     }
@@ -410,7 +410,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function lastLogOn()
+    public function lastLogOn(): string
     {
         return 'lastlogon';
     }
@@ -418,7 +418,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function lastLogOnTimestamp()
+    public function lastLogOnTimestamp(): string
     {
         return 'lastlogontimestamp';
     }
@@ -426,7 +426,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function lastName()
+    public function lastName(): string
     {
         return 'sn';
     }
@@ -434,7 +434,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function legacyExchangeDn()
+    public function legacyExchangeDn(): string
     {
         return 'legacyexchangedn';
     }
@@ -442,7 +442,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function locale()
+    public function locale(): string
     {
         return 'l';
     }
@@ -450,7 +450,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function location()
+    public function location(): string
     {
         return 'location';
     }
@@ -458,7 +458,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function manager()
+    public function manager(): string
     {
         return 'manager';
     }
@@ -466,7 +466,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function managedBy()
+    public function managedBy(): string
     {
         return 'managedby';
     }
@@ -474,7 +474,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function maxPasswordAge()
+    public function maxPasswordAge(): string
     {
         return 'maxpwdage';
     }
@@ -482,7 +482,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function member()
+    public function member(): string
     {
         return 'member';
     }
@@ -490,7 +490,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function memberIdentifier()
+    public function memberIdentifier(): string
     {
         return 'distinguishedname';
     }
@@ -498,7 +498,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function memberOf()
+    public function memberOf(): string
     {
         return 'memberof';
     }
@@ -506,7 +506,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function memberOfRecursive()
+    public function memberOfRecursive(): string
     {
         return 'memberof:1.2.840.113556.1.4.1941:';
     }
@@ -514,15 +514,15 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function memberRange($from, $to)
+    public function memberRange(int|string $from, int|string $to): string
     {
-        return $this->member().";range={$from}-{$to}";
+        return $this->member() . ";range=$from-$to";
     }
 
     /**
      * {@inheritdoc}
      */
-    public function messageTrackingEnabled()
+    public function messageTrackingEnabled(): string
     {
         return 'messagetrackingenabled';
     }
@@ -530,7 +530,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function msExchangeServer()
+    public function msExchangeServer(): string
     {
         return 'ms-exch-exchange-server';
     }
@@ -538,7 +538,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function name()
+    public function name(): string
     {
         return 'name';
     }
@@ -546,7 +546,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function neverExpiresDate()
+    public function neverExpiresDate(): string
     {
         return '9223372036854775807';
     }
@@ -554,7 +554,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryComputer()
+    public function objectCategoryComputer(): string
     {
         return 'computer';
     }
@@ -562,7 +562,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryContainer()
+    public function objectCategoryContainer(): string
     {
         return 'container';
     }
@@ -570,7 +570,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryExchangePrivateMdb()
+    public function objectCategoryExchangePrivateMdb(): string
     {
         return 'msexchprivatemdb';
     }
@@ -578,7 +578,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryExchangeServer()
+    public function objectCategoryExchangeServer(): string
     {
         return 'msExchExchangeServer';
     }
@@ -586,7 +586,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryExchangeStorageGroup()
+    public function objectCategoryExchangeStorageGroup(): string
     {
         return 'msExchStorageGroup';
     }
@@ -594,7 +594,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryGroup()
+    public function objectCategoryGroup(): string
     {
         return 'group';
     }
@@ -602,7 +602,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryOrganizationalUnit()
+    public function objectCategoryOrganizationalUnit(): string
     {
         return 'organizational-unit';
     }
@@ -610,7 +610,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryPerson()
+    public function objectCategoryPerson(): string
     {
         return 'person';
     }
@@ -618,7 +618,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectCategoryPrinter()
+    public function objectCategoryPrinter(): string
     {
         return 'print-queue';
     }
@@ -626,7 +626,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectClass()
+    public function objectClass(): string
     {
         return 'objectclass';
     }
@@ -634,7 +634,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectClassComputer()
+    public function objectClassComputer(): string
     {
         return 'computer';
     }
@@ -642,7 +642,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectClassContact()
+    public function objectClassContact(): string
     {
         return 'contact';
     }
@@ -650,15 +650,15 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectClassContainer()
+    public function objectClassContainer(): string
     {
         return 'container';
     }
 
     /**
-     * {@inheritdoc}
+     *
      */
-    public function objectClassOrganization()
+    public function objectClassOrganization(): string
     {
         return 'organization';
     }
@@ -666,7 +666,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectClassPrinter()
+    public function objectClassPrinter(): string
     {
         return 'printqueue';
     }
@@ -674,15 +674,15 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectClassUser()
+    public function objectClassUser(): string
     {
         return 'user';
     }
 
     /**
-     * {@inheritdoc}
+     *
      */
-    public function objectClassForeignSecurityPrincipal()
+    public function objectClassForeignSecurityPrincipal(): string
     {
         return 'foreignsecurityprincipal';
     }
@@ -690,25 +690,25 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectClassModelMap()
+    public function objectClassModelMap(): array
     {
         return [
-            $this->objectClassComputer()                    => $this->computerModel(),
-            $this->objectClassContact()                     => $this->contactModel(),
-            $this->objectClassPerson()                      => $this->userModel(),
-            $this->objectClassGroup()                       => $this->groupModel(),
-            $this->objectClassContainer()                   => $this->containerModel(),
-            $this->objectClassPrinter()                     => $this->printerModel(),
-            $this->objectClassOrganization()                => $this->organizationModel(),
-            $this->objectClassOu()                          => $this->organizationalUnitModel(),
-            $this->objectClassForeignSecurityPrincipal()    => $this->foreignSecurityPrincipalModel(),
+            $this->objectClassComputer() => $this->computerModel(),
+            $this->objectClassContact() => $this->contactModel(),
+            $this->objectClassPerson() => $this->userModel(),
+            $this->objectClassGroup() => $this->groupModel(),
+            $this->objectClassContainer() => $this->containerModel(),
+            $this->objectClassPrinter() => $this->printerModel(),
+            $this->objectClassOrganization() => $this->organizationModel(),
+            $this->objectClassOu() => $this->organizationalUnitModel(),
+            $this->objectClassForeignSecurityPrincipal() => $this->foreignSecurityPrincipalModel(),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function objectSid()
+    public function objectSid(): string
     {
         return 'objectsid';
     }
@@ -716,7 +716,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function objectSidRequiresConversion()
+    public function objectSidRequiresConversion(): bool
     {
         return true;
     }
@@ -724,7 +724,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function operatingSystem()
+    public function operatingSystem(): string
     {
         return 'operatingsystem';
     }
@@ -732,7 +732,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function operatingSystemServicePack()
+    public function operatingSystemServicePack(): string
     {
         return 'operatingsystemservicepack';
     }
@@ -740,15 +740,15 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function operatingSystemVersion()
+    public function operatingSystemVersion(): string
     {
         return 'operatingsystemversion';
     }
 
     /**
-     * {@inheritdoc}
+     *
      */
-    public function organization()
+    public function organization(): string
     {
         return 'organization';
     }
@@ -756,7 +756,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function organizationName()
+    public function organizationName(): string
     {
         return 'o';
     }
@@ -764,7 +764,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function organizationalPerson()
+    public function organizationalPerson(): string
     {
         return 'organizationalperson';
     }
@@ -772,7 +772,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function organizationalUnit()
+    public function organizationalUnit(): string
     {
         return 'organizationalunit';
     }
@@ -780,15 +780,15 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function organizationalUnitModel()
+    public function organizationalUnitModel(): string
     {
         return OrganizationalUnit::class;
     }
 
     /**
-     * {@inheritdoc}
+     *
      */
-    public function organizationModel()
+    public function organizationModel(): string
     {
         return Organization::class;
     }
@@ -796,7 +796,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function organizationalUnitShort()
+    public function organizationalUnitShort(): string
     {
         return 'ou';
     }
@@ -804,7 +804,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function otherMailbox()
+    public function otherMailbox(): string
     {
         return 'othermailbox';
     }
@@ -812,7 +812,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function passwordLastSet()
+    public function passwordLastSet(): string
     {
         return 'pwdlastset';
     }
@@ -820,7 +820,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function person()
+    public function person(): string
     {
         return 'person';
     }
@@ -828,7 +828,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function personalTitle()
+    public function personalTitle(): string
     {
         return 'personaltitle';
     }
@@ -836,7 +836,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function physicalDeliveryOfficeName()
+    public function physicalDeliveryOfficeName(): string
     {
         return 'physicaldeliveryofficename';
     }
@@ -844,7 +844,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function portName()
+    public function portName(): string
     {
         return 'portname';
     }
@@ -852,7 +852,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function postalCode()
+    public function postalCode(): string
     {
         return 'postalcode';
     }
@@ -860,7 +860,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function postOfficeBox()
+    public function postOfficeBox(): string
     {
         return 'postofficebox';
     }
@@ -868,7 +868,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function primaryGroupId()
+    public function primaryGroupId(): string
     {
         return 'primarygroupid';
     }
@@ -876,7 +876,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerBinNames()
+    public function printerBinNames(): string
     {
         return 'printbinnames';
     }
@@ -884,7 +884,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerColorSupported()
+    public function printerColorSupported(): string
     {
         return 'printcolor';
     }
@@ -892,7 +892,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerDuplexSupported()
+    public function printerDuplexSupported(): string
     {
         return 'printduplexsupported';
     }
@@ -900,7 +900,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerEndTime()
+    public function printerEndTime(): string
     {
         return 'printendtime';
     }
@@ -908,7 +908,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerMaxResolutionSupported()
+    public function printerMaxResolutionSupported(): string
     {
         return 'printmaxresolutionsupported';
     }
@@ -916,7 +916,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerMediaSupported()
+    public function printerMediaSupported(): string
     {
         return 'printmediasupported';
     }
@@ -924,7 +924,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerMemory()
+    public function printerMemory(): string
     {
         return 'printmemory';
     }
@@ -932,7 +932,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerModel()
+    public function printerModel(): string
     {
         return Printer::class;
     }
@@ -940,7 +940,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerName()
+    public function printerName(): string
     {
         return 'printername';
     }
@@ -948,7 +948,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerOrientationSupported()
+    public function printerOrientationSupported(): string
     {
         return 'printorientationssupported';
     }
@@ -956,7 +956,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerPrintRate()
+    public function printerPrintRate(): string
     {
         return 'printrate';
     }
@@ -964,7 +964,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerPrintRateUnit()
+    public function printerPrintRateUnit(): string
     {
         return 'printrateunit';
     }
@@ -972,7 +972,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerShareName()
+    public function printerShareName(): string
     {
         return 'printsharename';
     }
@@ -980,7 +980,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerStaplingSupported()
+    public function printerStaplingSupported(): string
     {
         return 'printstaplingsupported';
     }
@@ -988,7 +988,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function printerStartTime()
+    public function printerStartTime(): string
     {
         return 'printstarttime';
     }
@@ -996,7 +996,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function priority()
+    public function priority(): string
     {
         return 'priority';
     }
@@ -1004,7 +1004,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function profilePath()
+    public function profilePath(): string
     {
         return 'profilepath';
     }
@@ -1012,7 +1012,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function proxyAddresses()
+    public function proxyAddresses(): string
     {
         return 'proxyaddresses';
     }
@@ -1020,7 +1020,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function roomNumber()
+    public function roomNumber(): string
     {
         return 'roomnumber';
     }
@@ -1028,7 +1028,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function rootDomainNamingContext()
+    public function rootDomainNamingContext(): string
     {
         return 'rootdomainnamingcontext';
     }
@@ -1036,7 +1036,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function schemaNamingContext()
+    public function schemaNamingContext(): string
     {
         return 'schemanamingcontext';
     }
@@ -1044,7 +1044,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function scriptPath()
+    public function scriptPath(): string
     {
         return 'scriptpath';
     }
@@ -1052,7 +1052,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function serialNumber()
+    public function serialNumber(): string
     {
         return 'serialnumber';
     }
@@ -1060,7 +1060,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function serverName()
+    public function serverName(): string
     {
         return 'servername';
     }
@@ -1068,7 +1068,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function showInAddressBook()
+    public function showInAddressBook(): string
     {
         return 'showinaddressbook';
     }
@@ -1076,7 +1076,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function street()
+    public function street(): string
     {
         return 'street';
     }
@@ -1084,7 +1084,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function streetAddress()
+    public function streetAddress(): string
     {
         return 'streetaddress';
     }
@@ -1092,7 +1092,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function systemFlags()
+    public function systemFlags(): string
     {
         return 'systemflags';
     }
@@ -1100,7 +1100,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function telephone()
+    public function telephone(): string
     {
         return 'telephonenumber';
     }
@@ -1108,7 +1108,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function mobile()
+    public function mobile(): string
     {
         return 'mobile';
     }
@@ -1116,15 +1116,15 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function otherMobile()
+    public function otherMobile(): string
     {
         return 'othermobile';
     }
 
     /**
-     * {@inheritdoc}
+     *
      */
-    public function facsimile()
+    public function facsimile(): string
     {
         return 'facsimiletelephonenumber';
     }
@@ -1132,7 +1132,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function thumbnail()
+    public function thumbnail(): string
     {
         return 'thumbnailphoto';
     }
@@ -1140,7 +1140,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function title()
+    public function title(): string
     {
         return 'title';
     }
@@ -1148,7 +1148,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function top()
+    public function top(): string
     {
         return 'top';
     }
@@ -1156,7 +1156,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function true()
+    public function true(): string
     {
         return 'TRUE';
     }
@@ -1164,7 +1164,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function unicodePassword()
+    public function unicodePassword(): string
     {
         return 'unicodepwd';
     }
@@ -1172,7 +1172,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function updatedAt()
+    public function updatedAt(): string
     {
         return 'whenchanged';
     }
@@ -1180,7 +1180,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function url()
+    public function url(): string
     {
         return 'url';
     }
@@ -1188,7 +1188,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function user()
+    public function user(): string
     {
         return 'user';
     }
@@ -1196,7 +1196,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function userAccountControl()
+    public function userAccountControl(): string
     {
         return 'useraccountcontrol';
     }
@@ -1204,7 +1204,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function userId()
+    public function userId(): string
     {
         return 'uid';
     }
@@ -1212,7 +1212,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function userModel()
+    public function userModel(): string
     {
         return User::class;
     }
@@ -1233,7 +1233,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function userPrincipalName()
+    public function userPrincipalName(): string
     {
         return 'userprincipalname';
     }
@@ -1241,7 +1241,7 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function userWorkstations()
+    public function userWorkstations(): string
     {
         return 'userworkstations';
     }
@@ -1249,15 +1249,15 @@ abstract class Schema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function versionNumber()
+    public function versionNumber(): string
     {
         return 'versionnumber';
     }
 
     /**
-     * {@inheritdoc}
+     *
      */
-    public function foreignSecurityPrincipalModel()
+    public function foreignSecurityPrincipalModel(): string
     {
         return ForeignSecurityPrincipal::class;
     }

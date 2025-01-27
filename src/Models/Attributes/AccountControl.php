@@ -61,14 +61,14 @@ class AccountControl
      *
      * @var array
      */
-    protected $values = [];
+    protected array $values = [];
 
     /**
      * Constructor.
      *
-     * @param int $flag
+     * @param int|null $flag
      */
-    public function __construct($flag = null)
+    public function __construct(?int $flag = null)
     {
         if (!is_null($flag)) {
             $this->apply($flag);
@@ -82,7 +82,7 @@ class AccountControl
      */
     public function __toString()
     {
-        return (string) $this->getValue();
+        return (string)$this->getValue();
     }
 
     /**
@@ -90,7 +90,7 @@ class AccountControl
      *
      * @return int
      */
-    public function __toInt()
+    public function __toInt(): int
     {
         return $this->getValue();
     }
@@ -100,9 +100,9 @@ class AccountControl
      *
      * @param int $value
      *
-     * @return AccountControl
+     * @return static
      */
-    public function add($value)
+    public function add(int $value): static
     {
         // Use the value as a key so if the same value
         // is used, it will always be overwritten
@@ -118,7 +118,7 @@ class AccountControl
      *
      * @return $this
      */
-    public function remove($value)
+    public function remove(int $value): static
     {
         unset($this->values[$value]);
 
@@ -130,7 +130,7 @@ class AccountControl
      *
      * @param int $flag
      */
-    public function apply($flag)
+    public function apply(int $flag): void
     {
         $this->setValues($this->extractFlags($flag));
     }
@@ -142,7 +142,7 @@ class AccountControl
      *
      * @return bool
      */
-    public function has($flag)
+    public function has(int $flag): bool
     {
         // We'll extract the given flag into an array of possible flags, and
         // see if our AccountControl object contains any of them.
@@ -154,9 +154,9 @@ class AccountControl
     /**
      * The logon script will be run.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function runLoginScript()
+    public function runLoginScript(): static
     {
         return $this->add(static::SCRIPT);
     }
@@ -164,9 +164,9 @@ class AccountControl
     /**
      * The user account is locked.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsLocked()
+    public function accountIsLocked(): static
     {
         return $this->add(static::LOCKOUT);
     }
@@ -174,9 +174,9 @@ class AccountControl
     /**
      * The user account is disabled.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsDisabled()
+    public function accountIsDisabled(): static
     {
         return $this->add(static::ACCOUNTDISABLE);
     }
@@ -187,9 +187,9 @@ class AccountControl
      * This account provides user access to this domain, but not to any domain that
      * trusts this domain. This is sometimes referred to as a local user account.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsTemporary()
+    public function accountIsTemporary(): static
     {
         return $this->add(static::TEMP_DUPLICATE_ACCOUNT);
     }
@@ -197,9 +197,9 @@ class AccountControl
     /**
      * This is a default account type that represents a typical user.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsNormal()
+    public function accountIsNormal(): static
     {
         return $this->add(static::NORMAL_ACCOUNT);
     }
@@ -207,9 +207,9 @@ class AccountControl
     /**
      * This is a permit to trust an account for a system domain that trusts other domains.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsForInterdomain()
+    public function accountIsForInterdomain(): static
     {
         return $this->add(static::INTERDOMAIN_TRUST_ACCOUNT);
     }
@@ -219,9 +219,9 @@ class AccountControl
      * Windows NT 4.0 Workstation, Microsoft Windows NT 4.0 Server, Microsoft
      * Windows 2000 Professional, or Windows 2000 Server and is a member of this domain.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsForWorkstation()
+    public function accountIsForWorkstation(): static
     {
         return $this->add(static::WORKSTATION_TRUST_ACCOUNT);
     }
@@ -229,9 +229,9 @@ class AccountControl
     /**
      * This is a computer account for a domain controller that is a member of this domain.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsForServer()
+    public function accountIsForServer(): static
     {
         return $this->add(static::SERVER_TRUST_ACCOUNT);
     }
@@ -239,9 +239,9 @@ class AccountControl
     /**
      * This is an MNS logon account.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsMnsLogon()
+    public function accountIsMnsLogon(): static
     {
         return $this->add(static::MNS_LOGON_ACCOUNT);
     }
@@ -250,9 +250,9 @@ class AccountControl
      * (Windows 2000/Windows Server 2003) This account does
      * not require Kerberos pre-authentication for logging on.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountDoesNotRequirePreAuth()
+    public function accountDoesNotRequirePreAuth(): static
     {
         return $this->add(static::DONT_REQ_PREAUTH);
     }
@@ -260,9 +260,9 @@ class AccountControl
     /**
      * When this flag is set, it forces the user to log on by using a smart card.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountRequiresSmartCard()
+    public function accountRequiresSmartCard(): static
     {
         return $this->add(static::SMARTCARD_REQUIRED);
     }
@@ -272,9 +272,9 @@ class AccountControl
      *
      * This is a security-sensitive setting. Removing this setting from an RODC compromises security on that server.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function accountIsReadOnly()
+    public function accountIsReadOnly(): static
     {
         return $this->add(static::PARTIAL_SECRETS_ACCOUNT);
     }
@@ -282,9 +282,9 @@ class AccountControl
     /**
      * The home folder is required.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function homeFolderIsRequired()
+    public function homeFolderIsRequired(): static
     {
         return $this->add(static::HOMEDIR_REQUIRED);
     }
@@ -292,9 +292,9 @@ class AccountControl
     /**
      * No password is required.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function passwordIsNotRequired()
+    public function passwordIsNotRequired(): static
     {
         return $this->add(static::PASSWD_NOTREQD);
     }
@@ -306,9 +306,9 @@ class AccountControl
      *
      * @link http://msdn2.microsoft.com/en-us/library/aa746398.aspx
      *
-     * @return AccountControl
+     * @return static
      */
-    public function passwordCannotBeChanged()
+    public function passwordCannotBeChanged(): static
     {
         return $this->add(static::PASSWD_NOTREQD);
     }
@@ -316,9 +316,9 @@ class AccountControl
     /**
      * Represents the password, which should never expire on the account.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function passwordDoesNotExpire()
+    public function passwordDoesNotExpire(): static
     {
         return $this->add(static::DONT_EXPIRE_PASSWORD);
     }
@@ -326,9 +326,9 @@ class AccountControl
     /**
      * (Windows 2000/Windows Server 2003) The user's password has expired.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function passwordIsExpired()
+    public function passwordIsExpired(): static
     {
         return $this->add(static::PASSWORD_EXPIRED);
     }
@@ -336,9 +336,9 @@ class AccountControl
     /**
      * The user can send an encrypted password.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function allowEncryptedTextPassword()
+    public function allowEncryptedTextPassword(): static
     {
         return $this->add(static::ENCRYPTED_TEXT_PWD_ALLOWED);
     }
@@ -352,9 +352,9 @@ class AccountControl
      * To enable a service for Kerberos delegation, you must set this
      * flag on the userAccountControl property of the service account.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function trustForDelegation()
+    public function trustForDelegation(): static
     {
         return $this->add(static::TRUSTED_FOR_DELEGATION);
     }
@@ -367,9 +367,9 @@ class AccountControl
      * account assume a client's identity and authenticate as that user to other remote
      * servers on the network.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function trustToAuthForDelegation()
+    public function trustToAuthForDelegation(): static
     {
         return $this->add(static::TRUSTED_TO_AUTH_FOR_DELEGATION);
     }
@@ -378,9 +378,9 @@ class AccountControl
      * When this flag is set, the security context of the user is not delegated to a
      * service even if the service account is set as trusted for Kerberos delegation.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function doNotTrustForDelegation()
+    public function doNotTrustForDelegation(): static
     {
         return $this->add(static::NOT_DELEGATED);
     }
@@ -389,9 +389,9 @@ class AccountControl
      * (Windows 2000/Windows Server 2003) Restrict this principal to
      * use only Data Encryption Standard (DES) encryption types for keys.
      *
-     * @return AccountControl
+     * @return static
      */
-    public function useDesKeyOnly()
+    public function useDesKeyOnly(): static
     {
         return $this->add(static::USE_DES_KEY_ONLY);
     }
@@ -401,7 +401,7 @@ class AccountControl
      *
      * @return int
      */
-    public function getValue()
+    public function getValue(): int
     {
         return array_sum($this->values);
     }
@@ -411,7 +411,7 @@ class AccountControl
      *
      * @return array
      */
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values;
     }
@@ -421,7 +421,7 @@ class AccountControl
      *
      * @param array $flags
      */
-    public function setValues(array $flags)
+    public function setValues(array $flags): void
     {
         $this->values = $flags;
     }
@@ -431,7 +431,7 @@ class AccountControl
      *
      * @return array
      */
-    public function getAllFlags()
+    public function getAllFlags(): array
     {
         return (new ReflectionClass(__CLASS__))->getConstants();
     }
@@ -443,12 +443,12 @@ class AccountControl
      *
      * @return array
      */
-    public function extractFlags($flag)
+    public function extractFlags(int $flag): array
     {
         $flags = [];
 
         for ($i = 0; $i <= 26; $i++) {
-            if ((int) $flag & (1 << $i)) {
+            if ($flag & (1 << $i)) {
                 $flags[1 << $i] = 1 << $i;
             }
         }

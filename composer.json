@@ -1,5 +1,5 @@
 {
-    "name": "adldap2/adldap2",
+    "name": "sandritsch91/adldap2",
     "type": "library",
     "description": "A PHP LDAP Package for humans.",
     "keywords": [
@@ -13,37 +13,47 @@
     ],
     "license": "MIT",
     "support": {
-        "docs": "https://github.com/Adldap2/Adldap2/blob/master/readme.md",
-        "issues": "https://github.com/Adldap2/Adldap2/issues",
-        "source": "https://github.com/Adldap2/Adldap2",
-        "email": "steven_bauman@outlook.com"
+        "docs": "https://github.com/Sandritsch91/Adldap2/blob/master/readme.md",
+        "issues": "https://github.com/Sandritsch91/Adldap2/issues",
+        "source": "https://github.com/Sandritsch91/Adldap2",
+        "email": "sandritsch91@gmail.com"
     },
     "authors": [
         {
             "name": "Steve Bauman",
             "email": "steven_bauman@outlook.com",
-            "role": "Developer"
+            "role": "Original author"
+        },
+        {
+            "name": "Sandritsch91",
+            "email": "sandritsch91@gmail.com"
         }
     ],
     "require": {
-        "php": ">=7.0",
-        "ext-ldap": "*",
+        "php": ">=8.2",
+        "ext-fileinfo": "*",
         "ext-json": "*",
-        "psr/log": "^1.0|^2.0|^3.0",
-        "psr/simple-cache": "^1.0|^2.0|^3.0",
-        "tightenco/collect": "^5.0|^6.0|^7.0|^8.0|^9.0",
-        "illuminate/contracts": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0"
+        "ext-iconv": "*",
+        "ext-ldap": "*",
+        "ext-mbstring": "*",
+        "psr/log": "^3.0",
+        "psr/simple-cache": "^3.0",
+        "illuminate/collections": "^11.40.0",
+        "illuminate/contracts": "^11.40.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.2|^6.0",
-        "mockery/mockery": "^1.0"
+        "symfony/phpunit-bridge": "^v7.2.0",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^11.5.3"
     },
     "suggest": {
-        "ext-fileinfo": "fileinfo is required when retrieving user encoded thumbnails"
+    },
+    "replace": {
+        "adldap2/adldap2": ">=v10.5.0"
     },
     "archive": {
         "exclude": [
-            "/examples",
+            "/docs",
             "/tests"
         ]
     },

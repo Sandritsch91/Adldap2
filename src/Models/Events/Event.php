@@ -11,7 +11,7 @@ abstract class Event
      *
      * @var Model
      */
-    protected $model;
+    protected Model $model;
 
     /**
      * Constructor.
@@ -28,7 +28,7 @@ abstract class Event
      *
      * @return Model
      */
-    public function getModel()
+    public function getModel(): Model
     {
         return $this->model;
     }

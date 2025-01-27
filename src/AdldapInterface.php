@@ -2,59 +2,63 @@
 
 namespace Adldap;
 
-use Adldap\Connections\ProviderInterface;
+use Adldap\Configuration\DomainConfiguration;
 use Adldap\Connections\ConnectionInterface;
+use Adldap\Connections\ProviderInterface;
 
 interface AdldapInterface
 {
     /**
      * Add a provider by the specified name.
      *
-     * @param mixed               $configuration
-     * @param string              $name
-     * @param ConnectionInterface $connection
-     *
-     * @throws \InvalidArgumentException When an invalid type is given as the configuration argument.
+     * @param DomainConfiguration|ProviderInterface|array $config
+     * @param string $name
+     * @param ConnectionInterface|null $connection
      *
      * @return $this
+     * @throws \InvalidArgumentException When an invalid type is given as the configuration argument.
      */
-    public function addProvider($configuration, $name, ConnectionInterface $connection = null);
+    public function addProvider(
+        DomainConfiguration|ProviderInterface|array $config,
+        string $name,
+        ?ConnectionInterface $connection = null
+    ): AdldapInterface;
 
     /**
      * Returns all of the connection providers.
      *
      * @return array
      */
-    public function getProviders();
+    public function getProviders(): array;
 
     /**
      * Retrieves a Provider using its specified name.
      *
      * @param string $name
      *
+     * @return ProviderInterface
      * @throws AdldapException When the specified provider does not exist.
      *
-     * @return ProviderInterface
      */
-    public function getProvider($name);
+    public function getProvider(string $name): ProviderInterface;
 
     /**
      * Sets the default provider.
      *
      * @param string $name
-     *
+     * @return void
      * @throws AdldapException When the specified provider does not exist.
      */
-    public function setDefaultProvider($name);
+    public function setDefaultProvider(string $name): void;
 
     /**
      * Retrieves the first default provider.
      *
+     * @return ProviderInterface
      * @throws AdldapException When no default provider exists.
      *
-     * @return ProviderInterface
      */
-    public function getDefaultProvider();
+    public function getDefaultProvider(): ProviderInterface;
 
     /**
      * Removes a provider by the specified name.
@@ -63,7 +67,7 @@ interface AdldapInterface
      *
      * @return $this
      */
-    public function removeProvider($name);
+    public function removeProvider(string $name): static;
 
     /**
      * Connects to the specified provider.
@@ -77,15 +81,19 @@ interface AdldapInterface
      *
      * @return ProviderInterface
      */
-    public function connect($name = null, $username = null, $password = null);
+    public function connect(
+        ?string $name = null,
+        ?string $username = null,
+        ?string $password = null
+    ): ProviderInterface;
 
     /**
      * Call methods upon the default provider dynamically.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed
      */
-    public function __call($method, $parameters);
+    public function __call(string $method, array $parameters);
 }

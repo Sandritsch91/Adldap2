@@ -105,7 +105,7 @@ class AdldapTest extends TestCase
 
     public function test_invalid_provider()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
 
         $ad = new Adldap();
 

@@ -9,7 +9,7 @@ trait HasCriticalSystemObject
      *
      * @return null|bool
      */
-    public function isCriticalSystemObject()
+    public function isCriticalSystemObject(): ?bool
     {
         $attribute = $this->getFirstAttribute($this->schema->isCriticalSystemObject());
 

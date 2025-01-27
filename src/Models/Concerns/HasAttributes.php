@@ -13,7 +13,7 @@ trait HasAttributes
      *
      * @var string
      */
-    public $dateFormat = 'Y-m-d H:i:s';
+    public string $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * The format that is used to convert timestamps to unix timestamps.
@@ -22,21 +22,21 @@ trait HasAttributes
      *
      * @var string
      */
-    protected $timestampFormat = 'YmdHis.0Z';
+    protected string $timestampFormat = 'YmdHis.0Z';
 
     /**
      * The models attributes.
      *
      * @var array
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * The models original attributes.
      *
      * @var array
      */
-    protected $original = [];
+    protected array $original = [];
 
     /**
      * Dynamically retrieve attributes on the object.
@@ -45,7 +45,7 @@ trait HasAttributes
      *
      * @return bool
      */
-    public function __get($key)
+    public function __get(mixed $key)
     {
         return $this->getAttribute($key);
     }
@@ -58,7 +58,7 @@ trait HasAttributes
      *
      * @return $this
      */
-    public function __set($key, $value)
+    public function __set(mixed $key, mixed $value)
     {
         return $this->setAttribute($key, $value);
     }
@@ -69,7 +69,7 @@ trait HasAttributes
      *
      * @return $this
      */
-    public function syncOriginal()
+    public function syncOriginal(): static
     {
         $this->original = $this->attributes;
 
@@ -83,14 +83,14 @@ trait HasAttributes
      * retrieve it from the parent keys array.
      *
      * @param int|string $key
-     * @param int|string $subKey
+     * @param int|string|null $subKey
      *
      * @return mixed
      */
-    public function getAttribute($key, $subKey = null)
+    public function getAttribute(int|string $key, int|string|null $subKey = null): mixed
     {
         if (!$key) {
-            return;
+            return null;
         }
 
         // We'll normalize the given key to prevent case sensitivity issues.
@@ -101,6 +101,8 @@ trait HasAttributes
         } elseif ($this->hasAttribute($key, $subKey)) {
             return $this->attributes[$key][$subKey];
         }
+
+        return null;
     }
 
     /**
@@ -110,7 +112,7 @@ trait HasAttributes
      *
      * @return mixed
      */
-    public function getFirstAttribute($key)
+    public function getFirstAttribute(string $key): mixed
     {
         return $this->getAttribute($key, 0);
     }
@@ -120,7 +122,7 @@ trait HasAttributes
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -132,7 +134,7 @@ trait HasAttributes
      *
      * @return $this
      */
-    public function fill(array $attributes = [])
+    public function fill(array $attributes = []): static
     {
         foreach ($attributes as $key => $value) {
             $this->setAttribute($key, $value);
@@ -145,12 +147,12 @@ trait HasAttributes
      * Sets an attributes value by the specified key and sub-key.
      *
      * @param int|string $key
-     * @param mixed      $value
-     * @param int|string $subKey
+     * @param mixed $value
+     * @param int|string|null $subKey
      *
      * @return $this
      */
-    public function setAttribute($key, $value, $subKey = null)
+    public function setAttribute(int|string $key, mixed $value, int|string|null $subKey = null): static
     {
         // Normalize key.
         $key = $this->normalizeAttributeKey($key);
@@ -174,11 +176,11 @@ trait HasAttributes
      * Sets the first attributes value by the specified key.
      *
      * @param int|string $key
-     * @param mixed      $value
+     * @param mixed $value
      *
      * @return $this
      */
-    public function setFirstAttribute($key, $value)
+    public function setFirstAttribute(int|string $key, mixed $value): static
     {
         return $this->setAttribute($key, $value, 0);
     }
@@ -192,11 +194,11 @@ trait HasAttributes
      *
      * @return $this
      */
-    public function setRawAttributes(array $attributes = [])
+    public function setRawAttributes(array $attributes = []): static
     {
         // We'll filter out those annoying 'count' keys returned with LDAP results,
         // and lowercase all root array keys to prevent any casing issues.
-        $this->attributes = array_change_key_case($this->filterRawAttributes($attributes), CASE_LOWER);
+        $this->attributes = array_change_key_case($this->filterRawAttributes($attributes));
 
         // We'll pull out the distinguished name from our raw attributes
         // and set it into our attributes array with the full attribute
@@ -225,12 +227,12 @@ trait HasAttributes
     /**
      * Filters the count key recursively from raw LDAP attributes.
      *
-     * @param array        $attributes
+     * @param array $attributes
      * @param array|string $keys
      *
      * @return array
      */
-    public function filterRawAttributes(array $attributes = [], $keys = ['count', 'dn'])
+    public function filterRawAttributes(array $attributes = [], array|string $keys = ['count', 'dn']): array
     {
         $attributes = Arr::except($attributes, $keys);
 
@@ -248,11 +250,11 @@ trait HasAttributes
      * exists in the attributes array.
      *
      * @param int|string $key
-     * @param int|string $subKey
+     * @param int|string|null $subKey
      *
      * @return bool
      */
-    public function hasAttribute($key, $subKey = null)
+    public function hasAttribute(int|string $key, int|string|null $subKey = null): bool
     {
         // Normalize key.
         $key = $this->normalizeAttributeKey($key);
@@ -270,7 +272,7 @@ trait HasAttributes
      *
      * @return int
      */
-    public function countAttributes()
+    public function countAttributes(): int
     {
         return count($this->getAttributes());
     }
@@ -280,7 +282,7 @@ trait HasAttributes
      *
      * @return array
      */
-    public function getOriginal()
+    public function getOriginal(): array
     {
         return $this->original;
     }
@@ -290,7 +292,7 @@ trait HasAttributes
      *
      * @return array
      */
-    public function getDirty()
+    public function getDirty(): array
     {
         $dirty = [];
 
@@ -312,7 +314,7 @@ trait HasAttributes
      *
      * @return string
      */
-    protected function normalizeAttributeKey($key)
+    protected function normalizeAttributeKey(string $key): string
     {
         return strtolower($key);
     }
@@ -324,7 +326,7 @@ trait HasAttributes
      *
      * @return bool
      */
-    protected function originalIsEquivalent($key)
+    protected function originalIsEquivalent(string $key): bool
     {
         if (!array_key_exists($key, $this->original)) {
             return false;
@@ -338,8 +340,8 @@ trait HasAttributes
             return true;
         }
 
-        return  is_numeric($current) &&
-                is_numeric($original) &&
-                strcmp((string) $current, (string) $original) === 0;
+        return is_numeric($current) &&
+            is_numeric($original) &&
+            strcmp((string)$current, (string)$original) === 0;
     }
 }

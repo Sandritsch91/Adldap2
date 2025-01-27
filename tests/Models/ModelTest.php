@@ -74,8 +74,8 @@ class ModelTest extends TestCase
 
         $this->assertEquals('New Common Name', $entry->getCommonName());
         $this->assertEquals(['New Account Name'], $entry->samaccountname);
-        $this->assertFalse(empty($entry->cn));
-        $this->assertTrue(empty($entry->other));
+        $this->assertNotEmpty($entry->cn);
+        $this->assertEmpty($entry->other);
         $this->assertFalse(isset($entry->invalid));
     }
 
@@ -767,7 +767,7 @@ class ModelTest extends TestCase
 
     public function test_adding_invalid_modification()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
 
         $model = $this->newModel();
 

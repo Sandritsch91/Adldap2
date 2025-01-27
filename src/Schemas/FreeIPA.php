@@ -7,7 +7,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function accountName()
+    public function accountName(): string
     {
         return 'uid';
     }
@@ -15,7 +15,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function distinguishedName()
+    public function distinguishedName(): string
     {
         return 'dn';
     }
@@ -23,7 +23,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectCategory()
+    public function objectCategory(): string
     {
         return 'objectclass';
     }
@@ -31,7 +31,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassGroup()
+    public function objectClassGroup(): string
     {
         return 'ipausergroup';
     }
@@ -39,7 +39,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function userPrincipalName()
+    public function userPrincipalName(): string
     {
         return 'krbCanonicalName';
     }
@@ -47,7 +47,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function distinguishedNameSubKey()
+    public function distinguishedNameSubKey(): ?int
     {
         return 0;
     }
@@ -55,7 +55,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function filterEnabled()
+    public function filterEnabled(): string
     {
         return '(!(UserAccountControl:1.2.840.113556.1.4.803:=2))';
     }
@@ -63,7 +63,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function filterDisabled()
+    public function filterDisabled(): string
     {
         return '(UserAccountControl:1.2.840.113556.1.4.803:=2)';
     }
@@ -71,7 +71,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function lockoutTime()
+    public function lockoutTime(): string
     {
         return 'lockouttime';
     }
@@ -79,7 +79,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function passwordLastSet()
+    public function passwordLastSet(): string
     {
         return 'krbLastPwdChange';
     }
@@ -87,7 +87,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassOu()
+    public function objectClassOu(): string
     {
         return 'organizationalunit';
     }
@@ -95,7 +95,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassPerson()
+    public function objectClassPerson(): string
     {
         return 'person';
     }
@@ -103,7 +103,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassUser()
+    public function objectClassUser(): string
     {
         return 'organizationalPerson';
     }
@@ -111,7 +111,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectGuid()
+    public function objectGuid(): string
     {
         return 'ipaUniqueID';
     }
@@ -119,7 +119,7 @@ class FreeIPA extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectGuidRequiresConversion()
+    public function objectGuidRequiresConversion(): bool
     {
         return false;
     }

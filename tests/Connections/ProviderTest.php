@@ -129,7 +129,7 @@ class ProviderTest extends TestCase
         $connection
             ->shouldReceive('bind')->withArgs(['test', 'test'])->andReturn(false)
             ->shouldReceive('getLastError')->once()->andReturn('')
-            ->shouldReceive('getDetailedError')->once()->andReturn(new DetailedError(null, null, null))
+            ->shouldReceive('getDetailedError')->once()->andReturn(new DetailedError(0, '', ''))
             ->shouldReceive('errNo')->once()->andReturn(1);
 
         $m = $this->newProvider($connection, $config);

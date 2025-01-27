@@ -53,7 +53,7 @@ class AccountControlTest extends TestCase
         $ac = new AccountControl();
 
         $this->assertEquals(0, $ac->__toInt());
-        $this->assertEquals(0, (int) $ac->getValue());
+        $this->assertEquals(0, $ac->getValue());
         $this->assertIsInt($ac->__toInt());
     }
 

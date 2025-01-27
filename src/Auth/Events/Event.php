@@ -11,30 +11,30 @@ abstract class Event
      *
      * @var ConnectionInterface
      */
-    protected $connection;
+    protected ConnectionInterface $connection;
 
     /**
      * The username that is being used for binding.
      *
      * @var string
      */
-    protected $username;
+    protected string $username;
 
     /**
      * The password that is being used for binding.
      *
      * @var string
      */
-    protected $password;
+    protected string $password;
 
     /**
      * Constructor.
      *
      * @param ConnectionInterface $connection
-     * @param string              $username
-     * @param string              $password
+     * @param string $username
+     * @param string $password
      */
-    public function __construct(ConnectionInterface $connection, $username, $password)
+    public function __construct(ConnectionInterface $connection, string $username, string $password)
     {
         $this->connection = $connection;
         $this->username = $username;
@@ -46,7 +46,7 @@ abstract class Event
      *
      * @return ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return $this->connection;
     }
@@ -56,7 +56,7 @@ abstract class Event
      *
      * @return string
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -66,7 +66,7 @@ abstract class Event
      *
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }

@@ -2,9 +2,13 @@
 
 namespace Adldap\Connections;
 
+use Adldap\Auth\BindException;
+use Adldap\Auth\Guard;
 use Adldap\Auth\GuardInterface;
-use Adldap\Schemas\SchemaInterface;
+use Adldap\Configuration\ConfigurationException;
 use Adldap\Configuration\DomainConfiguration;
+use Adldap\Models\Factory;
+use Adldap\Schemas\SchemaInterface;
 
 interface ProviderInterface
 {
@@ -12,30 +16,30 @@ interface ProviderInterface
      * Constructor.
      *
      * @param array|DomainConfiguration $configuration
-     * @param ConnectionInterface       $connection
+     * @param ConnectionInterface|null $connection
      */
-    public function __construct($configuration, ConnectionInterface $connection);
+    public function __construct(DomainConfiguration|array $configuration, ?ConnectionInterface $connection);
 
     /**
      * Returns the current connection instance.
      *
      * @return ConnectionInterface
      */
-    public function getConnection();
+    public function getConnection(): ConnectionInterface;
 
     /**
      * Returns the current configuration instance.
      *
      * @return DomainConfiguration
      */
-    public function getConfiguration();
+    public function getConfiguration(): DomainConfiguration;
 
     /**
      * Returns the current Guard instance.
      *
-     * @return \Adldap\Auth\Guard
+     * @return ?Guard
      */
-    public function getGuard();
+    public function getGuard(): ?Guard;
 
     /**
      * Returns a new default Guard instance.
@@ -43,27 +47,30 @@ interface ProviderInterface
      * @param ConnectionInterface $connection
      * @param DomainConfiguration $configuration
      *
-     * @return \Adldap\Auth\Guard
+     * @return Guard
      */
-    public function getDefaultGuard(ConnectionInterface $connection, DomainConfiguration $configuration);
+    public function getDefaultGuard(
+        ConnectionInterface $connection,
+        DomainConfiguration $configuration
+    ): Guard;
 
     /**
      * Sets the current connection.
      *
-     * @param ConnectionInterface $connection
+     * @param ConnectionInterface|null $connection
      *
      * @return $this
      */
-    public function setConnection(ConnectionInterface $connection = null);
+    public function setConnection(?ConnectionInterface $connection = null): static;
 
     /**
      * Sets the current configuration.
      *
-     * @param DomainConfiguration|array $configuration
+     * @param array|DomainConfiguration $configuration
      *
-     * @throws \Adldap\Configuration\ConfigurationException
+     * @throws ConfigurationException
      */
-    public function setConfiguration($configuration = []);
+    public function setConfiguration(DomainConfiguration|array $configuration = []);
 
     /**
      * Sets the current LDAP attribute schema.
@@ -72,14 +79,14 @@ interface ProviderInterface
      *
      * @return $this
      */
-    public function setSchema(SchemaInterface $schema = null);
+    public function setSchema(?SchemaInterface $schema = null): static;
 
     /**
      * Returns the current LDAP attribute schema.
      *
      * @return SchemaInterface
      */
-    public function getSchema();
+    public function getSchema(): SchemaInterface;
 
     /**
      * Sets the current Guard instance.
@@ -88,28 +95,28 @@ interface ProviderInterface
      *
      * @return $this
      */
-    public function setGuard(GuardInterface $guard);
+    public function setGuard(GuardInterface $guard): static;
 
     /**
      * Returns a new Model factory instance.
      *
-     * @return \Adldap\Models\Factory
+     * @return Factory
      */
-    public function make();
+    public function make(): Factory;
 
     /**
      * Returns a new Search factory instance.
      *
      * @return \Adldap\Query\Factory
      */
-    public function search();
+    public function search(): \Adldap\Query\Factory;
 
     /**
      * Returns a new Auth Guard instance.
      *
-     * @return \Adldap\Auth\Guard
+     * @return Guard
      */
-    public function auth();
+    public function auth(): Guard;
 
     /**
      * Connects and Binds to the Domain Controller.
@@ -120,10 +127,10 @@ interface ProviderInterface
      * @param string|null $username
      * @param string|null $password
      *
-     * @throws \Adldap\Auth\BindException If binding to the LDAP server fails.
+     * @return ProviderInterface
      * @throws ConnectionException        If upgrading the connection to TLS fails
      *
-     * @return ProviderInterface
+     * @throws BindException If binding to the LDAP server fails.
      */
-    public function connect($username = null, $password = null);
+    public function connect(?string $username = null, ?string $password = null): ProviderInterface;
 }

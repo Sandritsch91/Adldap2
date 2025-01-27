@@ -9,9 +9,9 @@ trait HasUserAccountControl
     /**
      * Returns the users user account control integer.
      *
-     * @return string
+     * @return string|null
      */
-    public function getUserAccountControl()
+    public function getUserAccountControl(): ?string
     {
         return $this->getFirstAttribute($this->schema->userAccountControl());
     }
@@ -21,7 +21,7 @@ trait HasUserAccountControl
      *
      * @return AccountControl
      */
-    public function getUserAccountControlObject()
+    public function getUserAccountControlObject(): AccountControl
     {
         return new AccountControl($this->getUserAccountControl());
     }
@@ -33,9 +33,9 @@ trait HasUserAccountControl
      *
      * @return $this
      */
-    public function setUserAccountControl($accountControl)
+    public function setUserAccountControl(AccountControl|int|string $accountControl): static
     {
-        return $this->setAttribute($this->schema->userAccountControl(), (string) $accountControl);
+        return $this->setAttribute($this->schema->userAccountControl(), (string)$accountControl);
     }
 
     /**
@@ -43,7 +43,7 @@ trait HasUserAccountControl
      *
      * @return bool
      */
-    public function isDisabled()
+    public function isDisabled(): bool
     {
         return ($this->getUserAccountControl() & AccountControl::ACCOUNTDISABLE) === AccountControl::ACCOUNTDISABLE;
     }
@@ -53,8 +53,8 @@ trait HasUserAccountControl
      *
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
-        return $this->getUserAccountControl() === null ? false : !$this->isDisabled();
+        return !($this->getUserAccountControl() === null) && !$this->isDisabled();
     }
 }

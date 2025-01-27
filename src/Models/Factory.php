@@ -18,14 +18,14 @@ class Factory
      *
      * @var Builder
      */
-    protected $query;
+    protected Builder $query;
 
     /**
      * The LDAP schema.
      *
      * @var SchemaInterface
      */
-    protected $schema;
+    protected SchemaInterface $schema;
 
     /**
      * Constructor.
@@ -45,7 +45,7 @@ class Factory
      *
      * @return $this
      */
-    public function setQuery(Builder $builder)
+    public function setQuery(Builder $builder): static
     {
         $this->query = $builder;
 
@@ -61,7 +61,7 @@ class Factory
      *
      * @return $this
      */
-    public function setSchema(SchemaInterface $schema = null)
+    public function setSchema(?SchemaInterface $schema = null): static
     {
         $this->schema = $schema ?: new ActiveDirectory();
 
@@ -75,7 +75,7 @@ class Factory
      *
      * @return Entry
      */
-    public function entry(array $attributes = [])
+    public function entry(array $attributes = []): Entry
     {
         $model = $this->schema->entryModel();
 
@@ -89,7 +89,7 @@ class Factory
      *
      * @return User
      */
-    public function user(array $attributes = [])
+    public function user(array $attributes = []): User
     {
         $model = $this->schema->userModel();
 
@@ -104,7 +104,7 @@ class Factory
      *
      * @return OrganizationalUnit
      */
-    public function ou(array $attributes = [])
+    public function ou(array $attributes = []): OrganizationalUnit
     {
         $model = $this->schema->organizationalUnitModel();
 
@@ -122,7 +122,7 @@ class Factory
      *
      * @return Organization
      */
-    public function organization(array $attributes = [])
+    public function organization(array $attributes = []): Organization
     {
         $model = $this->schema->organizationModel();
 
@@ -140,7 +140,7 @@ class Factory
      *
      * @return Group
      */
-    public function group(array $attributes = [])
+    public function group(array $attributes = []): Group
     {
         $model = $this->schema->groupModel();
 
@@ -158,7 +158,7 @@ class Factory
      *
      * @return Container
      */
-    public function container(array $attributes = [])
+    public function container(array $attributes = []): Container
     {
         $model = $this->schema->containerModel();
 
@@ -171,9 +171,9 @@ class Factory
      *
      * @param array $attributes
      *
-     * @return User
+     * @return Contact
      */
-    public function contact(array $attributes = [])
+    public function contact(array $attributes = []): Contact
     {
         $model = $this->schema->contactModel();
 
@@ -193,7 +193,7 @@ class Factory
      *
      * @return Computer
      */
-    public function computer(array $attributes = [])
+    public function computer(array $attributes = []): Computer
     {
         $model = $this->schema->computerModel();
 

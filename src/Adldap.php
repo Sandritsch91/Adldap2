@@ -2,47 +2,50 @@
 
 namespace Adldap;
 
-use Adldap\Log\EventLogger;
-use Adldap\Connections\Ldap;
-use InvalidArgumentException;
-use Adldap\Log\LogsInformation;
-use Adldap\Connections\Provider;
-use Adldap\Events\DispatchesEvents;
-use Adldap\Connections\ProviderInterface;
-use Adldap\Connections\ConnectionInterface;
+use Adldap\Configuration\ConfigurationException;
 use Adldap\Configuration\DomainConfiguration;
+use Adldap\Connections\ConnectionInterface;
+use Adldap\Connections\Ldap;
+use Adldap\Connections\Provider;
+use Adldap\Connections\ProviderInterface;
+use Adldap\Events\DispatchesEvents;
+use Adldap\Log\EventLogger;
+use Adldap\Log\LogsInformation;
+use InvalidArgumentException;
 
 class Adldap implements AdldapInterface
 {
     use DispatchesEvents;
     use LogsInformation;
+
     /**
      * The default provider name.
      *
      * @var string
      */
-    protected $default = 'default';
+    protected string $default = 'default';
 
     /**
      * The connection providers.
      *
      * @var array
      */
-    protected $providers = [];
+    protected array $providers = [];
 
     /**
      * The events to register listeners for during initialization.
      *
      * @var array
      */
-    protected $listen = [
+    protected array $listen = [
         'Adldap\Auth\Events\*',
         'Adldap\Query\Events\*',
         'Adldap\Models\Events\*',
     ];
 
     /**
-     * {@inheritdoc}
+     * Constructor.
+     * @throws AdldapException
      */
     public function __construct(array $providers = [])
     {
@@ -59,9 +62,13 @@ class Adldap implements AdldapInterface
 
     /**
      * {@inheritdoc}
+     * @throws ConfigurationException
      */
-    public function addProvider($config, $name = 'default', ConnectionInterface $connection = null)
-    {
+    public function addProvider(
+        DomainConfiguration|ProviderInterface|array $config,
+        string $name = 'default',
+        ?ConnectionInterface $connection = null
+    ): AdldapInterface {
         if ($this->isValidConfig($config)) {
             $config = new Provider($config, $connection ?? new Ldap($name));
         }
@@ -84,7 +91,7 @@ class Adldap implements AdldapInterface
      *
      * @return bool
      */
-    protected function isValidConfig($config)
+    protected function isValidConfig(mixed $config): bool
     {
         return is_array($config) || $config instanceof DomainConfiguration;
     }
@@ -92,7 +99,7 @@ class Adldap implements AdldapInterface
     /**
      * {@inheritdoc}
      */
-    public function getProviders()
+    public function getProviders(): array
     {
         return $this->providers;
     }
@@ -100,7 +107,7 @@ class Adldap implements AdldapInterface
     /**
      * {@inheritdoc}
      */
-    public function getProvider($name)
+    public function getProvider(string $name): ProviderInterface
     {
         if (array_key_exists($name, $this->providers)) {
             return $this->providers[$name];
@@ -112,7 +119,7 @@ class Adldap implements AdldapInterface
     /**
      * {@inheritdoc}
      */
-    public function setDefaultProvider($name = 'default')
+    public function setDefaultProvider(string $name = 'default'): void
     {
         if ($this->getProvider($name) instanceof ProviderInterface) {
             $this->default = $name;
@@ -122,7 +129,7 @@ class Adldap implements AdldapInterface
     /**
      * {@inheritdoc}
      */
-    public function getDefaultProvider()
+    public function getDefaultProvider(): ProviderInterface
     {
         return $this->getProvider($this->default);
     }
@@ -130,7 +137,7 @@ class Adldap implements AdldapInterface
     /**
      * {@inheritdoc}
      */
-    public function removeProvider($name)
+    public function removeProvider(string $name): static
     {
         unset($this->providers[$name]);
 
@@ -139,8 +146,9 @@ class Adldap implements AdldapInterface
 
     /**
      * {@inheritdoc}
+     * @throws AdldapException
      */
-    public function connect($name = null, $username = null, $password = null)
+    public function connect(?string $name = null, ?string $username = null, ?string $password = null): ProviderInterface
     {
         $provider = $name ? $this->getProvider($name) : $this->getDefaultProvider();
 
@@ -149,12 +157,13 @@ class Adldap implements AdldapInterface
 
     /**
      * {@inheritdoc}
+     * @throws AdldapException
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         $provider = $this->getDefaultProvider();
-        
-        if (! $provider->getConnection()->isBound()) {
+
+        if (!$provider->getConnection()->isBound()) {
             $provider->connect();
         }
 
@@ -166,7 +175,7 @@ class Adldap implements AdldapInterface
      *
      * @return void
      */
-    public function initEventLogger()
+    public function initEventLogger(): void
     {
         $dispatcher = static::getEventDispatcher();
 
@@ -187,7 +196,7 @@ class Adldap implements AdldapInterface
      *
      * @return EventLogger
      */
-    protected function newEventLogger()
+    protected function newEventLogger(): EventLogger
     {
         return new EventLogger(static::getLogger());
     }

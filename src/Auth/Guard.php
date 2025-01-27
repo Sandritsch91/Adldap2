@@ -2,16 +2,18 @@
 
 namespace Adldap\Auth;
 
-use Exception;
-use Throwable;
+use Adldap\Auth\Events\Attempting;
+use Adldap\Auth\Events\Binding;
 use Adldap\Auth\Events\Bound;
 use Adldap\Auth\Events\Failed;
 use Adldap\Auth\Events\Passed;
-use Adldap\Auth\Events\Binding;
-use Adldap\Auth\Events\Attempting;
-use Adldap\Events\DispatcherInterface;
-use Adldap\Connections\ConnectionInterface;
+use Adldap\Configuration\ConfigurationException;
 use Adldap\Configuration\DomainConfiguration;
+use Adldap\Connections\ConnectionException;
+use Adldap\Connections\ConnectionInterface;
+use Adldap\Events\DispatcherInterface;
+use Exception;
+use Throwable;
 
 /**
  * Class Guard.
@@ -25,21 +27,21 @@ class Guard implements GuardInterface
      *
      * @var ConnectionInterface
      */
-    protected $connection;
+    protected ConnectionInterface $connection;
 
     /**
      * The domain configuration to utilize.
      *
      * @var DomainConfiguration
      */
-    protected $configuration;
+    protected DomainConfiguration $configuration;
 
     /**
      * The event dispatcher.
      *
      * @var DispatcherInterface
      */
-    protected $events;
+    protected DispatcherInterface $events;
 
     /**
      * {@inheritdoc}
@@ -53,7 +55,7 @@ class Guard implements GuardInterface
     /**
      * {@inheritdoc}
      */
-    public function attempt($username, $password, $bindAsUser = false)
+    public function attempt(string $username, string $password, bool $bindAsUser = false): bool
     {
         $this->validateCredentials($username, $password);
 
@@ -68,7 +70,7 @@ class Guard implements GuardInterface
             $result = true;
 
             $this->firePassedEvent($username, $password);
-        } catch (BindException $e) {
+        } catch (BindException|ConnectionException|ConfigurationException) {
             // We'll catch the BindException here to allow
             // developers to use a simple if / else
             // using the attempt method.
@@ -82,7 +84,11 @@ class Guard implements GuardInterface
             // catch rebind failures. However this shouldn't
             // occur if our credentials are correct
             // in the first place.
-            $this->bindAsAdministrator();
+            try {
+                $this->bindAsAdministrator();
+            } catch (BindException|ConnectionException|ConfigurationException) {
+                $result = false;
+            }
         }
 
         return $result;
@@ -91,7 +97,7 @@ class Guard implements GuardInterface
     /**
      * {@inheritdoc}
      */
-    public function bind($username = null, $password = null)
+    public function bind(string $username = '', string $password = ''): void
     {
         $this->fireBindingEvent($username, $password);
 
@@ -111,12 +117,13 @@ class Guard implements GuardInterface
 
     /**
      * {@inheritdoc}
+     * @throws ConnectionException|ConfigurationException
      */
-    public function bindAsAdministrator()
+    public function bindAsAdministrator(): void
     {
         $this->bind(
-            $this->configuration->get('username'),
-            $this->configuration->get('password')
+            $this->configuration->get('username') ?? '',
+            $this->configuration->get('password') ?? ''
         );
     }
 
@@ -125,7 +132,7 @@ class Guard implements GuardInterface
      *
      * @return DispatcherInterface
      */
-    public function getDispatcher()
+    public function getDispatcher(): DispatcherInterface
     {
         return $this->events;
     }
@@ -137,7 +144,7 @@ class Guard implements GuardInterface
      *
      * @return void
      */
-    public function setDispatcher(DispatcherInterface $dispatcher)
+    public function setDispatcher(DispatcherInterface $dispatcher): void
     {
         $this->events = $dispatcher;
     }
@@ -147,17 +154,17 @@ class Guard implements GuardInterface
      *
      * @param string $username
      *
-     * @throws \Adldap\Configuration\ConfigurationException If account_suffix or account_prefix do not
+     * @return string
+     * @throws ConfigurationException If account_suffix or account_prefix do not
      *                                                      exist in the providers domain configuration
      *
-     * @return string
      */
-    protected function applyPrefixAndSuffix($username)
+    protected function applyPrefixAndSuffix(string $username): string
     {
         $prefix = $this->configuration->get('account_prefix');
         $suffix = $this->configuration->get('account_suffix');
 
-        return $prefix.$username.$suffix;
+        return $prefix . $username . $suffix;
     }
 
     /**
@@ -169,7 +176,7 @@ class Guard implements GuardInterface
      * @throws PasswordRequiredException When the given password is empty.
      * @throws UsernameRequiredException When the given username is empty.
      */
-    protected function validateCredentials($username, $password)
+    protected function validateCredentials(string $username, string $password): void
     {
         if (empty($username)) {
             // Check for an empty username.
@@ -190,7 +197,7 @@ class Guard implements GuardInterface
      *
      * @return void
      */
-    protected function fireAttemptingEvent($username, $password)
+    protected function fireAttemptingEvent(string $username, string $password): void
     {
         if (isset($this->events)) {
             $this->events->fire(new Attempting($this->connection, $username, $password));
@@ -205,7 +212,7 @@ class Guard implements GuardInterface
      *
      * @return void
      */
-    protected function firePassedEvent($username, $password)
+    protected function firePassedEvent(string $username, string $password): void
     {
         if (isset($this->events)) {
             $this->events->fire(new Passed($this->connection, $username, $password));
@@ -215,12 +222,12 @@ class Guard implements GuardInterface
     /**
      * Fire the failed event.
      *
-     * @param string $username
-     * @param string $password
+     * @param string|null $username
+     * @param string|null $password
      *
      * @return void
      */
-    protected function fireFailedEvent($username, $password)
+    protected function fireFailedEvent(?string $username, ?string $password): void
     {
         if (isset($this->events)) {
             $this->events->fire(new Failed($this->connection, $username, $password));
@@ -230,12 +237,12 @@ class Guard implements GuardInterface
     /**
      * Fire the binding event.
      *
-     * @param string $username
-     * @param string $password
+     * @param string|null $username
+     * @param string|null $password
      *
      * @return void
      */
-    protected function fireBindingEvent($username, $password)
+    protected function fireBindingEvent(?string $username, ?string $password): void
     {
         if (isset($this->events)) {
             $this->events->fire(new Binding($this->connection, $username, $password));
@@ -250,7 +257,7 @@ class Guard implements GuardInterface
      *
      * @return void
      */
-    protected function fireBoundEvent($username, $password)
+    protected function fireBoundEvent(string $username, string $password): void
     {
         if (isset($this->events)) {
             $this->events->fire(new Bound($this->connection, $username, $password));

@@ -7,7 +7,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function accountName()
+    public function accountName(): string
     {
         return 'uid';
     }
@@ -15,7 +15,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function distinguishedName()
+    public function distinguishedName(): string
     {
         return 'dn';
     }
@@ -23,15 +23,15 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function distinguishedNameSubKey()
+    public function distinguishedNameSubKey(): ?int
     {
-        //
+        throw new \BadMethodCallException('Not implemented.');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function filterEnabled()
+    public function filterEnabled(): string
     {
         return sprintf('(!(%s=*))', $this->lockoutTime());
     }
@@ -39,7 +39,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function filterDisabled()
+    public function filterDisabled(): string
     {
         return sprintf('(%s=*)', $this->lockoutTime());
     }
@@ -47,7 +47,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function lockoutTime()
+    public function lockoutTime(): string
     {
         return 'pwdAccountLockedTime';
     }
@@ -55,7 +55,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectCategory()
+    public function objectCategory(): string
     {
         return 'objectclass';
     }
@@ -63,7 +63,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassGroup()
+    public function objectClassGroup(): string
     {
         return 'groupofnames';
     }
@@ -71,7 +71,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassOu()
+    public function objectClassOu(): string
     {
         return 'organizationalUnit';
     }
@@ -79,7 +79,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassPerson()
+    public function objectClassPerson(): string
     {
         return 'inetorgperson';
     }
@@ -87,7 +87,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectClassUser()
+    public function objectClassUser(): string
     {
         return 'inetorgperson';
     }
@@ -95,7 +95,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectGuid()
+    public function objectGuid(): string
     {
         return 'guid';
     }
@@ -103,7 +103,7 @@ class EDirectory extends Schema
     /**
      * {@inheritdoc}
      */
-    public function objectGuidRequiresConversion()
+    public function objectGuidRequiresConversion(): bool
     {
         return false;
     }

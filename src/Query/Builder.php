@@ -2,17 +2,17 @@
 
 namespace Adldap\Query;
 
-use Closure;
 use Adldap\Adldap;
-use Adldap\Utilities;
+use Adldap\Connections\ConnectionInterface;
 use Adldap\Models\Model;
-use Illuminate\Support\Arr;
-use InvalidArgumentException;
+use Adldap\Models\ModelNotFoundException;
+use Adldap\Query\Events\QueryExecuted;
 use Adldap\Schemas\ActiveDirectory;
 use Adldap\Schemas\SchemaInterface;
-use Adldap\Query\Events\QueryExecuted;
-use Adldap\Models\ModelNotFoundException;
-use Adldap\Connections\ConnectionInterface;
+use Adldap\Utilities;
+use Closure;
+use Illuminate\Support\Arr;
+use InvalidArgumentException;
 use LDAP\Result;
 
 class Builder
@@ -22,16 +22,16 @@ class Builder
      *
      * @var array
      */
-    public $columns = ['*'];
+    public array $columns = ['*'];
 
     /**
      * The query filters.
      *
      * @var array
      */
-    public $filters = [
+    public array $filters = [
         'and' => [],
-        'or'  => [],
+        'or' => [],
         'raw' => [],
     ];
 
@@ -40,122 +40,125 @@ class Builder
      *
      * @var int
      */
-    public $limit = 0;
+    public int $limit = 0;
 
     /**
      * Determines whether the current query is paginated.
      *
      * @var bool
      */
-    public $paginated = false;
+    public bool $paginated = false;
 
     /**
      * The field to sort search results by.
      *
      * @var string
      */
-    protected $sortByField = '';
+    protected string $sortByField = '';
 
     /**
      * The direction to sort the results by.
      *
      * @var string
      */
-    protected $sortByDirection = '';
+    protected string $sortByDirection = '';
 
     /**
      * The sort flags for sorting query results.
      *
-     * @var int
+     * @var int|null
      */
-    protected $sortByFlags;
+    protected ?int $sortByFlags = null;
 
     /**
      * The distinguished name to perform searches upon.
      *
      * @var string|null
      */
-    protected $dn;
+    protected ?string $dn = null;
 
     /**
      * The default query type.
      *
      * @var string
      */
-    protected $type = 'search';
+    protected string $type = 'search';
 
     /**
      * Determines whether or not to return LDAP results in their raw array format.
      *
      * @var bool
      */
-    protected $raw = false;
+    protected bool $raw = false;
 
     /**
      * Determines whether the query is nested.
      *
      * @var bool
      */
-    protected $nested = false;
+    protected bool $nested = false;
 
     /**
      * Determines whether the query should be cached.
      *
      * @var bool
      */
-    protected $caching = false;
+    protected bool $caching = false;
 
     /**
      * How long the query should be cached until.
      *
      * @var \DateTimeInterface|null
      */
-    protected $cacheUntil = null;
+    protected ?\DateTimeInterface $cacheUntil = null;
 
     /**
      * Determines whether the query cache must be flushed.
      *
      * @var bool
      */
-    protected $flushCache = false;
+    protected bool $flushCache = false;
 
     /**
      * The current connection instance.
      *
      * @var ConnectionInterface
      */
-    protected $connection;
+    protected ConnectionInterface $connection;
 
     /**
      * The current grammar instance.
      *
      * @var Grammar
      */
-    protected $grammar;
+    protected Grammar $grammar;
 
     /**
      * The current schema instance.
      *
      * @var SchemaInterface
      */
-    protected $schema;
+    protected SchemaInterface $schema;
 
     /**
      * The current cache instance.
      *
      * @var Cache|null
      */
-    protected $cache;
+    protected ?Cache $cache;
 
     /**
      * Constructor.
      *
-     * @param ConnectionInterface  $connection
-     * @param Grammar|null         $grammar
+     * @param ConnectionInterface $connection
+     * @param Grammar|null $grammar
      * @param SchemaInterface|null $schema
      */
-    public function __construct(ConnectionInterface $connection, Grammar $grammar = null, SchemaInterface $schema = null)
-    {
+    public function __construct(
+        ConnectionInterface $connection,
+        ?Grammar $grammar = null,
+        ?SchemaInterface $schema = null
+    ) {
         $this->setConnection($connection)
             ->setGrammar($grammar)
             ->setSchema($schema);
@@ -168,7 +171,7 @@ class Builder
      *
      * @return Builder
      */
-    public function setConnection(ConnectionInterface $connection)
+    public function setConnection(ConnectionInterface $connection): static
     {
         $this->connection = $connection;
 
@@ -182,7 +185,7 @@ class Builder
      *
      * @return Builder
      */
-    public function setGrammar(Grammar $grammar = null)
+    public function setGrammar(?Grammar $grammar = null): static
     {
         $this->grammar = $grammar ?: new Grammar();
 
@@ -196,7 +199,7 @@ class Builder
      *
      * @return Builder
      */
-    public function setSchema(SchemaInterface $schema = null)
+    public function setSchema(?SchemaInterface $schema = null): static
     {
         $this->schema = $schema ?: new ActiveDirectory();
 
@@ -208,7 +211,7 @@ class Builder
      *
      * @return SchemaInterface
      */
-    public function getSchema()
+    public function getSchema(): SchemaInterface
     {
         return $this->schema;
     }
@@ -217,8 +220,9 @@ class Builder
      * Sets the cache to store query results.
      *
      * @param Cache|null $cache
+     * @return Builder
      */
-    public function setCache(Cache $cache = null)
+    public function setCache(?Cache $cache = null): static
     {
         $this->cache = $cache;
 
@@ -228,11 +232,11 @@ class Builder
     /**
      * Returns a new Query Builder instance.
      *
-     * @param string $baseDn
+     * @param string|null $baseDn
      *
      * @return Builder
      */
-    public function newInstance($baseDn = null)
+    public function newInstance(?string $baseDn = null): Builder
     {
         // We'll set the base DN of the new Builder so
         // developers don't need to do this manually.
@@ -249,7 +253,7 @@ class Builder
      *
      * @return $this
      */
-    public function newNestedInstance(Closure $closure = null)
+    public function newNestedInstance(?Closure $closure = null): static
     {
         $query = $this->newInstance()->nested();
 
@@ -264,8 +268,9 @@ class Builder
      * Returns the current query.
      *
      * @return Collection|array
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function get()
+    public function get(): array|Collection
     {
         // We'll mute any warnings / errors here. We just need to
         // know if any query results were returned.
@@ -277,7 +282,7 @@ class Builder
      *
      * @return string
      */
-    public function getQuery()
+    public function getQuery(): string
     {
         // We need to ensure we have at least one filter, as
         // no query results will be returned otherwise.
@@ -293,7 +298,7 @@ class Builder
      *
      * @return string
      */
-    public function getUnescapedQuery()
+    public function getUnescapedQuery(): string
     {
         return Utilities::unescape($this->getQuery());
     }
@@ -303,7 +308,7 @@ class Builder
      *
      * @return Grammar
      */
-    public function getGrammar()
+    public function getGrammar(): Grammar
     {
         return $this->grammar;
     }
@@ -313,7 +318,7 @@ class Builder
      *
      * @return ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return $this->connection;
     }
@@ -323,9 +328,9 @@ class Builder
      *
      * @return string
      */
-    public function getDn()
+    public function getDn(): string
     {
-        return $this->dn;
+        return $this->dn ?? '';
     }
 
     /**
@@ -335,7 +340,7 @@ class Builder
      *
      * @return Builder
      */
-    public function setDn($dn = null)
+    public function setDn(Model|string|null $dn = null): static
     {
         $this->dn = $dn instanceof Model ? $dn->getDn() : $dn;
 
@@ -349,7 +354,7 @@ class Builder
      *
      * @return Builder
      */
-    public function in($dn = null)
+    public function in(Model|string|null $dn = null): static
     {
         return $this->setDn($dn);
     }
@@ -361,7 +366,7 @@ class Builder
      *
      * @return Builder
      */
-    public function limit($limit = 0)
+    public function limit(int $limit = 0): static
     {
         $this->limit = $limit;
 
@@ -373,9 +378,10 @@ class Builder
      *
      * @param string $query
      *
-     * @return \Adldap\Query\Collection|array
+     * @return Collection|array
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function query($query)
+    public function query(string $query): array|Collection
     {
         $start = microtime(true);
 
@@ -405,13 +411,14 @@ class Builder
     /**
      * Paginates the current LDAP query.
      *
-     * @param int  $perPage
-     * @param int  $currentPage
+     * @param int $perPage
+     * @param int $currentPage
      * @param bool $isCritical
      *
      * @return Paginator
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function paginate($perPage = 1000, $currentPage = 0, $isCritical = true)
+    public function paginate(int $perPage = 1000, int $currentPage = 0, bool $isCritical = true): Paginator
     {
         $this->paginated = true;
 
@@ -444,12 +451,13 @@ class Builder
     /**
      * Get the cached response or execute and cache the callback value.
      *
-     * @param string  $key
+     * @param string $key
      * @param Closure $callback
      *
      * @return mixed
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    protected function getCachedResponse($key, Closure $callback)
+    protected function getCachedResponse(string $key, Closure $callback): mixed
     {
         if ($this->flushCache) {
             $this->cache->delete($key);
@@ -463,15 +471,16 @@ class Builder
      *
      * @param string $filter
      *
-     * @return resource
+     * @return Result
      */
-    protected function run($filter)
+    // todo - add return type Result
+    protected function run(string $filter): mixed
     {
         return $this->connection->{$this->type}(
             $this->getDn(),
             $filter,
             $this->getSelects(),
-            $onlyAttributes = false,
+            false,
             $this->limit
         );
     }
@@ -480,12 +489,12 @@ class Builder
      * Runs the paginate operation with the given filter.
      *
      * @param string $filter
-     * @param int    $perPage
-     * @param bool   $isCritical
+     * @param int $perPage
+     * @param bool $isCritical
      *
      * @return array
      */
-    protected function runPaginate($filter, $perPage, $isCritical)
+    protected function runPaginate(string $filter, int $perPage, bool $isCritical): array
     {
         return $this->connection->supportsServerControlsInMethods() ?
             $this->compatiblePaginationCallback($filter, $perPage, $isCritical) :
@@ -496,12 +505,12 @@ class Builder
      * Create a deprecated pagination callback compatible with PHP 7.2.
      *
      * @param string $filter
-     * @param int    $perPage
-     * @param bool   $isCritical
+     * @param int $perPage
+     * @param bool $isCritical
      *
      * @return array
      */
-    protected function deprecatedPaginationCallback($filter, $perPage, $isCritical)
+    protected function deprecatedPaginationCallback(string $filter, int $perPage, bool $isCritical): array
     {
         $pages = [];
 
@@ -510,7 +519,7 @@ class Builder
         do {
             $this->connection->controlPagedResult($perPage, $isCritical, $cookie);
 
-            if (! $resource = $this->run($filter)) {
+            if (!$resource = $this->run($filter)) {
                 break;
             }
 
@@ -534,22 +543,22 @@ class Builder
      * Create a compatible pagination callback compatible with PHP 7.3 and greater.
      *
      * @param string $filter
-     * @param int    $perPage
-     * @param bool   $isCritical
+     * @param int $perPage
+     * @param bool $isCritical
      *
      * @return array
      */
-    protected function compatiblePaginationCallback($filter, $perPage, $isCritical)
+    protected function compatiblePaginationCallback(string $filter, int $perPage, bool $isCritical): array
     {
         $pages = [];
 
         // Setup our paged results control.
         $controls = [
             LDAP_CONTROL_PAGEDRESULTS => [
-                'oid'        => LDAP_CONTROL_PAGEDRESULTS,
+                'oid' => LDAP_CONTROL_PAGEDRESULTS,
                 'isCritical' => $isCritical,
-                'value'      => [
-                    'size'   => $perPage,
+                'value' => [
+                    'size' => $perPage,
                     'cookie' => '',
                 ],
             ],
@@ -559,7 +568,7 @@ class Builder
             // Update the server controls.
             $this->connection->setOption(LDAP_OPT_SERVER_CONTROLS, $controls);
 
-            if (! $resource = $this->run($filter)) {
+            if (!$resource = $this->run($filter)) {
                 break;
             }
 
@@ -588,15 +597,18 @@ class Builder
     /**
      * Parses the given LDAP result by retrieving its entries.
      *
-     * @param resource|Result $result
+     * @param Result|resource $result
      *
-     * @return array
+     * @return array|Model
      */
-    protected function parse($result)
+    protected function parse(mixed $result): array|Model
     {
         if (is_resource($result) || $result instanceof Result) {
             $entries = $this->connection->getEntries($result);
-            
+            if (is_null($entries)) {
+                $entries = [];
+            }
+
             // Free up memory.
             $this->connection->freeResult($result);
         } else {
@@ -613,15 +625,15 @@ class Builder
      *
      * @return string
      */
-    protected function getCacheKey($query)
+    protected function getCacheKey(string $query): string
     {
         $key = $this->connection->getHost()
-            .$this->type
-            .$this->getDn()
-            .$query
-            .implode('', $this->getSelects())
-            .$this->limit
-            .$this->paginated;
+            . $this->type
+            . $this->getDn()
+            . $query
+            . implode('', $this->getSelects())
+            . $this->limit
+            . $this->paginated;
 
         return md5($key);
     }
@@ -632,8 +644,9 @@ class Builder
      * @param array|string $columns
      *
      * @return Model|array|null
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function first($columns = [])
+    public function first(array|string $columns = []): Model|array|null
     {
         $results = $this->select($columns)->limit(1)->get();
 
@@ -650,11 +663,10 @@ class Builder
      *
      * @param array|string $columns
      *
-     * @throws ModelNotFoundException
-     *
      * @return Model|array
+     * @throws ModelNotFoundException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function firstOrFail($columns = [])
+    public function firstOrFail(array|string $columns = []): Model|array
     {
         $record = $this->first($columns);
 
@@ -669,18 +681,19 @@ class Builder
     /**
      * Finds a record by the specified attribute and value.
      *
-     * @param string       $attribute
-     * @param string       $value
+     * @param string $attribute
+     * @param string $value
      * @param array|string $columns
      *
      * @return Model|array|false
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function findBy($attribute, $value, $columns = [])
+    public function findBy(string $attribute, string $value, array|string $columns = []): Model|false|array
     {
         try {
             return $this->findByOrFail($attribute, $value, $columns);
-        } catch (ModelNotFoundException $e) {
-            return;
+        } catch (ModelNotFoundException) {
+            return false;
         }
     }
 
@@ -689,15 +702,14 @@ class Builder
      *
      * If no record is found an exception is thrown.
      *
-     * @param string       $attribute
-     * @param string       $value
+     * @param string $attribute
+     * @param string $value
      * @param array|string $columns
      *
-     * @throws ModelNotFoundException
-     *
      * @return Model|array
+     * @throws ModelNotFoundException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function findByOrFail($attribute, $value, $columns = [])
+    public function findByOrFail(string $attribute, string $value, array|string $columns = []): Model|array
     {
         return $this->whereEquals($attribute, $value)->firstOrFail($columns);
     }
@@ -705,12 +717,13 @@ class Builder
     /**
      * Finds a record using ambiguous name resolution.
      *
-     * @param string|array $value
+     * @param array|string $value
      * @param array|string $columns
      *
-     * @return Model|array|null
+     * @return false|Model|array|Collection|null
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function find($value, $columns = [])
+    public function find(array|string $value, array|string $columns = []): false|Model|array|Collection|null
     {
         if (is_array($value)) {
             return $this->findMany($value, $columns);
@@ -730,9 +743,10 @@ class Builder
      * @param array $values
      * @param array $columns
      *
-     * @return \Adldap\Query\Collection|array
+     * @return Collection|array
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function findMany(array $values = [], $columns = [])
+    public function findMany(array $values = [], array $columns = []): array|Collection
     {
         $this->select($columns);
 
@@ -756,7 +770,7 @@ class Builder
      *
      * @return Builder
      */
-    protected function prepareAnrEquivalentQuery($value)
+    protected function prepareAnrEquivalentQuery(string $value): static
     {
         return $this->orFilter(function (self $query) use ($value) {
             $locateBy = [
@@ -779,12 +793,13 @@ class Builder
      * Finds many records by the specified attribute.
      *
      * @param string $attribute
-     * @param array  $values
-     * @param array  $columns
+     * @param array $values
+     * @param array $columns
      *
-     * @return \Adldap\Query\Collection|array
+     * @return Collection|array
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function findManyBy($attribute, array $values = [], $columns = [])
+    public function findManyBy(string $attribute, array $values = [], array $columns = []): array|Collection
     {
         $query = $this->select($columns);
 
@@ -800,14 +815,13 @@ class Builder
      *
      * If a record is not found, an exception is thrown.
      *
-     * @param string       $value
+     * @param string $value
      * @param array|string $columns
      *
-     * @throws ModelNotFoundException
-     *
      * @return Model|array
+     * @throws ModelNotFoundException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function findOrFail($value, $columns = [])
+    public function findOrFail(string $value, array|string $columns = []): Model|array
     {
         $entry = $this->find($value, $columns);
 
@@ -824,17 +838,21 @@ class Builder
     /**
      * Finds a record by its distinguished name.
      *
-     * @param string       $dn
+     * @param string|null $dn
      * @param array|string $columns
      *
-     * @return bool|Model
+     * @return Model|bool|array
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function findByDn($dn, $columns = [])
+    public function findByDn(?string $dn, array|string $columns = []): Model|bool|array
     {
+        if (is_null($dn)) {
+            $dn = '';
+        }
         try {
             return $this->findByDnOrFail($dn, $columns);
-        } catch (ModelNotFoundException $e) {
-            return;
+        } catch (ModelNotFoundException) {
+            return false;
         }
     }
 
@@ -843,14 +861,13 @@ class Builder
      *
      * Fails upon no records returned.
      *
-     * @param string       $dn
+     * @param string $dn
      * @param array|string $columns
      *
-     * @throws ModelNotFoundException
-     *
      * @return Model|array
+     * @throws ModelNotFoundException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function findByDnOrFail($dn, $columns = [])
+    public function findByDnOrFail(string $dn, array|string $columns = []): Model|array
     {
         // Since we're setting our base DN to be able to retrieve a model
         // by its distinguished name, we need to set it back to
@@ -874,17 +891,18 @@ class Builder
     /**
      * Finds a record by its string GUID.
      *
-     * @param string       $guid
+     * @param string $guid
      * @param array|string $columns
      *
      * @return Model|array|false
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function findByGuid($guid, $columns = [])
+    public function findByGuid(string $guid, array|string $columns = []): Model|false|array
     {
         try {
             return $this->findByGuidOrFail($guid, $columns);
-        } catch (ModelNotFoundException $e) {
-            return;
+        } catch (ModelNotFoundException) {
+            return false;
         }
     }
 
@@ -893,14 +911,13 @@ class Builder
      *
      * Fails upon no records returned.
      *
-     * @param string       $guid
+     * @param string $guid
      * @param array|string $columns
      *
-     * @throws ModelNotFoundException
-     *
      * @return Model|array
+     * @throws ModelNotFoundException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function findByGuidOrFail($guid, $columns = [])
+    public function findByGuidOrFail(string $guid, array|string $columns = []): Model|array
     {
         if ($this->schema->objectGuidRequiresConversion()) {
             $guid = Utilities::stringGuidToHex($guid);
@@ -914,17 +931,18 @@ class Builder
     /**
      * Finds a record by its Object SID.
      *
-     * @param string       $sid
+     * @param string $sid
      * @param array|string $columns
      *
      * @return Model|array|false
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function findBySid($sid, $columns = [])
+    public function findBySid(string $sid, array|string $columns = []): Model|false|array
     {
         try {
             return $this->findBySidOrFail($sid, $columns);
-        } catch (ModelNotFoundException $e) {
-            return;
+        } catch (ModelNotFoundException) {
+            return false;
         }
     }
 
@@ -933,14 +951,13 @@ class Builder
      *
      * Fails upon no records returned.
      *
-     * @param string       $sid
+     * @param string $sid
      * @param array|string $columns
      *
-     * @throws ModelNotFoundException
-     *
      * @return Model|array
+     * @throws ModelNotFoundException|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function findBySidOrFail($sid, $columns = [])
+    public function findBySidOrFail(string $sid, array|string $columns = []): Model|array
     {
         return $this->findByOrFail($this->schema->objectSid(), $sid, $columns);
     }
@@ -949,10 +966,11 @@ class Builder
      * Finds the Base DN of your domain controller.
      *
      * @return string|bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function findBaseDn()
+    public function findBaseDn(): bool|string
     {
-        $result = $this->setDn(null)
+        $result = $this->setDn()
             ->read()
             ->raw()
             ->whereHas($this->schema->objectClass())
@@ -976,7 +994,7 @@ class Builder
      *
      * @return Builder
      */
-    public function select($columns = [])
+    public function select(array|string $columns = []): static
     {
         $columns = is_array($columns) ? $columns : func_get_args();
 
@@ -994,7 +1012,7 @@ class Builder
      *
      * @return Builder
      */
-    public function rawFilter($filters = [])
+    public function rawFilter(array|string $filters = []): static
     {
         $filters = is_array($filters) ? $filters : func_get_args();
 
@@ -1012,7 +1030,7 @@ class Builder
      *
      * @return Builder
      */
-    public function andFilter(Closure $closure)
+    public function andFilter(Closure $closure): static
     {
         $query = $this->newNestedInstance($closure);
 
@@ -1028,7 +1046,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orFilter(Closure $closure)
+    public function orFilter(Closure $closure): static
     {
         $query = $this->newNestedInstance($closure);
 
@@ -1044,7 +1062,7 @@ class Builder
      *
      * @return Builder
      */
-    public function notFilter(Closure $closure)
+    public function notFilter(Closure $closure): static
     {
         $query = $this->newNestedInstance($closure);
 
@@ -1056,18 +1074,25 @@ class Builder
     /**
      * Adds a where clause to the current query.
      *
-     * @param string|array $field
-     * @param string       $operator
-     * @param string       $value
-     * @param string       $boolean
-     * @param bool         $raw
-     *
-     * @throws InvalidArgumentException
+     * @param array|string $field
+     * @param string|null $operator
+     * @param string|null $value
+     * @param string $boolean
+     * @param bool $raw
      *
      * @return Builder
      */
-    public function where($field, $operator = null, $value = null, $boolean = 'and', $raw = false)
-    {
+    public function where(
+        array|string $field,
+        ?string $operator = null,
+        ?string $value = '',
+        string $boolean = 'and',
+        bool $raw = false
+    ): static {
+        if (is_null($value)) {
+            $value = '';
+        }
+
         if (is_array($field)) {
             // If the column is an array, we will assume it is an array of
             // key-value pairs and can add them each as a where clause.
@@ -1082,17 +1107,17 @@ class Builder
         // 2 values are passed to the method, we will assume that
         // the operator is 'equals' and keep going.
         if (func_num_args() === 2 && in_array($operator, $bypass) === false) {
-            list($value, $operator) = [$operator, '='];
+            [$value, $operator] = [$operator, '='];
         }
 
         if (!in_array($operator, Operator::all())) {
-            throw new InvalidArgumentException("Invalid where operator: {$operator}");
+            throw new InvalidArgumentException("Invalid where operator: $operator");
         }
 
         // We'll escape the value if raw isn't requested.
         $value = $raw ? $value : $this->escape($value);
 
-        $field = $this->escape($field, $ignore = '', 3);
+        $field = $this->escape($field, '', 3);
 
         $this->addFilter($boolean, compact('field', 'operator', 'value'));
 
@@ -1104,13 +1129,13 @@ class Builder
      *
      * Values given to this method are not escaped.
      *
-     * @param string|array $field
-     * @param string       $operator
-     * @param string       $value
+     * @param array|string $field
+     * @param string|null $operator
+     * @param string|null $value
      *
      * @return Builder
      */
-    public function whereRaw($field, $operator = null, $value = null)
+    public function whereRaw(array|string $field, ?string $operator = null, ?string $value = null): static
     {
         return $this->where($field, $operator, $value, 'and', true);
     }
@@ -1123,7 +1148,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereEquals($field, $value)
+    public function whereEquals(string $field, string $value): static
     {
         return $this->where($field, Operator::$equals, $value);
     }
@@ -1136,7 +1161,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereNotEquals($field, $value)
+    public function whereNotEquals(string $field, string $value): static
     {
         return $this->where($field, Operator::$doesNotEqual, $value);
     }
@@ -1149,7 +1174,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereApproximatelyEquals($field, $value)
+    public function whereApproximatelyEquals(string $field, string $value): static
     {
         return $this->where($field, Operator::$approximatelyEquals, $value);
     }
@@ -1161,7 +1186,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereHas($field)
+    public function whereHas(string $field): static
     {
         return $this->where($field, Operator::$has);
     }
@@ -1173,7 +1198,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereNotHas($field)
+    public function whereNotHas(string $field): static
     {
         return $this->where($field, Operator::$notHas);
     }
@@ -1186,7 +1211,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereContains($field, $value)
+    public function whereContains(string $field, string $value): static
     {
         return $this->where($field, Operator::$contains, $value);
     }
@@ -1199,7 +1224,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereNotContains($field, $value)
+    public function whereNotContains(string $field, string $value): static
     {
         return $this->where($field, Operator::$notContains, $value);
     }
@@ -1208,11 +1233,11 @@ class Builder
      * Query for entries that match any of the values provided for the given field.
      *
      * @param string $field
-     * @param array  $values
+     * @param array $values
      *
      * @return Builder
      */
-    public function whereIn($field, array $values)
+    public function whereIn(string $field, array $values): static
     {
         return $this->orFilter(function (self $query) use ($field, $values) {
             foreach ($values as $value) {
@@ -1225,11 +1250,11 @@ class Builder
      * Adds a 'between' clause to the current query.
      *
      * @param string $field
-     * @param array  $values
+     * @param array $values
      *
      * @return Builder
      */
-    public function whereBetween($field, array $values)
+    public function whereBetween(string $field, array $values): static
     {
         return $this->where([
             [$field, '>=', $values[0]],
@@ -1245,7 +1270,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereStartsWith($field, $value)
+    public function whereStartsWith(string $field, string $value): static
     {
         return $this->where($field, Operator::$startsWith, $value);
     }
@@ -1258,7 +1283,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereNotStartsWith($field, $value)
+    public function whereNotStartsWith(string $field, string $value): static
     {
         return $this->where($field, Operator::$notStartsWith, $value);
     }
@@ -1271,7 +1296,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereEndsWith($field, $value)
+    public function whereEndsWith(string $field, string $value): static
     {
         return $this->where($field, Operator::$endsWith, $value);
     }
@@ -1284,7 +1309,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereNotEndsWith($field, $value)
+    public function whereNotEndsWith(string $field, string $value): static
     {
         return $this->where($field, Operator::$notEndsWith, $value);
     }
@@ -1294,7 +1319,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereEnabled()
+    public function whereEnabled(): static
     {
         return $this->rawFilter($this->schema->filterEnabled());
     }
@@ -1304,7 +1329,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereDisabled()
+    public function whereDisabled(): static
     {
         return $this->rawFilter($this->schema->filterDisabled());
     }
@@ -1316,7 +1341,7 @@ class Builder
      *
      * @return Builder
      */
-    public function whereMemberOf($dn)
+    public function whereMemberOf(string $dn): static
     {
         return $this->whereEquals($this->schema->memberOfRecursive(), $dn);
     }
@@ -1325,12 +1350,12 @@ class Builder
      * Adds an 'or where' clause to the current query.
      *
      * @param array|string $field
-     * @param string|null  $operator
-     * @param string|null  $value
+     * @param string|null $operator
+     * @param string|null $value
      *
      * @return Builder
      */
-    public function orWhere($field, $operator = null, $value = null)
+    public function orWhere(array|string $field, ?string $operator = null, ?string $value = null): static
     {
         return $this->where($field, $operator, $value, 'or');
     }
@@ -1341,12 +1366,12 @@ class Builder
      * Values given to this method are not escaped.
      *
      * @param string $field
-     * @param string $operator
-     * @param string $value
+     * @param string|null $operator
+     * @param string|null $value
      *
      * @return Builder
      */
-    public function orWhereRaw($field, $operator = null, $value = null)
+    public function orWhereRaw(string $field, ?string $operator = null, ?string $value = null): static
     {
         return $this->where($field, $operator, $value, 'or', true);
     }
@@ -1358,7 +1383,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereHas($field)
+    public function orWhereHas(string $field): static
     {
         return $this->orWhere($field, Operator::$has);
     }
@@ -1370,7 +1395,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereNotHas($field)
+    public function orWhereNotHas(string $field): static
     {
         return $this->orWhere($field, Operator::$notHas);
     }
@@ -1383,7 +1408,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereEquals($field, $value)
+    public function orWhereEquals(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$equals, $value);
     }
@@ -1396,7 +1421,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereNotEquals($field, $value)
+    public function orWhereNotEquals(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$doesNotEqual, $value);
     }
@@ -1409,7 +1434,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereApproximatelyEquals($field, $value)
+    public function orWhereApproximatelyEquals(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$approximatelyEquals, $value);
     }
@@ -1422,7 +1447,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereContains($field, $value)
+    public function orWhereContains(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$contains, $value);
     }
@@ -1435,7 +1460,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereNotContains($field, $value)
+    public function orWhereNotContains(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$notContains, $value);
     }
@@ -1448,7 +1473,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereStartsWith($field, $value)
+    public function orWhereStartsWith(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$startsWith, $value);
     }
@@ -1461,7 +1486,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereNotStartsWith($field, $value)
+    public function orWhereNotStartsWith(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$notStartsWith, $value);
     }
@@ -1474,7 +1499,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereEndsWith($field, $value)
+    public function orWhereEndsWith(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$endsWith, $value);
     }
@@ -1487,7 +1512,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereNotEndsWith($field, $value)
+    public function orWhereNotEndsWith(string $field, string $value): static
     {
         return $this->orWhere($field, Operator::$notEndsWith, $value);
     }
@@ -1499,7 +1524,7 @@ class Builder
      *
      * @return Builder
      */
-    public function orWhereMemberOf($dn)
+    public function orWhereMemberOf(string $dn): static
     {
         return $this->orWhereEquals($this->schema->memberOfRecursive(), $dn);
     }
@@ -1507,18 +1532,17 @@ class Builder
     /**
      * Adds a filter onto the current query.
      *
-     * @param string $type     The type of filter to add.
-     * @param array  $bindings The bindings of the filter.
-     *
-     * @throws InvalidArgumentException
+     * @param string $type The type of filter to add.
+     * @param array $bindings The bindings of the filter.
      *
      * @return $this
+     * @throws InvalidArgumentException
      */
-    public function addFilter($type, array $bindings)
+    public function addFilter(string $type, array $bindings): static
     {
         // Here we will ensure we have been given a proper filter type.
         if (!array_key_exists($type, $this->filters)) {
-            throw new InvalidArgumentException("Invalid filter type: {$type}.");
+            throw new InvalidArgumentException("Invalid filter type: $type.");
         }
 
         // The required filter key bindings.
@@ -1529,7 +1553,7 @@ class Builder
             // Retrieve the keys that are missing in the bindings array.
             $missing = implode(', ', array_diff($required, array_flip($bindings)));
 
-            throw new InvalidArgumentException("Invalid filter bindings. Missing: {$missing} keys.");
+            throw new InvalidArgumentException("Invalid filter bindings. Missing: $missing keys.");
         }
 
         $this->filters[$type][] = $bindings;
@@ -1542,7 +1566,7 @@ class Builder
      *
      * @return $this
      */
-    public function clearFilters()
+    public function clearFilters(): static
     {
         foreach ($this->filters as $type => $filters) {
             $this->filters[$type] = [];
@@ -1557,7 +1581,7 @@ class Builder
      *
      * @return bool
      */
-    public function hasSelects()
+    public function hasSelects(): bool
     {
         return count($this->getSelects()) > 0;
     }
@@ -1567,7 +1591,7 @@ class Builder
      *
      * @return array
      */
-    public function getSelects()
+    public function getSelects(): array
     {
         $selects = $this->columns;
 
@@ -1586,13 +1610,13 @@ class Builder
     /**
      * Sorts the LDAP search results by the specified field and direction.
      *
-     * @param string   $field
-     * @param string   $direction
+     * @param string $field
+     * @param string $direction
      * @param int|null $flags
      *
      * @return Builder
      */
-    public function sortBy($field, $direction = 'asc', $flags = null)
+    public function sortBy(string $field, string $direction = 'asc', ?int $flags = null): static
     {
         $this->sortByField = $field;
 
@@ -1617,7 +1641,7 @@ class Builder
      *
      * @return Builder
      */
-    public function read()
+    public function read(): static
     {
         $this->type = 'read';
 
@@ -1629,7 +1653,7 @@ class Builder
      *
      * @return Builder
      */
-    public function listing()
+    public function listing(): static
     {
         $this->type = 'listing';
 
@@ -1641,7 +1665,7 @@ class Builder
      *
      * @return Builder
      */
-    public function recursive()
+    public function recursive(): static
     {
         $this->type = 'search';
 
@@ -1655,9 +1679,9 @@ class Builder
      *
      * @return Builder
      */
-    public function raw($raw = true)
+    public function raw(bool $raw = true): static
     {
-        $this->raw = (bool) $raw;
+        $this->raw = $raw;
 
         return $this;
     }
@@ -1669,9 +1693,9 @@ class Builder
      *
      * @return Builder
      */
-    public function nested($nested = true)
+    public function nested(bool $nested = true): static
     {
-        $this->nested = (bool) $nested;
+        $this->nested = $nested;
 
         return $this;
     }
@@ -1681,12 +1705,12 @@ class Builder
      *
      * If flushing is enabled, the query cache will be flushed and then re-cached.
      *
-     * @param \DateTimeInterface $until When to expire the query cache.
-     * @param bool               $flush Whether to force-flush the query cache.
+     * @param \DateTimeInterface|null $until When to expire the query cache.
+     * @param bool $flush Whether to force-flush the query cache.
      *
      * @return $this
      */
-    public function cache(\DateTimeInterface $until = null, $flush = false)
+    public function cache(?\DateTimeInterface $until = null, bool $flush = false): static
     {
         $this->caching = true;
         $this->cacheUntil = $until;
@@ -1700,13 +1724,13 @@ class Builder
      *
      * @param string $value
      * @param string $ignore
-     * @param int    $flags
+     * @param int $flags
      *
      * @return string
      */
-    public function escape($value, $ignore = '', $flags = 0)
+    public function escape(string $value, string $ignore = '', int $flags = 0): string
     {
-        return ldap_escape((string) $value, $ignore, $flags);
+        return ldap_escape($value, $ignore, $flags);
     }
 
     /**
@@ -1714,7 +1738,7 @@ class Builder
      *
      * @return string
      */
-    public function getSortByField()
+    public function getSortByField(): string
     {
         return $this->sortByField;
     }
@@ -1724,7 +1748,7 @@ class Builder
      *
      * @return string
      */
-    public function getSortByDirection()
+    public function getSortByDirection(): string
     {
         return $this->sortByDirection;
     }
@@ -1732,9 +1756,9 @@ class Builder
     /**
      * Returns the query builders sort by flags.
      *
-     * @return int
+     * @return int|null
      */
-    public function getSortByFlags()
+    public function getSortByFlags(): ?int
     {
         return $this->sortByFlags;
     }
@@ -1744,7 +1768,7 @@ class Builder
      *
      * @return bool
      */
-    public function isNested()
+    public function isNested(): bool
     {
         return $this->nested === true;
     }
@@ -1755,7 +1779,7 @@ class Builder
      *
      * @return bool
      */
-    public function isRaw()
+    public function isRaw(): bool
     {
         return $this->raw;
     }
@@ -1766,7 +1790,7 @@ class Builder
      *
      * @return bool
      */
-    public function isPaginated()
+    public function isPaginated(): bool
     {
         return $this->paginated;
     }
@@ -1777,24 +1801,24 @@ class Builder
      *
      * @return bool
      */
-    public function isSorted()
+    public function isSorted(): bool
     {
-        return $this->sortByField ? true : false;
+        return (bool)$this->sortByField;
     }
 
     /**
      * Handle dynamic method calls on the query builder object to be directed to the query processor.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         // We'll check if the beginning of the method being called contains
         // 'where'. If so, we'll assume it's a dynamic 'where' clause.
-        if (substr($method, 0, 5) === 'where') {
+        if (str_starts_with($method, 'where')) {
             return $this->dynamicWhere($method, $parameters);
         }
 
@@ -1805,11 +1829,11 @@ class Builder
      * Handles dynamic "where" clauses to the query.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return Builder
      */
-    public function dynamicWhere($method, $parameters)
+    public function dynamicWhere(string $method, array $parameters): static
     {
         $finder = substr($method, 5);
 
@@ -1846,19 +1870,19 @@ class Builder
     /**
      * Adds an array of wheres to the current query.
      *
-     * @param array  $wheres
+     * @param array $wheres
      * @param string $boolean
-     * @param bool   $raw
+     * @param bool $raw
      *
      * @return Builder
      */
-    protected function addArrayOfWheres($wheres, $boolean, $raw)
+    protected function addArrayOfWheres(array $wheres, string $boolean, bool $raw): static
     {
         foreach ($wheres as $key => $value) {
             if (is_numeric($key) && is_array($value)) {
                 // If the key is numeric and the value is an array, we'll
                 // assume we've been given an array with conditionals.
-                list($field, $condition) = $value;
+                [$field, $condition] = $value;
 
                 // Since a value is optional for some conditionals, we will
                 // try and retrieve the third parameter from the array,
@@ -1880,12 +1904,12 @@ class Builder
      *
      * @param string $segment
      * @param string $connector
-     * @param array  $parameters
-     * @param int    $index
+     * @param array $parameters
+     * @param int $index
      *
      * @return void
      */
-    protected function addDynamic($segment, $connector, $parameters, $index)
+    protected function addDynamic(string $segment, string $connector, array $parameters, int $index): void
     {
         // We'll format the 'where' boolean and field here to avoid casing issues.
         $bool = strtolower($connector);
@@ -1897,28 +1921,20 @@ class Builder
     /**
      * Logs the given executed query information by firing its query event.
      *
-     * @param Builder    $query
-     * @param string     $type
-     * @param null|float $time
+     * @param Builder $query
+     * @param string $type
+     * @param float|null $time
      */
-    protected function logQuery($query, $type, $time = null)
+    protected function logQuery(Builder $query, string $type, ?float $time = null): void
     {
         $args = [$query, $time];
 
-        switch ($type) {
-            case 'listing':
-                $event = new Events\Listing(...$args);
-                break;
-            case 'read':
-                $event = new Events\Read(...$args);
-                break;
-            case 'paginate':
-                $event = new Events\Paginate(...$args);
-                break;
-            default:
-                $event = new Events\Search(...$args);
-                break;
-        }
+        $event = match ($type) {
+            'listing' => new Events\Listing(...$args),
+            'read' => new Events\Read(...$args),
+            'paginate' => new Events\Paginate(...$args),
+            default => new Events\Search(...$args),
+        };
 
         $this->fireQueryEvent($event);
     }
@@ -1928,7 +1944,7 @@ class Builder
      *
      * @param QueryExecuted $event
      */
-    protected function fireQueryEvent(QueryExecuted $event)
+    protected function fireQueryEvent(QueryExecuted $event): void
     {
         Adldap::getEventDispatcher()->fire($event);
     }
@@ -1936,11 +1952,11 @@ class Builder
     /**
      * Get the elapsed time since a given starting point.
      *
-     * @param int $start
+     * @param float $start
      *
      * @return float
      */
-    protected function getElapsedTime($start)
+    protected function getElapsedTime(float $start): float
     {
         return round((microtime(true) - $start) * 1000, 2);
     }
@@ -1950,7 +1966,7 @@ class Builder
      *
      * @return Processor
      */
-    protected function newProcessor()
+    protected function newProcessor(): Processor
     {
         return new Processor($this);
     }

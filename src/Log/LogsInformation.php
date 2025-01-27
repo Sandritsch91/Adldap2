@@ -11,14 +11,14 @@ trait LogsInformation
      *
      * @var LoggerInterface|null
      */
-    protected static $logger;
+    protected static ?LoggerInterface $logger = null;
 
     /**
      * Get the logger instance.
      *
      * @return LoggerInterface|null
      */
-    public static function getLogger()
+    public static function getLogger(): ?LoggerInterface
     {
         return static::$logger;
     }
@@ -30,7 +30,7 @@ trait LogsInformation
      *
      * @return void
      */
-    public static function setLogger(LoggerInterface $logger)
+    public static function setLogger(LoggerInterface $logger): void
     {
         static::$logger = $logger;
     }
@@ -40,7 +40,7 @@ trait LogsInformation
      *
      * @return void
      */
-    public static function unsetLogger()
+    public static function unsetLogger(): void
     {
         static::$logger = null;
     }

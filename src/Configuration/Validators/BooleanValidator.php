@@ -14,10 +14,10 @@ class BooleanValidator extends Validator
     /**
      * {@inheritdoc}
      */
-    public function validate()
+    public function validate(): true
     {
         if (!is_bool($this->value)) {
-            throw new ConfigurationException("Option {$this->key} must be a boolean.");
+            throw new ConfigurationException("Option {this->key must be a boolean.");
         }
 
         return true;

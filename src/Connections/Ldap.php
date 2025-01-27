@@ -2,6 +2,9 @@
 
 namespace Adldap\Connections;
 
+use LDAP\Connection;
+use LDAP\Result;
+
 /**
  * Class Ldap.
  *
@@ -14,47 +17,47 @@ class Ldap implements ConnectionInterface
      *
      * @var string|null
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * The LDAP host that is currently connected.
      *
      * @var string|null
      */
-    protected $host;
+    protected ?string $host = null;
 
     /**
      * The active LDAP connection.
      *
-     * @var resource
+     * @var false|Connection|null
      */
-    protected $connection;
+    protected false|Connection|null $connection = null;
 
     /**
      * The bound status of the connection.
      *
      * @var bool
      */
-    protected $bound = false;
+    protected bool $bound = false;
 
     /**
      * Whether the connection must be bound over SSL.
      *
      * @var bool
      */
-    protected $useSSL = false;
+    protected bool $useSSL = false;
 
     /**
      * Whether the connection must be bound over TLS.
      *
      * @var bool
      */
-    protected $useTLS = false;
+    protected bool $useTLS = false;
 
     /**
      * {@inheritdoc}
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         $this->name = $name;
     }
@@ -62,7 +65,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function isUsingSSL()
+    public function isUsingSSL(): bool
     {
         return $this->useSSL;
     }
@@ -70,7 +73,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function isUsingTLS()
+    public function isUsingTLS(): bool
     {
         return $this->useTLS;
     }
@@ -78,7 +81,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function isBound()
+    public function isBound(): bool
     {
         return $this->bound;
     }
@@ -86,7 +89,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function canChangePasswords()
+    public function canChangePasswords(): bool
     {
         return $this->isUsingSSL() || $this->isUsingTLS();
     }
@@ -94,7 +97,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function ssl($enabled = true)
+    public function ssl(bool $enabled = true): ConnectionInterface
     {
         $this->useSSL = $enabled;
 
@@ -104,7 +107,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function tls($enabled = true)
+    public function tls(bool $enabled = true): ConnectionInterface
     {
         $this->useTLS = $enabled;
 
@@ -114,7 +117,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getHost()
+    public function getHost(): ?string
     {
         return $this->host;
     }
@@ -122,7 +125,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -130,7 +133,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getConnection()
+    public function getConnection(): Connection|false|null
     {
         return $this->connection;
     }
@@ -138,7 +141,8 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntries($searchResults)
+    // todo - add return type Result
+    public function getEntries(mixed $searchResults): array|false
     {
         return ldap_get_entries($this->connection, $searchResults);
     }
@@ -146,7 +150,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getFirstEntry($searchResults)
+    public function getFirstEntry(Result $searchResults): array|false
     {
         return ldap_first_entry($this->connection, $searchResults);
     }
@@ -154,7 +158,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getNextEntry($entry)
+    public function getNextEntry($entry): array|false
     {
         return ldap_next_entry($this->connection, $entry);
     }
@@ -162,7 +166,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getAttributes($entry)
+    public function getAttributes($entry): array
     {
         return ldap_get_attributes($this->connection, $entry);
     }
@@ -170,7 +174,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function countEntries($searchResults)
+    public function countEntries(Result $searchResults): int
     {
         return ldap_count_entries($this->connection, $searchResults);
     }
@@ -178,7 +182,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function compare($dn, $attribute, $value)
+    public function compare(string $dn, string $attribute, string $value): int|bool
     {
         return ldap_compare($this->connection, $dn, $attribute, $value);
     }
@@ -186,7 +190,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getLastError()
+    public function getLastError(): string
     {
         return ldap_error($this->connection);
     }
@@ -194,7 +198,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getDetailedError()
+    public function getDetailedError(): ?DetailedError
     {
         // If the returned error number is zero, the last LDAP operation
         // succeeded. We won't return a detailed error.
@@ -203,12 +207,13 @@ class Ldap implements ConnectionInterface
 
             return new DetailedError($number, $this->err2Str($number), $message);
         }
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getValuesLen($entry, $attribute)
+    public function getValuesLen($entry, $attribute): array
     {
         return ldap_get_values_len($this->connection, $entry, $attribute);
     }
@@ -216,7 +221,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function setOption($option, $value)
+    public function setOption(int $option, mixed $value): bool
     {
         return ldap_set_option($this->connection, $option, $value);
     }
@@ -224,7 +229,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []): void
     {
         foreach ($options as $option => $value) {
             $this->setOption($option, $value);
@@ -234,7 +239,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function setRebindCallback(callable $callback)
+    public function setRebindCallback(callable $callback): bool
     {
         return ldap_set_rebind_proc($this->connection, $callback);
     }
@@ -242,21 +247,17 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function startTLS()
+    public function startTLS(): bool
     {
-        try {
-            return ldap_start_tls($this->connection);
-        } catch (\ErrorException $e) {
-            throw new ConnectionException($e->getMessage(), $e->getCode(), $e);
-        }
+        return ldap_start_tls($this->connection);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function connect($hosts = [], $port = 389)
+    public function connect(array|string $hostname = [], int $port = 389): Connection|bool
     {
-        $this->host = $this->getConnectionString($hosts, $this->getProtocol(), $port);
+        $this->host = $this->getConnectionString($hostname, $this->getProtocol(), $port);
 
         // Reset the bound status if reinitializing the connection.
         $this->bound = false;
@@ -267,11 +268,15 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function close()
+    public function close(): bool
     {
         $connection = $this->connection;
 
-        $result = is_resource($connection) ? ldap_close($connection) : false;
+        if ($this->connection instanceof Connection) {
+            $result = ldap_close($connection);
+        } else {
+            $result = true;
+        }
 
         $this->bound = false;
 
@@ -281,24 +286,44 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function search($dn, $filter, array $fields, $onlyAttributes = false, $size = 0, $time = 0)
-    {
+    // todo - add return type Result
+    public function search(
+        string $dn,
+        string $filter,
+        array $fields,
+        bool $onlyAttributes = false,
+        int $size = 0,
+        int $time = 0
+    ): mixed {
         return ldap_search($this->connection, $dn, $filter, $fields, $onlyAttributes, $size, $time);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function listing($dn, $filter, array $fields, $onlyAttributes = false, $size = 0, $time = 0)
-    {
-        return ldap_list($this->connection, $dn, $filter, $fields, $onlyAttributes, $size, $time);
+    public function listing(
+        string $dn,
+        string $filter,
+        array $attributes,
+        bool $onlyAttributes = false,
+        int $size = 0,
+        int $time = 0
+    ): Result|array|false {
+        return ldap_list($this->connection, $dn, $filter, $attributes, $onlyAttributes, $size, $time);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function read($dn, $filter, array $fields, $onlyAttributes = false, $size = 0, $time = 0)
-    {
+    // todo - add return type Result
+    public function read(
+        string $dn,
+        string $filter,
+        array $fields,
+        bool $onlyAttributes = false,
+        int $size = 0,
+        int $time = 0
+    ): mixed {
         return ldap_read($this->connection, $dn, $filter, $fields, $onlyAttributes, $size, $time);
     }
 
@@ -307,17 +332,23 @@ class Ldap implements ConnectionInterface
      *
      * @link https://www.php.net/manual/en/function.ldap-parse-result.php
      *
-     * @param resource $result
-     * @param int      $errorCode
-     * @param string   $dn
-     * @param string   $errorMessage
-     * @param array    $referrals
-     * @param array    $serverControls
+     * @param Result $result
+     * @param int|null $errorCode
+     * @param string $dn
+     * @param string $errorMessage
+     * @param array|null $referrals
+     * @param array $serverControls
      *
      * @return bool
      */
-    public function parseResult($result, &$errorCode, &$dn, &$errorMessage, &$referrals, &$serverControls = [])
-    {
+    public function parseResult(
+        Result $result,
+        ?int &$errorCode,
+        string &$dn,
+        string &$errorMessage,
+        ?array &$referrals,
+        array &$serverControls = []
+    ): bool {
         return $this->supportsServerControlsInMethods() && !empty($serverControls) ?
             ldap_parse_result($this->connection, $result, $errorCode, $dn, $errorMessage, $referrals, $serverControls) :
             ldap_parse_result($this->connection, $result, $errorCode, $dn, $errorMessage, $referrals);
@@ -326,7 +357,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function bind($username, $password, $sasl = false)
+    public function bind(string $username, string $password, bool $sasl = false): bool
     {
         // Prior to binding, we will upgrade our connectivity to TLS on our current
         // connection and ensure we are not already bound before upgrading.
@@ -349,7 +380,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function add($dn, array $entry)
+    public function add(string $dn, array $entry): bool
     {
         return ldap_add($this->connection, $dn, $entry);
     }
@@ -357,7 +388,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function delete($dn)
+    public function delete(string $dn): bool
     {
         return ldap_delete($this->connection, $dn);
     }
@@ -365,7 +396,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function rename($dn, $newRdn, $newParent, $deleteOldRdn = false)
+    public function rename(string $dn, string $newRdn, string $newParent, bool $deleteOldRdn = false): bool
     {
         return ldap_rename($this->connection, $dn, $newRdn, $newParent, $deleteOldRdn);
     }
@@ -373,7 +404,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function modify($dn, array $entry)
+    public function modify(string $dn, array $entry): bool
     {
         return ldap_modify($this->connection, $dn, $entry);
     }
@@ -381,7 +412,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function modifyBatch($dn, array $values)
+    public function modifyBatch(?string $dn, array $values): bool
     {
         return ldap_modify_batch($this->connection, $dn, $values);
     }
@@ -389,7 +420,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function modAdd($dn, array $entry)
+    public function modAdd(string $dn, array $entry): bool
     {
         return ldap_mod_add($this->connection, $dn, $entry);
     }
@@ -397,7 +428,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function modReplace($dn, array $entry)
+    public function modReplace(string $dn, array $entry): bool
     {
         return ldap_mod_replace($this->connection, $dn, $entry);
     }
@@ -405,7 +436,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function modDelete($dn, array $entry)
+    public function modDelete(string $dn, array $entry): bool
     {
         return ldap_mod_del($this->connection, $dn, $entry);
     }
@@ -413,23 +444,25 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function controlPagedResult($pageSize = 1000, $isCritical = false, $cookie = '')
+    public function controlPagedResult(int $pageSize = 1000, bool $isCritical = false, string $cookie = ''): void
     {
-        return ldap_control_paged_result($this->connection, $pageSize, $isCritical, $cookie);
+        throw new \BadMethodCallException('This method is not supported in this version of PHP.');
+        // return ldap_control_paged_result($this->connection, $pageSize, $isCritical, $cookie);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function controlPagedResultResponse($result, &$cookie)
+    public function controlPagedResultResponse($result, string &$cookie): void
     {
-        return ldap_control_paged_result_response($this->connection, $result, $cookie);
+        throw new \BadMethodCallException('This method is not supported in this version of PHP.');
+        // return ldap_control_paged_result_response($this->connection, $result, $cookie);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function freeResult($result)
+    public function freeResult($result): bool
     {
         return ldap_free_result($result);
     }
@@ -437,7 +470,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function errNo()
+    public function errNo(): int
     {
         return ldap_errno($this->connection);
     }
@@ -445,7 +478,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getExtendedError()
+    public function getExtendedError(): string
     {
         return $this->getDiagnosticMessage();
     }
@@ -453,17 +486,18 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getExtendedErrorHex()
+    public function getExtendedErrorHex(): ?string
     {
-        if (preg_match("/(?<=data\s).*?(?=\,)/", $this->getExtendedError(), $code)) {
+        if (preg_match("/(?<=data\s).*?(?=,)/", $this->getExtendedError(), $code)) {
             return $code[0];
         }
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtendedErrorCode()
+    public function getExtendedErrorCode(): string
     {
         return $this->extractDiagnosticCode($this->getExtendedError());
     }
@@ -471,7 +505,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function err2Str($number)
+    public function err2Str(int $number): string
     {
         return ldap_err2str($number);
     }
@@ -479,7 +513,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getDiagnosticMessage()
+    public function getDiagnosticMessage(): string
     {
         ldap_get_option($this->connection, LDAP_OPT_ERROR_STRING, $message);
 
@@ -489,11 +523,11 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function extractDiagnosticCode($message)
+    public function extractDiagnosticCode(string $message): bool|string
     {
         preg_match('/^([\da-fA-F]+):/', $message, $matches);
 
-        return isset($matches[1]) ? $matches[1] : false;
+        return $matches[1] ?? false;
     }
 
     /**
@@ -501,7 +535,7 @@ class Ldap implements ConnectionInterface
      *
      * @return string
      */
-    public function getProtocol()
+    public function getProtocol(): string
     {
         return $this->isUsingSSL() ? $this::PROTOCOL_SSL : $this::PROTOCOL;
     }
@@ -511,7 +545,7 @@ class Ldap implements ConnectionInterface
      *
      * @return bool
      */
-    public function supportsServerControlsInMethods()
+    public function supportsServerControlsInMethods(): bool
     {
         return version_compare(PHP_VERSION, '7.3.0') >= 0;
     }
@@ -519,13 +553,13 @@ class Ldap implements ConnectionInterface
     /**
      * Generates an LDAP connection string for each host given.
      *
-     * @param string|array $hosts
-     * @param string       $protocol
-     * @param string       $port
+     * @param array|string $hosts
+     * @param string $protocol
+     * @param int $port
      *
      * @return string
      */
-    protected function getConnectionString($hosts, $protocol, $port)
+    protected function getConnectionString(array|string $hosts, string $protocol, int $port): string
     {
         // If we are using SSL and using the default port, we
         // will override it to use the default SSL port.
@@ -537,7 +571,7 @@ class Ldap implements ConnectionInterface
         $hosts = is_array($hosts) ? $hosts : [$hosts];
 
         $hosts = array_map(function ($host) use ($protocol, $port) {
-            return "{$protocol}{$host}:{$port}";
+            return "$protocol$host:$port";
         }, $hosts);
 
         return implode(' ', $hosts);

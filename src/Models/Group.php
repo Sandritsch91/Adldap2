@@ -169,9 +169,9 @@ class Group extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms675935(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getGroupType(): string
+    public function getGroupType(): ?string
     {
         return $this->getFirstAttribute($this->schema->groupType());
     }

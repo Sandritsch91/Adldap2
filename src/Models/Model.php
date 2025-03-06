@@ -613,9 +613,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
      *
      * @link https://docs.microsoft.com/en-us/windows/win32/adschema/a-userprincipalname
      *
-     * @return string
+     * @return string|null
      */
-    public function getUserPrincipalName(): string
+    public function getUserPrincipalName(): ?string
     {
         return $this->getFirstAttribute($this->schema->userPrincipalName());
     }

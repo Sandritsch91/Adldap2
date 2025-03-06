@@ -388,4 +388,18 @@ class UserTest extends TestCase
         $this->assertTrue($parameters->has('CtxInitialProgram'));
         $this->assertEquals('C:\\path\\otherbin.exe', $parameters->get('CtxInitialProgram')->getValue());
     }
+
+    public function test_get_empty_property()
+    {
+        $model = $this->newUserModel();
+        $value = $model->getAccountExpiry();
+        $this->assertNull($value);
+    }
+
+    public function test_get_faulty_property()
+    {
+        $model = $this->newUserModel();
+        $value = $model->getFirstAttribute('thisDoesNotExist');
+        $this->assertNull($value);
+    }
 }

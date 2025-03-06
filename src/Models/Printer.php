@@ -14,9 +14,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679385(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrinterName(): string
+    public function getPrinterName(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerName());
     }
@@ -26,9 +26,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679408(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrinterShareName(): string
+    public function getPrinterShareName(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerShareName());
     }
@@ -38,9 +38,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679396(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getMemory(): string
+    public function getMemory(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerMemory());
     }
@@ -48,9 +48,9 @@ class Printer extends Entry
     /**
      * Returns the printers URL.
      *
-     * @return string
+     * @return string|null
      */
-    public function getUrl(): string
+    public function getUrl(): ?string
     {
         return $this->getFirstAttribute($this->schema->url());
     }
@@ -60,9 +60,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms676839(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getLocation(): string
+    public function getLocation(): ?string
     {
         return $this->getFirstAttribute($this->schema->location());
     }
@@ -73,9 +73,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679772(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getServerName(): string
+    public function getServerName(): ?string
     {
         return $this->getFirstAttribute($this->schema->serverName());
     }
@@ -157,9 +157,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679391(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrintMaxResolution(): string
+    public function getPrintMaxResolution(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerMaxResolutionSupported());
     }
@@ -169,9 +169,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679402(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrintOrientations(): string
+    public function getPrintOrientations(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerOrientationSupported());
     }
@@ -181,9 +181,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms675652(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getDriverName(): string
+    public function getDriverName(): ?string
     {
         return $this->getFirstAttribute($this->schema->driverName());
     }
@@ -193,9 +193,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms675653(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getDriverVersion(): string
+    public function getDriverVersion(): ?string
     {
         return $this->getFirstAttribute($this->schema->driverVersion());
     }
@@ -205,9 +205,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679413(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPriority(): string
+    public function getPriority(): ?string
     {
         return $this->getFirstAttribute($this->schema->priority());
     }
@@ -217,9 +217,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679411(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrintStartTime(): string
+    public function getPrintStartTime(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerStartTime());
     }
@@ -229,9 +229,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679384(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrintEndTime(): string
+    public function getPrintEndTime(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerEndTime());
     }
@@ -241,9 +241,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679131(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPortName(): string
+    public function getPortName(): ?string
     {
         return $this->getFirstAttribute($this->schema->portName());
     }
@@ -253,9 +253,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms680897(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getVersionNumber(): string
+    public function getVersionNumber(): ?string
     {
         return $this->getFirstAttribute($this->schema->versionNumber());
     }
@@ -265,9 +265,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679405(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrintRate(): string
+    public function getPrintRate(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerPrintRate());
     }
@@ -277,9 +277,9 @@ class Printer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679406(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrintRateUnit(): string
+    public function getPrintRateUnit(): ?string
     {
         return $this->getFirstAttribute($this->schema->printerPrintRateUnit());
     }

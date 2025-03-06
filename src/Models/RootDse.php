@@ -36,9 +36,9 @@ class RootDse extends Model
     /**
      * Returns the hosts configuration naming context.
      *
-     * @return string
+     * @return string|null
      */
-    public function getConfigurationNamingContext(): string
+    public function getConfigurationNamingContext(): ?string
     {
         return $this->getFirstAttribute($this->schema->configurationNamingContext());
     }
@@ -46,9 +46,9 @@ class RootDse extends Model
     /**
      * Returns the hosts schema naming context.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSchemaNamingContext(): string
+    public function getSchemaNamingContext(): ?string
     {
         return $this->getFirstAttribute($this->schema->schemaNamingContext());
     }
@@ -56,9 +56,9 @@ class RootDse extends Model
     /**
      * Returns the hosts DNS name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDnsHostName(): string
+    public function getDnsHostName(): ?string
     {
         return $this->getFirstAttribute($this->schema->dnsHostName());
     }
@@ -66,9 +66,9 @@ class RootDse extends Model
     /**
      * Returns the current hosts server name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getServerName(): string
+    public function getServerName(): ?string
     {
         return $this->getFirstAttribute($this->schema->serverName());
     }

@@ -14,9 +14,9 @@ class Organization extends Entry
     /**
      * Retrieves the organization units OU attribute.
      *
-     * @return string
+     * @return string|null
      */
-    public function getOrganization(): string
+    public function getOrganization(): ?string
     {
         return $this->getFirstAttribute($this->schema->organizationName());
     }

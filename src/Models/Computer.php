@@ -20,9 +20,9 @@ class Computer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679076(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getOperatingSystem(): string
+    public function getOperatingSystem(): ?string
     {
         return $this->getFirstAttribute($this->schema->operatingSystem());
     }
@@ -32,9 +32,9 @@ class Computer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679079(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getOperatingSystemVersion(): string
+    public function getOperatingSystemVersion(): ?string
     {
         return $this->getFirstAttribute($this->schema->operatingSystemVersion());
     }
@@ -44,9 +44,9 @@ class Computer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679078(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getOperatingSystemServicePack(): string
+    public function getOperatingSystemServicePack(): ?string
     {
         return $this->getFirstAttribute($this->schema->operatingSystemServicePack());
     }
@@ -54,9 +54,9 @@ class Computer extends Entry
     /**
      * Returns the computers DNS host name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDnsHostName(): string
+    public function getDnsHostName(): ?string
     {
         return $this->getFirstAttribute($this->schema->dnsHostName());
     }
@@ -66,9 +66,9 @@ class Computer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms675243(v=vs.85).aspx
      *
-     * @return int
+     * @return int|null
      */
-    public function getBadPasswordTime(): int
+    public function getBadPasswordTime(): ?int
     {
         return $this->getFirstAttribute($this->schema->badPasswordTime());
     }
@@ -78,9 +78,9 @@ class Computer extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms675098(v=vs.85).aspx
      *
-     * @return int
+     * @return int|null
      */
-    public function getAccountExpiry(): int
+    public function getAccountExpiry(): ?int
     {
         return $this->getFirstAttribute($this->schema->accountExpires());
     }

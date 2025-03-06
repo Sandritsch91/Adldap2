@@ -117,9 +117,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the department number.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDepartmentNumber(): string
+    public function getDepartmentNumber(): ?string
     {
         return $this->getFirstAttribute($this->schema->departmentNumber());
     }
@@ -161,9 +161,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users physical delivery office name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPhysicalDeliveryOfficeName(): string
+    public function getPhysicalDeliveryOfficeName(): ?string
     {
         return $this->getFirstAttribute($this->schema->physicalDeliveryOfficeName());
     }
@@ -183,9 +183,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users locale.
      *
-     * @return string
+     * @return string|null
      */
-    public function getLocale(): string
+    public function getLocale(): ?string
     {
         return $this->getFirstAttribute($this->schema->locale());
     }
@@ -207,9 +207,9 @@ class User extends Entry implements Authenticatable
      *
      * @link https://msdn.microsoft.com/en-us/library/ms675457(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getCompany(): string
+    public function getCompany(): ?string
     {
         return $this->getFirstAttribute($this->schema->company());
     }
@@ -231,9 +231,9 @@ class User extends Entry implements Authenticatable
      *
      * @link https://msdn.microsoft.com/en-us/library/aa487565(v=exchg.65).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getHomeMdb(): string
+    public function getHomeMdb(): ?string
     {
         return $this->getFirstAttribute($this->schema->homeMdb());
     }
@@ -307,9 +307,9 @@ class User extends Entry implements Authenticatable
      *
      * @link https://msdn.microsoft.com/en-us/library/ms680857(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getUserPrincipalName(): string
+    public function getUserPrincipalName(): ?string
     {
         return $this->getFirstAttribute($this->schema->userPrincipalName());
     }
@@ -365,9 +365,9 @@ class User extends Entry implements Authenticatable
      *
      * @link https://msdn.microsoft.com/en-us/library/ms679656(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getScriptPath(): string
+    public function getScriptPath(): ?string
     {
         return $this->getFirstAttribute($this->schema->scriptPath());
     }
@@ -387,9 +387,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users bad password count.
      *
-     * @return string
+     * @return string|null
      */
-    public function getBadPasswordCount(): string
+    public function getBadPasswordCount(): ?string
     {
         return $this->getFirstAttribute($this->schema->badPasswordCount());
     }
@@ -397,9 +397,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users bad password time.
      *
-     * @return string
+     * @return string|null
      */
-    public function getBadPasswordTime(): string
+    public function getBadPasswordTime(): ?string
     {
         return $this->getFirstAttribute($this->schema->badPasswordTime());
     }
@@ -435,9 +435,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the time when the users password was set last.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPasswordLastSet(): string
+    public function getPasswordLastSet(): ?string
     {
         return $this->getFirstAttribute($this->schema->passwordLastSet());
     }
@@ -473,9 +473,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users lockout time.
      *
-     * @return string
+     * @return string|null
      */
-    public function getLockoutTime(): string
+    public function getLockoutTime(): ?string
     {
         return $this->getFirstAttribute($this->schema->lockoutTime());
     }
@@ -521,9 +521,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users profile file path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getProfilePath(): string
+    public function getProfilePath(): ?string
     {
         return $this->getFirstAttribute($this->schema->profilePath());
     }
@@ -543,9 +543,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users legacy exchange distinguished name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getLegacyExchangeDn(): string
+    public function getLegacyExchangeDn(): ?string
     {
         return $this->getFirstAttribute($this->schema->legacyExchangeDn());
     }
@@ -678,9 +678,9 @@ class User extends Entry implements Authenticatable
     /**
      * Return the employee ID.
      *
-     * @return string
+     * @return string|null
      */
-    public function getEmployeeId(): string
+    public function getEmployeeId(): ?string
     {
         return $this->getFirstAttribute($this->schema->employeeId());
     }
@@ -722,9 +722,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the employee number.
      *
-     * @return string
+     * @return string|null
      */
-    public function getEmployeeNumber(): string
+    public function getEmployeeNumber(): ?string
     {
         return $this->getFirstAttribute($this->schema->employeeNumber());
     }
@@ -744,9 +744,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the room number.
      *
-     * @return string
+     * @return string|null
      */
-    public function getRoomNumber(): string
+    public function getRoomNumber(): ?string
     {
         return $this->getFirstAttribute($this->schema->roomNumber());
     }
@@ -1009,9 +1009,9 @@ class User extends Entry implements Authenticatable
     /**
      * Returns the users account expiry date.
      *
-     * @return string
+     * @return string|null
      */
-    public function getAccountExpiry(): string
+    public function getAccountExpiry(): ?string
     {
         return $this->getFirstAttribute($this->schema->accountExpires());
     }

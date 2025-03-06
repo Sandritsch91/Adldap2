@@ -19,9 +19,9 @@ class Container extends Entry
      *
      * @link https://msdn.microsoft.com/en-us/library/ms680022(v=vs.85).aspx
      *
-     * @return string
+     * @return string|null
      */
-    public function getSystemFlags(): string
+    public function getSystemFlags(): ?string
     {
         return $this->getFirstAttribute($this->schema->systemFlags());
     }

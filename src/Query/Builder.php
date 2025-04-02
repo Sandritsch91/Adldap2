@@ -542,12 +542,16 @@ class Builder
     /**
      * Parses the given LDAP result by retrieving its entries.
      *
-     * @param Result|array $result
+     * @param Result|false $result
      *
      * @return array|Model
      */
-    protected function parse(Result|array $result): array|Model
+    protected function parse(Result|false $result): array|Model
     {
+        if ($result === false) {
+            return [];
+        }
+
         $entries = $this->connection->getEntries($result);
 
         // Free up memory.

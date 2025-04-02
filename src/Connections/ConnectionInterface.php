@@ -312,7 +312,7 @@ interface ConnectionInterface
      * @param int $size
      * @param int $time
      *
-     * @return Result|Result[]|array|false
+     * @return Result|false
      */
     public function search(
         string $dn,
@@ -321,7 +321,7 @@ interface ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): Result|array|false;
+    ): Result|false;
 
     /**
      * Reads an entry on the current connection.
@@ -358,7 +358,7 @@ interface ConnectionInterface
      * @param int $size
      * @param int $time
      *
-     * @return Result|array|false
+     * @return Result|false
      */
     public function listing(
         string $dn,
@@ -367,7 +367,7 @@ interface ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): Result|array|false;
+    ): Result|false;
 
     /**
      * Adds an entry to the current connection.

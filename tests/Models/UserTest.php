@@ -2,6 +2,9 @@
 
 namespace Adldap\Tests\Models;
 
+use Adldap\Adldap;
+use Adldap\Query\Collection;
+use Adldap\Schemas\FreeIPA;
 use DateTime;
 use Adldap\Utilities;
 use Adldap\Models\User;
@@ -19,6 +22,25 @@ class UserTest extends TestCase
         $builder = $builder ?: $this->newBuilder();
 
         return new User($attributes, $builder);
+    }
+
+    public function test_get_real_users()
+    {
+        $connection = new Adldap([
+           'default' => [
+               'hosts' => [self::URL],
+               'base_dn' => self::BASE_DN,
+               'schema' => FreeIPA::class,
+           ]
+        ]);
+
+        $users = $connection->connect()->search()
+            ->users()
+            ->get();
+
+        $this->assertInstanceOf(Collection::class, $users);
+        $this->assertGreaterThan(1, count($users));
+        $this->assertInstanceOf(User::class, $users[0]);
     }
 
     public function test_set_password_on_new_user()

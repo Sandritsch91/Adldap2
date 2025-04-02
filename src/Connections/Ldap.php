@@ -292,7 +292,7 @@ class Ldap implements ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): Result|array|false {
+    ): Result|false {
         return ldap_search($this->connection, $dn, $filter, $fields, $onlyAttributes, $size, $time);
     }
 
@@ -306,7 +306,7 @@ class Ldap implements ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): Result|array|false {
+    ): Result|false {
         return ldap_list($this->connection, $dn, $filter, $attributes, $onlyAttributes, $size, $time);
     }
 

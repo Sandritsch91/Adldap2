@@ -13,7 +13,8 @@ use Adldap\Connections\ConnectionInterface;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    const URL = 'ldap.forumsys.com';
+    const URL = 'ipa.demo1.freeipa.org';
+    const BASE_DN = 'dc=demo1,dc=freeipa,dc=org';
 
     protected Connection $conn;
 
@@ -139,7 +140,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         // Use static variable here to not call the ldap server too often
         if (static::$_result == null) {
-            static::$_result = ldap_search($this->conn, 'cn=read-only-admin,dc=example,dc=com', '(objectClass=*)');
+            static::$_result = ldap_search($this->conn, self::BASE_DN, '(objectClass=*)');
         }
         return static::$_result;
     }

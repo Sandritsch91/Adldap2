@@ -696,7 +696,7 @@ class BuilderTest extends TestCase
         $controls = ['1.2.840.113556.1.4.319' => ['oid' => '1.2.840.113556.1.4.319', 'isCritical' => true, 'value' => ['size' => 50, 'cookie' => '']]];
         $connection->shouldReceive('setOption')->once()->withArgs([18, $controls]);
 
-        $connection->shouldReceive('search')->once()->withArgs([null, '(field=\76\61\6c\75\65)', ['*'], false, 0])->andReturn(array());
+        $connection->shouldReceive('search')->once()->withArgs([null, '(field=\76\61\6c\75\65)', ['*'], false, 0])->andReturn(false);
         $connection->shouldReceive('parseResult')->never();
 
         $connection->shouldReceive('setOption')->once()->withArgs([18, []]);

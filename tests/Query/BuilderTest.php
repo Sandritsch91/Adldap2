@@ -685,57 +685,6 @@ class BuilderTest extends TestCase
         $this->assertEquals('(UserAccountControl:1.2.840.113556.1.4.803:=2)', $b->getQuery());
     }
 
-    public function test_deprecated_paginate_with_no_results()
-    {
-        $connection = $this->newConnectionMock();
-
-        $connection->allows()->supportsServerControlsInMethods()->andReturns(false);
-
-        $connection->shouldReceive('controlPagedResult')->once()->withArgs([50, true, ''])
-            ->shouldReceive('search')->once()->withArgs([null, '(field=\76\61\6c\75\65)', ['*'], false, 0])->andReturn(null)
-            ->shouldReceive('controlPagedResult')->once();
-
-        $b = $this->newBuilder($connection);
-
-        $this->assertInstanceOf(Paginator::class, $b->where('field', '=', 'value')->paginate(50));
-    }
-
-    public function test_deprecated_paginate_with_results()
-    {
-        $connection = $this->newConnectionMock();
-
-        $connection->allows()->supportsServerControlsInMethods()->andReturns(false);
-
-        $rawEntries = [
-            'count' => 1,
-            [
-                'dn' => 'cn=Test,dc=corp,dc=acme,dc=org',
-                'cn' => ['Test'],
-            ],
-        ];
-
-        $result = $this->newResult();
-        $connection->shouldReceive('controlPagedResult')->twice()
-            ->shouldReceive('search')->once()->withArgs(['', '(field=\76\61\6c\75\65)', ['*'], false, 0])->andReturn($result)
-            ->shouldReceive('controlPagedResultResponse')->withArgs([$result, ''])
-            ->shouldReceive('getEntries')->with($result)->andReturn($rawEntries)
-            ->shouldReceive('freeResult')->with($result);
-
-        $b = $this->newBuilder($connection);
-
-        $paginator = $b->where('field', '=', 'value')->paginate(50);
-
-        $this->assertInstanceOf(Paginator::class, $paginator);
-        $this->assertEquals(1, $paginator->getPages());
-        $this->assertEquals(1, $paginator->count());
-
-        foreach ($paginator as $model) {
-            $this->assertInstanceOf(Model::class, $model);
-            $this->assertEquals($rawEntries[0]['dn'], $model->getDn());
-            $this->assertEquals($rawEntries[0]['cn'][0], $model->getCommonName());
-        }
-    }
-
     public function test_compatible_paginate_with_no_results()
     {
         $connection = $this->newConnectionMock();
@@ -747,7 +696,7 @@ class BuilderTest extends TestCase
         $controls = ['1.2.840.113556.1.4.319' => ['oid' => '1.2.840.113556.1.4.319', 'isCritical' => true, 'value' => ['size' => 50, 'cookie' => '']]];
         $connection->shouldReceive('setOption')->once()->withArgs([18, $controls]);
 
-        $connection->shouldReceive('search')->once()->withArgs([null, '(field=\76\61\6c\75\65)', ['*'], false, 0])->andReturn(null);
+        $connection->shouldReceive('search')->once()->withArgs([null, '(field=\76\61\6c\75\65)', ['*'], false, 0])->andReturn(array());
         $connection->shouldReceive('parseResult')->never();
 
         $connection->shouldReceive('setOption')->once()->withArgs([18, []]);
@@ -1102,7 +1051,7 @@ class BuilderTest extends TestCase
         $result = $this->newResult();
         $c
             ->shouldReceive('search')->once()->with(null, $expectedFilter, $expectedSelect, $attrsOnly = false, $total = 1)->andReturn($result)
-            ->shouldReceive('getEntries')->once()->with($result)->andReturn(null)
+            ->shouldReceive('getEntries')->once()->with($result)->andReturn(array())
             ->shouldReceive('freeResult')->once()->with($result);
 
         $this->assertNull($b->find('jdoe', $select));
@@ -1146,7 +1095,7 @@ class BuilderTest extends TestCase
         $result = $this->newResult();
         $c
             ->shouldReceive('search')->once()->with(null, $expectedFilter, $expectedSelect, $attrsOnly = false, $total = 0)->andReturn($result)
-            ->shouldReceive('getEntries')->once()->with($result)->andReturn(null)
+            ->shouldReceive('getEntries')->once()->with($result)->andReturn(array())
             ->shouldReceive('freeResult')->once()->with($result);
 
         $this->assertInstanceOf(Collection::class, $b->findMany([

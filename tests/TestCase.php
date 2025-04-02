@@ -2,6 +2,8 @@
 
 namespace Adldap\Tests;
 
+use LDAP\Connection;
+use LDAP\Result;
 use Mockery;
 use Adldap\Utilities;
 use Adldap\Models\User;
@@ -11,6 +13,12 @@ use Adldap\Connections\ConnectionInterface;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
+    const URL = 'ldap.forumsys.com';
+
+    protected Connection $conn;
+
+    protected static ?Result $_result = null;
+
     /*
      * Set up the test environment.
      *
@@ -18,6 +26,8 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
+        $this->conn = ldap_connect(self::URL);
+
         if (!defined('LDAP_CONTROL_PAGEDRESULTS')) {
             define('LDAP_CONTROL_PAGEDRESULTS', '1.2.840.113556.1.4.319');
         }
@@ -123,11 +133,14 @@ class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * Returns a faked LDAP Result resource.
      *
-     * @return resource
+     * @return Result
      */
-    protected function newResult()
+    protected function newResult(): Result
     {
-        // cheap way of creating a PHP resource
-        return stream_context_create();
+        // Use static variable here to not call the ldap server too often
+        if (static::$_result == null) {
+            static::$_result = ldap_search($this->conn, 'cn=read-only-admin,dc=example,dc=com', '(objectClass=*)');
+        }
+        return static::$_result;
     }
 }

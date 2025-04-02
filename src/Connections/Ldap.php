@@ -141,8 +141,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    // todo - add return type Result
-    public function getEntries(mixed $searchResults): array|false
+    public function getEntries(Result $searchResults): array|false
     {
         return ldap_get_entries($this->connection, $searchResults);
     }
@@ -286,7 +285,6 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    // todo - add return type Result
     public function search(
         string $dn,
         string $filter,
@@ -294,7 +292,7 @@ class Ldap implements ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): mixed {
+    ): Result|array|false {
         return ldap_search($this->connection, $dn, $filter, $fields, $onlyAttributes, $size, $time);
     }
 
@@ -315,7 +313,6 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    // todo - add return type Result
     public function read(
         string $dn,
         string $filter,
@@ -323,7 +320,7 @@ class Ldap implements ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): mixed {
+    ): Result|array|false {
         return ldap_read($this->connection, $dn, $filter, $fields, $onlyAttributes, $size, $time);
     }
 
@@ -337,7 +334,7 @@ class Ldap implements ConnectionInterface
      * @param string $dn
      * @param string $errorMessage
      * @param array|null $referrals
-     * @param array $serverControls
+     * @param array|null $serverControls
      *
      * @return bool
      */
@@ -347,11 +344,9 @@ class Ldap implements ConnectionInterface
         string &$dn,
         string &$errorMessage,
         ?array &$referrals,
-        array &$serverControls = []
+        ?array &$serverControls = null
     ): bool {
-        return $this->supportsServerControlsInMethods() && !empty($serverControls) ?
-            ldap_parse_result($this->connection, $result, $errorCode, $dn, $errorMessage, $referrals, $serverControls) :
-            ldap_parse_result($this->connection, $result, $errorCode, $dn, $errorMessage, $referrals);
+        return ldap_parse_result($this->connection, $result, $errorCode, $dn, $errorMessage, $referrals, $serverControls);
     }
 
     /**
@@ -462,7 +457,7 @@ class Ldap implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function freeResult($result): bool
+    public function freeResult(Result $result): bool
     {
         return ldap_free_result($result);
     }
@@ -538,16 +533,6 @@ class Ldap implements ConnectionInterface
     public function getProtocol(): string
     {
         return $this->isUsingSSL() ? $this::PROTOCOL_SSL : $this::PROTOCOL;
-    }
-
-    /**
-     * Determine if the current PHP version supports server controls.
-     *
-     * @return bool
-     */
-    public function supportsServerControlsInMethods(): bool
-    {
-        return version_compare(PHP_VERSION, '7.3.0') >= 0;
     }
 
     /**

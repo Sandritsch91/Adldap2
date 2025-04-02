@@ -125,10 +125,9 @@ interface ConnectionInterface
      *
      * @param Result $searchResults
      *
-     * @return mixed
+     * @return array|false
      */
-    // todo - add return type Result
-    public function getEntries(mixed $searchResults): mixed;
+    public function getEntries(Result $searchResults): array|false;
 
     /**
      * Returns the number of entries from a search result.
@@ -313,9 +312,8 @@ interface ConnectionInterface
      * @param int $size
      * @param int $time
      *
-     * @return Result|Result[]|false
+     * @return Result|Result[]|array|false
      */
-    // todo - add return type Result
     public function search(
         string $dn,
         string $filter,
@@ -323,7 +321,7 @@ interface ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): mixed;
+    ): Result|array|false;
 
     /**
      * Reads an entry on the current connection.
@@ -337,9 +335,8 @@ interface ConnectionInterface
      * @param int $size
      * @param int $time
      *
-     * @return Result|Result[]|false
+     * @return Result|Result[]|array|false
      */
-    // todo - add return type Result
     public function read(
         string $dn,
         string $filter,
@@ -347,7 +344,7 @@ interface ConnectionInterface
         bool $onlyAttributes = false,
         int $size = 0,
         int $time = 0
-    ): mixed;
+    ): Result|array|false;
 
     /**
      * Performs a single level search on the current connection.
@@ -499,11 +496,11 @@ interface ConnectionInterface
      *
      * @link https://www.php.net/manual/en/function.ldap-free-result.php
      *
-     * @param resource $result
+     * @param Result $result
      *
      * @return bool
      */
-    public function freeResult($result): bool;
+    public function freeResult(Result $result): bool;
 
     /**
      * Returns the error number of the last command

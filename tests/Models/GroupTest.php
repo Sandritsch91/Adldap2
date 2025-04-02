@@ -270,7 +270,7 @@ class GroupTest extends TestCase
         $result = $this->newResult();
         $connection
             ->shouldReceive('read')->once()->with($group->getDn(), '(objectclass=*)', ['*'], false, 1)->andReturn($result)
-            ->shouldReceive('getEntries')->once()->with($result)->andReturn($group)
+            ->shouldReceive('getEntries')->once()->with($result)->andReturn(array())
             ->shouldReceive('freeResult')->once()->with($result);
 
         $this->assertTrue($group->addMembers($members));
@@ -308,7 +308,7 @@ class GroupTest extends TestCase
         $result = $this->newResult();
         $connection
             ->shouldReceive('read')->once()->with($group->getDn(), '(objectclass=*)', ['*'], false, 1)->andReturn($result)
-            ->shouldReceive('getEntries')->once()->with($result)->andReturn($group)
+            ->shouldReceive('getEntries')->once()->with($result)->andReturn(array())
             ->shouldReceive('freeResult')->once()->with($result);
 
         $this->assertTrue($group->addMembers($members));
@@ -342,7 +342,7 @@ class GroupTest extends TestCase
         $result = $this->newResult();
         $connection
             ->shouldReceive('read')->once()->with($group->getDn(), '(objectclass=*)', ['*'], false, 1)->andReturn($result)
-            ->shouldReceive('getEntries')->once()->with($result)->andReturn($group)
+            ->shouldReceive('getEntries')->once()->with($result)->andReturn(array())
             ->shouldReceive('freeResult')->once()->with($result);
 
         $this->assertTrue($group->addMember($member));
@@ -376,7 +376,7 @@ class GroupTest extends TestCase
         $result = $this->newResult();
         $connection
             ->shouldReceive('read')->once()->with($group->getDn(), '(objectclass=*)', ['*'], false, 1)->andReturn($result)
-            ->shouldReceive('getEntries')->once()->with($result)->andReturn($group)
+            ->shouldReceive('getEntries')->once()->with($result)->andReturn(array())
             ->shouldReceive('freeResult')->once()->with($result);
 
         $this->assertTrue($group->removeMember($member));

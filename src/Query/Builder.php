@@ -471,10 +471,9 @@ class Builder
      *
      * @param string $filter
      *
-     * @return Result
+     * @return array|false|Result
      */
-    // todo - add return type Result
-    protected function run(string $filter): mixed
+    protected function run(string $filter):  array|false|Result
     {
         return $this->connection->{$this->type}(
             $this->getDn(),
@@ -496,60 +495,6 @@ class Builder
      */
     protected function runPaginate(string $filter, int $perPage, bool $isCritical): array
     {
-        return $this->connection->supportsServerControlsInMethods() ?
-            $this->compatiblePaginationCallback($filter, $perPage, $isCritical) :
-            $this->deprecatedPaginationCallback($filter, $perPage, $isCritical);
-    }
-
-    /**
-     * Create a deprecated pagination callback compatible with PHP 7.2.
-     *
-     * @param string $filter
-     * @param int $perPage
-     * @param bool $isCritical
-     *
-     * @return array
-     */
-    protected function deprecatedPaginationCallback(string $filter, int $perPage, bool $isCritical): array
-    {
-        $pages = [];
-
-        $cookie = '';
-
-        do {
-            $this->connection->controlPagedResult($perPage, $isCritical, $cookie);
-
-            if (!$resource = $this->run($filter)) {
-                break;
-            }
-
-            // If we have been given a valid resource, we will retrieve the next
-            // pagination cookie to send for our next pagination request.
-            $this->connection->controlPagedResultResponse($resource, $cookie);
-
-            $pages[] = $this->parse($resource);
-        } while (!empty($cookie));
-
-        // Reset paged result on the current connection. We won't pass in the current $perPage
-        // parameter since we want to reset the page size to the default '1000'. Sending '0'
-        // eliminates any further opportunity for running queries in the same request,
-        // even though that is supposed to be the correct usage.
-        $this->connection->controlPagedResult();
-
-        return $pages;
-    }
-
-    /**
-     * Create a compatible pagination callback compatible with PHP 7.3 and greater.
-     *
-     * @param string $filter
-     * @param int $perPage
-     * @param bool $isCritical
-     *
-     * @return array
-     */
-    protected function compatiblePaginationCallback(string $filter, int $perPage, bool $isCritical): array
-    {
         $pages = [];
 
         // Setup our paged results control.
@@ -568,16 +513,16 @@ class Builder
             // Update the server controls.
             $this->connection->setOption(LDAP_OPT_SERVER_CONTROLS, $controls);
 
-            if (!$resource = $this->run($filter)) {
+            if (!$result = $this->run($filter)) {
                 break;
             }
 
             $errorCode = $dn = $errorMessage = $refs = null;
 
             // Update the server controls with the servers response.
-            $this->connection->parseResult($resource, $errorCode, $dn, $errorMessage, $refs, $controls);
+            $this->connection->parseResult($result, $errorCode, $dn, $errorMessage, $refs, $controls);
 
-            $pages[] = $this->parse($resource);
+            $pages[] = $this->parse($result);
 
             // Reset paged result on the current connection. We won't pass in the current $perPage
             // parameter since we want to reset the page size to the default '1000'. Sending '0'
@@ -597,23 +542,16 @@ class Builder
     /**
      * Parses the given LDAP result by retrieving its entries.
      *
-     * @param Result|resource $result
+     * @param Result|array $result
      *
      * @return array|Model
      */
-    protected function parse(mixed $result): array|Model
+    protected function parse(Result|array $result): array|Model
     {
-        if (is_resource($result) || $result instanceof Result) {
-            $entries = $this->connection->getEntries($result);
-            if (is_null($entries)) {
-                $entries = [];
-            }
+        $entries = $this->connection->getEntries($result);
 
-            // Free up memory.
-            $this->connection->freeResult($result);
-        } else {
-            $entries = [];
-        }
+        // Free up memory.
+        $this->connection->freeResult($result);
 
         return $entries;
     }

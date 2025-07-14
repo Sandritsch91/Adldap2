@@ -30,9 +30,9 @@ class DetailedError
      *
      * @param int $errorCode
      * @param string $errorMessage
-     * @param string $diagnosticMessage
+     * @param string|null $diagnosticMessage
      */
-    public function __construct(int $errorCode, string $errorMessage, string $diagnosticMessage)
+    public function __construct(int $errorCode, string $errorMessage, ?string $diagnosticMessage)
     {
         $this->errorCode = $errorCode;
         $this->errorMessage = $errorMessage;

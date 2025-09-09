@@ -38,8 +38,8 @@
         "ext-mbstring": "*",
         "psr/log": "^3.0",
         "psr/simple-cache": "^3.0",
-        "illuminate/collections": "^11.40.0",
-        "illuminate/contracts": "^11.40.0"
+        "illuminate/collections": "^v12.28.1",
+        "illuminate/contracts": "^v12.28.1"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^v7.2.0",

@@ -37,14 +37,14 @@
         "ext-ldap": "*",
         "ext-mbstring": "*",
         "psr/log": "^3.0.2",
-        "psr/simple-cache": "^3",
-        "illuminate/collections": "^13.15",
-        "illuminate/contracts": "^13.15"
+        "psr/simple-cache": "^3.0",
+        "illuminate/collections": "^v12.28.1",
+        "illuminate/contracts": "^v12.28.1"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^8.1",
-        "mockery/mockery": "^1.6.12",
-        "phpunit/phpunit": "^12.5.30"
+        "symfony/phpunit-bridge": "^v7.2.0",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^11.5.3"
     },
     "suggest": {
     },

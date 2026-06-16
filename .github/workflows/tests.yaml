@@ -4,15 +4,11 @@ on:
     push:
         branches:
             - master
-            - v9.0
-            - v8.0
         paths-ignore:
             - '**.md'
     pull_request:
         branches:
             - master
-            - v9.0
-            - v8.0
         paths-ignore:
             - '**.md'
     # Allow manually triggering the workflow
@@ -28,6 +24,7 @@ jobs:
                     - "8.2"
                     - "8.3"
                     - "8.4"
+                    - "8.5"
 
         name: PHP ${{ matrix.php-version }} tests
 
